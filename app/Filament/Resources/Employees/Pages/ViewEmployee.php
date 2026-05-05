@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Filament\Resources\Employees\Pages;
+
+use App\Filament\Resources\Employees\Actions\LinkUserAccountAction;
+use App\Filament\Resources\Employees\EmployeeResource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewEmployee extends ViewRecord
+{
+    protected static string $resource = EmployeeResource::class;
+
+    protected static ?string $title = 'عرض موظف';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            LinkUserAccountAction::make(),
+            EditAction::make()->label('تعديل'),
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
+        ];
+    }
+}
