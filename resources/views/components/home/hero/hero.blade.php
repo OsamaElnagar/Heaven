@@ -1,17 +1,13 @@
-<section class="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-zinc-50 dark:bg-zinc-950">
-    {{-- Light mode gradient --}}
-    <div
-        class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-100/60 via-zinc-50 to-zinc-50 dark:hidden">
-    </div>
-    {{-- Dark mode gradient --}}
-    <div
-        class="absolute inset-0 hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/30 via-zinc-950 to-zinc-950 dark:block">
-    </div>
+<section class="relative flex min-h-[85vh] items-center justify-center overflow-hidden">
+    {{-- Light mode gradients --}}
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-100 via-amber-50/70 to-zinc-50 dark:hidden"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-200/50 via-transparent to-transparent dark:hidden"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-100/60 via-transparent to-transparent dark:hidden"></div>
 
-    {{-- Pattern overlay --}}
-    <div
-        class="absolute inset-0 opacity-[0.03] dark:opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0di00aC0ydjRoLTR2Mmg0djRoMnYtNGg0di0yaC00em0wLTMwVjBoLTJ2NGgtNHYyaDR2NGgyVjZoNFY0aC00ek02IDM0di00SDR2NEgwdjJoNHY0aDJ2LTRoNHYtMkg2ek02IDRWMEg0djRIMHYyaDR2NGgyVjZoNFY0SDZ6Ii8+PC9nPjwvZz48L3N2Zz4=')]">
-    </div>
+    {{-- Dark mode gradients --}}
+    <div class="absolute inset-0 hidden bg-gradient-to-br from-emerald-950 via-zinc-900 to-zinc-950 dark:block"></div>
+    <div class="absolute inset-0 hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-900/40 via-transparent to-transparent dark:block"></div>
+    <div class="absolute inset-0 hidden bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-900/20 via-transparent to-transparent dark:block"></div>
 
     <div class="relative z-10 mx-auto w-full max-w-6xl px-4 py-16 text-center sm:px-6 lg:px-8">
         {{-- Badge --}}

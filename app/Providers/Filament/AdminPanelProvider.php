@@ -18,6 +18,8 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -97,6 +99,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label(__('التقارير'))
                     ->collapsible()
                     ->collapsed(),
-            ]);
+            ])
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
+                fn(): View => view('filament.topbar.quick-links'),
+            );
     }
 }
