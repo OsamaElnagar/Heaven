@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 #[ObservedBy([PackageObserver::class])]
 class Package extends Model
@@ -20,6 +21,7 @@ class Package extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'type',
         'grade',
         'season_year',
@@ -46,6 +48,20 @@ class Package extends Model
     public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    public static function booted(): void
+    {
+        static::creating(function (Package $package) {
+            if (empty($package->slug)) {
+                $package->slug = Str::slug($package->name).'-'.Str::random(6);
+            }
+        });
     }
 
     public function bookings(): HasMany

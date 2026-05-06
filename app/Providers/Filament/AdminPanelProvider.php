@@ -13,6 +13,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -65,6 +66,37 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->topNavigation(false)
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label(__('حجاج وحجوزات'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('الموارد البشرية'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('الموردون والفنادق'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('الرحلات والباقات'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('التأشيرات'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('المحتوى'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('التقارير'))
+                    ->collapsible()
+                    ->collapsed(),
             ]);
     }
 }
