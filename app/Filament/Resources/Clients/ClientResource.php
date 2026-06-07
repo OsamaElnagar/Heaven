@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Clients;
 
+use App\Filament\Resources\Clients\Pages\ClientAccountingStatementPage;
 use App\Filament\Resources\Clients\Pages\ClientStatementPage;
 use App\Filament\Resources\Clients\Pages\CreateClient;
 use App\Filament\Resources\Clients\Pages\EditClient;
@@ -66,6 +67,7 @@ class ClientResource extends Resource
             'view' => ViewClient::route('/{record}'),
             'edit' => EditClient::route('/{record}/edit'),
             'statement' => ClientStatementPage::route('/{record}/statement'),
+            'accounting-statement' => ClientAccountingStatementPage::route('/{record}/accounting-statement'),
         ];
     }
 

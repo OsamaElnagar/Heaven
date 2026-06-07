@@ -3,15 +3,21 @@
 namespace Database\Seeders;
 
 use App\Enums\BookingStatus;
+use App\Enums\ExpenseStatus;
+use App\Enums\PayerType;
+use App\Enums\PaymentType;
 use App\Enums\VisaStatus;
+use App\Enums\VoucherPaymentMethod;
+use App\Models\BankAccount;
 use App\Models\Booking;
 use App\Models\Client;
 use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\Hotel;
 use App\Models\Package;
-use App\Models\Payment;
+use App\Models\ReceiptVoucher;
 use App\Models\Room;
+use App\Models\Safe;
 use App\Models\Supplier;
 use App\Models\Trip;
 use App\Models\User;
@@ -23,6 +29,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            ChartOfAccountsSeeder::class,
+            FiscalYearSeeder::class,
+        ]);
+
+        $this->seedSafesAndBanks();
         $this->seedUsers();
         $suppliers = $this->seedSuppliers();
         $hotels = $this->seedHotels($suppliers);
@@ -49,6 +61,30 @@ class DatabaseSeeder extends Seeder
         User::factory(2)->create();
 
         return $admin;
+    }
+
+    private function seedSafesAndBanks(): void
+    {
+        if (Safe::count() === 0) {
+            Safe::create([
+                'code' => 'SAF-2026-00001',
+                'name' => 'الخزينة الرئيسية',
+                'is_active' => true,
+                'notes' => 'الخزينة الرئيسية للشركة',
+            ]);
+        }
+
+        if (BankAccount::count() === 0) {
+            BankAccount::create([
+                'code' => 'BNK-2026-00001',
+                'bank_name' => 'البنك الأهلي المصري',
+                'branch' => 'فرع التحرير',
+                'account_number' => '1234567890',
+                'iban' => 'EG38001900050000000001234567',
+                'is_active' => true,
+                'notes' => 'حساب الشركة الرئيسي',
+            ]);
+        }
     }
 
     private function seedSuppliers(): array
@@ -174,6 +210,20 @@ class DatabaseSeeder extends Seeder
 
     private function seedPayments(array $bookings): void
     {
+        $safe = Safe::where('is_active', true)->first();
+        $bank = BankAccount::where('is_active', true)->first();
+        $cashTarget = $safe ?? $bank;
+        if (! $cashTarget) {
+            return;
+        }
+
+        $paymentTypes = [
+            PaymentType::DEPOSIT,
+            PaymentType::INSTALLMENT,
+            PaymentType::INSTALLMENT,
+            PaymentType::FINAL,
+        ];
+
         foreach ($bookings as $booking) {
             if (in_array($booking->status->value, ['cancelled', 'refunded'], true)) {
                 continue;
@@ -181,36 +231,47 @@ class DatabaseSeeder extends Seeder
 
             $paymentCount = fake()->numberBetween(1, 3);
             $totalPaid = 0;
+            $vouchersCreated = 0;
 
             for ($i = 0; $i < $paymentCount; $i++) {
                 $remaining = $booking->net_price - $totalPaid;
+                if ($remaining <= 0) {
+                    break;
+                }
                 $amount = $i === $paymentCount - 1
-                    ? $remaining
+                    ? (int) $remaining
                     : fake()->numberBetween(1000, (int) max($remaining * 0.6, 2000));
 
                 $totalPaid += $amount;
 
-                Payment::factory()->create([
-                    'booking_id' => $booking->id,
+                $useSafe = $i % 2 === 0 && $safe;
+                $method = $useSafe ? VoucherPaymentMethod::SAFE : VoucherPaymentMethod::BANK;
+
+                ReceiptVoucher::create([
+                    'voucher_date' => now()->subDays(fake()->numberBetween(0, 30)),
+                    'receipt_method' => $method,
+                    'safe_id' => $useSafe ? $safe->id : null,
+                    'bank_account_id' => $useSafe ? null : ($bank?->id),
                     'amount' => $amount,
-                    'received_by' => User::inRandomOrder()->first()->id,
+                    'payment_type' => fake()->randomElement($paymentTypes),
+                    'payer_type' => PayerType::CLIENT,
+                    'client_id' => $booking->client_id,
+                    'booking_id' => $booking->id,
+                    'description' => 'دفعة على الحجز #'.$booking->id,
+                    'reference' => 'SEED-'.str_pad((string) $booking->id, 5, '0', STR_PAD_LEFT).'-'.($i + 1),
+                    'status' => ExpenseStatus::POSTED,
+                    'created_by' => User::inRandomOrder()->first()->id,
                 ]);
+                $vouchersCreated++;
             }
 
-            Booking::withoutEvents(function () use ($booking) {
-                $paid = $booking->payments()
-                    ->whereNot('type', 'refund')
-                    ->sum('amount');
-                $refunded = $booking->payments()
-                    ->where('type', 'refund')
-                    ->sum('amount');
-                $netPaid = (float) $paid - (float) $refunded;
-
+            if ($vouchersCreated > 0) {
+                $netPaid = (float) $totalPaid;
                 $booking->updateQuietly([
                     'paid_amount' => $netPaid,
                     'status' => $netPaid > 0 ? BookingStatus::CONFIRMED : BookingStatus::PENDING,
                 ]);
-            });
+            }
         }
     }
 

@@ -22,7 +22,7 @@ class CancelBookingAction extends Action
         $this->label('إلغاء الحجز')
             ->icon('heroicon-o-x-circle')
             ->color('danger')
-            ->form([
+            ->schema([
                 Textarea::make('reason')->label('سبب الإلغاء')->required(),
             ])
             ->modalHeading('إلغاء الحجز')

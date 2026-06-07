@@ -6,6 +6,10 @@
     "guidelines": true,
     "mcp": true,
     "nightwatch": false,
+    "packages": [
+        "filament/filament",
+        "laraveldaily/filacheck"
+    ],
     "sail": false,
     "skills": [
         "fortify-development",
@@ -14,6 +18,7 @@
         "livewire-development",
         "pest-testing",
         "tailwindcss-development",
-        "deploying-laravel-cloud"
+        "deploying-laravel-cloud",
+        "filament-development"
     ]
 }

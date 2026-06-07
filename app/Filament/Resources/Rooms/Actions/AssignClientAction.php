@@ -22,7 +22,7 @@ class AssignClientAction extends Action
         $this->label('إضافة حاج')
             ->icon('heroicon-o-user-plus')
             ->color('success')
-            ->form([
+            ->schema([
                 Select::make('booking_id')
                     ->label('الحجز')
                     ->options(function (Room $record) {

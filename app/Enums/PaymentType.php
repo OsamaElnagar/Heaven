@@ -11,7 +11,6 @@ enum PaymentType: string implements HasColor, HasLabel
     case DEPOSIT = 'deposit';
     case INSTALLMENT = 'installment';
     case FINAL = 'final';
-    case REFUND = 'refund';
 
     public function getColor(): string|array|null
     {
@@ -19,7 +18,6 @@ enum PaymentType: string implements HasColor, HasLabel
             self::DEPOSIT => 'info',
             self::INSTALLMENT => 'warning',
             self::FINAL => 'success',
-            self::REFUND => 'danger',
         };
     }
 
@@ -29,7 +27,6 @@ enum PaymentType: string implements HasColor, HasLabel
             self::DEPOSIT => 'عربون',
             self::INSTALLMENT => 'قسط',
             self::FINAL => 'دفعة أخيرة',
-            self::REFUND => 'استرداد',
         };
     }
 }

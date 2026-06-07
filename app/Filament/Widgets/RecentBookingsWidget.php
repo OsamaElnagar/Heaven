@@ -14,7 +14,7 @@ class RecentBookingsWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected function getTableQuery(): Builder
+    protected function query(): Builder
     {
         return Booking::with('client', 'package')
             ->latest()
@@ -24,7 +24,7 @@ class RecentBookingsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query($this->getTableQuery())
+            ->query($this->query())
             ->columns([
                 TextColumn::make('reference')
                     ->label('المرجع')

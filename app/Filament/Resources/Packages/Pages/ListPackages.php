@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Packages\Pages;
 
 use App\Filament\Resources\Packages\PackageResource;
 use App\Filament\Resources\Packages\Widgets\PackagesStatsWidget;
+use App\Filament\Resources\Packages\Widgets\SeatOccupancyWidget;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -24,6 +25,7 @@ class ListPackages extends ListRecords
     {
         return [
             PackagesStatsWidget::class,
+            SeatOccupancyWidget::class,
         ];
     }
 }

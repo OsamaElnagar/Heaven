@@ -2,13 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Widgets\BookingsOverviewWidget;
+use App\Filament\Resources\Packages\Widgets\SeatOccupancyWidget;
 use App\Filament\Widgets\RecentBookingsWidget;
 use App\Filament\Widgets\RevenueChartWidget;
 use App\Filament\Widgets\RevenueWidget;
-use App\Filament\Widgets\SeatOccupancyWidget;
-use App\Filament\Widgets\UpcomingTripsWidget;
-use App\Filament\Widgets\VisaStatusWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -45,14 +42,11 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                BookingsOverviewWidget::class,
                 RevenueWidget::class,
-                VisaStatusWidget::class,
                 RevenueChartWidget::class,
                 SeatOccupancyWidget::class,
-                UpcomingTripsWidget::class,
                 RecentBookingsWidget::class,
             ])
             ->middleware([
@@ -96,13 +90,25 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make()
+                    ->label(__('المحاسبة'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('الخزينة والسندات'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('التقارير المالية'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label(__('التقارير'))
                     ->collapsible()
                     ->collapsed(),
             ])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
-                fn(): View => view('filament.topbar.quick-links'),
+                fn (): View => view('filament.topbar.quick-links'),
             );
     }
 }

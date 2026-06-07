@@ -1,9 +1,8 @@
 @php
-    use App\Filament\Resources\Bookings\BookingResource;
-    use App\Filament\Resources\Clients\ClientResource;
-    use App\Filament\Resources\Payments\PaymentResource;
-    use App\Filament\Resources\Trips\TripResource;
-    use Filament\Support\Colors\Color;
+use App\Filament\Resources\Bookings\BookingResource;
+use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Trips\TripResource;
+use Filament\Support\Colors\Color;
 @endphp
 
 <div class="flex items-center gap-1">
@@ -24,11 +23,7 @@
             عميل جديد
         </x-filament::button>
 
-        <x-filament::button href="{{ PaymentResource::getUrl('create') }}" icon="heroicon-m-banknotes" color="warning"
-            size="sm" icon-position="after" tag="a">
-            دفعة جديدة
-        </x-filament::button>
-
+      
         <x-filament::button href="{{ TripResource::getUrl('create') }}" icon="heroicon-m-paper-airplane"
             :color="Color::Green" size="sm" icon-position="after" tag="a">
             رحلة جديدة
@@ -56,11 +51,7 @@
                     عميل جديد
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item href="{{ PaymentResource::getUrl('create') }}"
-                    icon="heroicon-m-banknotes" tag="a">
-                    دفعة جديدة
-                </x-filament::dropdown.list.item>
-
+               
                 <x-filament::dropdown.list.item href="{{ TripResource::getUrl('create') }}"
                     icon="heroicon-m-paper-airplane" tag="a">
                     رحلة جديدة

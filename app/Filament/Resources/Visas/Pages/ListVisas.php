@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Visas\Pages;
 
 use App\Filament\Resources\Visas\Actions\ExportVisaListAction;
 use App\Filament\Resources\Visas\VisaResource;
+use App\Filament\Resources\Visas\Widgets\VisaStatusWidget;
 use Filament\Resources\Pages\ListRecords;
 
 class ListVisas extends ListRecords
@@ -16,6 +17,13 @@ class ListVisas extends ListRecords
     {
         return [
             ExportVisaListAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            VisaStatusWidget::class,
         ];
     }
 }

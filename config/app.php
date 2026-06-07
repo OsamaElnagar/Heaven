@@ -123,6 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'editor' => 'antigravity',
+    'editor' => 'vscode',
 
 ];

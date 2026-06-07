@@ -57,17 +57,20 @@ class PackageInfolist
                     ->components([
                         TextEntry::make('includes')
                             ->label('يشمل')
+                            ->markdown()
                             ->placeholder('-')
                             ->columnSpanFull(),
                         TextEntry::make('excludes')
                             ->label('لا يشمل')
+                            ->markdown()
                             ->placeholder('-')
                             ->columnSpanFull(),
                         TextEntry::make('notes')
                             ->label('ملاحظات')
+                            ->markdown()
                             ->placeholder('-')
                             ->columnSpanFull(),
-                    ]),
+                    ])->columnSpanFull(),
             ]);
     }
 }

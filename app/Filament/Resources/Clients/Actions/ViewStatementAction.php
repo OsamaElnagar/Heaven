@@ -16,9 +16,9 @@ class ViewStatementAction extends Action
     {
         parent::setUp();
 
-        $this->label('كشف حساب')
-            ->icon('heroicon-o-document-text')
-            ->color('gray')
-            ->url(fn ($record) => ClientResource::getUrl('statement', ['record' => $record]));
+        $this->label('كشف حساب ')
+            ->icon('heroicon-o-document-chart-bar')
+            ->color('info')
+            ->url(fn ($record) => ClientResource::getUrl('accounting-statement', ['record' => $record]));
     }
 }

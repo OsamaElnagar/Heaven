@@ -2,9 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\PaymentType;
+use App\Enums\ExpenseStatus;
 use App\Models\Booking;
-use App\Models\Payment;
+use App\Models\ReceiptVoucher;
+use App\Models\RefundVoucher;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +16,8 @@ class RevenueWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $totalPaid = (float) Payment::whereNot('type', PaymentType::REFUND->value)->sum('amount');
-        $totalRefunded = (float) Payment::where('type', PaymentType::REFUND->value)->sum('amount');
+        $totalPaid = (float) ReceiptVoucher::where('status', ExpenseStatus::POSTED)->sum('amount');
+        $totalRefunded = (float) RefundVoucher::where('status', ExpenseStatus::POSTED)->sum('amount');
         $totalOutstanding = (float) Booking::whereIn('status', ['pending', 'confirmed'])
             ->sum(DB::raw('net_price - paid_amount'));
 

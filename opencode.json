@@ -29,6 +29,15 @@
                 "-y",
                 "chrome-devtools-mcp@latest"
             ]
+        },
+        "github": {
+            "type": "local",
+            "command": [
+                "npx",
+                "@modelcontextprotocol/server-github"
+            ],
+            "url": "https://github.com",
+            "enabled": true
         }
     },
     "plugin": [

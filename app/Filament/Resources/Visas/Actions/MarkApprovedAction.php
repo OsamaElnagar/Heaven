@@ -24,7 +24,7 @@ class MarkApprovedAction extends Action
         $this->label('موافقة')
             ->icon('heroicon-o-check-badge')
             ->color('success')
-            ->form([
+            ->schema([
                 TextInput::make('visa_number')
                     ->label('رقم التأشيرة')
                     ->required(),

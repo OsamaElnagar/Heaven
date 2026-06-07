@@ -45,7 +45,7 @@ class User extends Authenticatable
 
     public function receivedPayments(): HasMany
     {
-        return $this->hasMany(Payment::class, 'received_by');
+        return $this->hasMany(ReceiptVoucher::class, 'created_by');
     }
 
     public function paidExpenses(): HasMany

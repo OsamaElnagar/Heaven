@@ -22,7 +22,7 @@ class MarkRejectedAction extends Action
         $this->label('رفض')
             ->icon('heroicon-o-x-mark')
             ->color('danger')
-            ->form([
+            ->schema([
                 Textarea::make('reason')
                     ->label('سبب الرفض')
                     ->required(),

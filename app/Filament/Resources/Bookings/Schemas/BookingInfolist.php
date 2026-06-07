@@ -63,6 +63,7 @@ class BookingInfolist
                             ->placeholder('-'),
                         TextEntry::make('notes')
                             ->label('ملاحظات')
+                            ->markdown()
                             ->placeholder('-')
                             ->columnSpanFull(),
                     ])

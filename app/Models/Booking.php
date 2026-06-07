@@ -61,9 +61,14 @@ class Booking extends Model
         return $this->belongsTo(Room::class);
     }
 
-    public function payments(): HasMany
+    public function receiptVouchers(): HasMany
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(ReceiptVoucher::class);
+    }
+
+    public function refundVouchers(): HasMany
+    {
+        return $this->hasMany(RefundVoucher::class);
     }
 
     public function visa(): HasOne

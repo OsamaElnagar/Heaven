@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Enums\BookingStatus;
+use App\Enums\ExpenseStatus;
 use App\Enums\VisaStatus;
 use App\Models\Booking;
 use App\Models\Package;
@@ -90,6 +91,39 @@ class BookingObserver
             Package::where('id', $booking->package_id)
                 ->where('reserved_seats', '>', 0)
                 ->decrement('reserved_seats');
+        });
+    }
+
+    /**
+     * Recalculate the booking's paid_amount based on posted receipt/refund vouchers.
+     * Called from ReceiptVoucher/RefundVoucher observers.
+     */
+    public function recalculatePaidAmount(Booking $booking): void
+    {
+        if (! $booking) {
+            return;
+        }
+
+        $received = (int) $booking->receiptVouchers()
+            ->where('status', ExpenseStatus::POSTED)
+            ->sum('amount');
+
+        $refunded = (int) $booking->refundVouchers()
+            ->where('status', ExpenseStatus::POSTED)
+            ->sum('amount');
+
+        $netPaid = $received - $refunded;
+
+        $status = match (true) {
+            $netPaid <= 0 => BookingStatus::PENDING,
+            default => BookingStatus::CONFIRMED,
+        };
+
+        Booking::withoutEvents(function () use ($booking, $netPaid, $status) {
+            $booking->updateQuietly([
+                'paid_amount' => $netPaid,
+                'status' => $status,
+            ]);
         });
     }
 

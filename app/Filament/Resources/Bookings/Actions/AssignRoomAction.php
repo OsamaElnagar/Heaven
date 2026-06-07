@@ -22,7 +22,7 @@ class AssignRoomAction extends Action
         $this->label('تخصيص غرفة')
             ->icon('heroicon-o-home-modern')
             ->color('info')
-            ->form([
+            ->schema([
                 Select::make('room_id')
                     ->label('الغرفة')
                     ->options(function (Booking $record) {

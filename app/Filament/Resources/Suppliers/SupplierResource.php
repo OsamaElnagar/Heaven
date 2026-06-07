@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Suppliers;
 use App\Filament\Resources\Suppliers\Pages\CreateSupplier;
 use App\Filament\Resources\Suppliers\Pages\EditSupplier;
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
+use App\Filament\Resources\Suppliers\Pages\SupplierAccountingStatementPage;
 use App\Filament\Resources\Suppliers\Pages\ViewSupplier;
 use App\Filament\Resources\Suppliers\RelationManagers\HotelsRelationManager;
 use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
@@ -64,6 +65,7 @@ class SupplierResource extends Resource
             'create' => CreateSupplier::route('/create'),
             'view' => ViewSupplier::route('/{record}'),
             'edit' => EditSupplier::route('/{record}/edit'),
+            'accounting-statement' => SupplierAccountingStatementPage::route('/{record}/accounting-statement'),
         ];
     }
 

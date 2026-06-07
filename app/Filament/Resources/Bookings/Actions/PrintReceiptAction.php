@@ -21,7 +21,7 @@ class PrintReceiptAction extends Action
             ->icon('heroicon-o-receipt-percent')
             ->color('gray')
             ->action(function (Booking $record) {
-                $record->load('client', 'payments');
+                $record->load(['client', 'receiptVouchers' => fn ($q) => $q->where('status', 'posted')->orderBy('voucher_date')]);
                 $pdf = PDF::loadView('pdf.booking-receipt', [
                     'booking' => $record,
                     'generatedAt' => now()->format('Y-m-d h:i A'),

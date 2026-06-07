@@ -2,7 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Payment;
+use App\Enums\ExpenseStatus;
+use App\Models\ReceiptVoucher;
 use Filament\Widgets\ChartWidget;
 
 class RevenueChartWidget extends ChartWidget
@@ -26,9 +27,9 @@ class RevenueChartWidget extends ChartWidget
         $data = [];
 
         for ($m = 1; $m <= 12; $m++) {
-            $data[] = (float) Payment::whereNot('type', 'refund')
-                ->whereYear('paid_at', $year)
-                ->whereMonth('paid_at', $m)
+            $data[] = (float) ReceiptVoucher::where('status', ExpenseStatus::POSTED)
+                ->whereYear('voucher_date', $year)
+                ->whereMonth('voucher_date', $m)
                 ->sum('amount');
         }
 

@@ -22,7 +22,7 @@ class LinkUserAccountAction extends Action
         $this->label('ربط حساب مستخدم')
             ->icon('heroicon-o-link')
             ->color('info')
-            ->form([
+            ->schema([
                 Select::make('user_id')
                     ->label('المستخدم')
                     ->options(fn () => User::pluck('name', 'id'))

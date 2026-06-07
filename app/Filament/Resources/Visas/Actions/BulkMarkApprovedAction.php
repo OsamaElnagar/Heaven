@@ -17,7 +17,7 @@ class BulkMarkApprovedAction extends BulkActionGroup
                 ->label('موافقة جماعية')
                 ->icon('heroicon-o-check-badge')
                 ->color('success')
-                ->form([
+                ->schema([
                     DatePicker::make('expiry_date')
                         ->label('تاريخ الانتهاء')
                         ->required()

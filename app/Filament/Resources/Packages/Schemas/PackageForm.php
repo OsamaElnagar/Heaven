@@ -4,12 +4,15 @@ namespace App\Filament\Resources\Packages\Schemas;
 
 use App\Enums\PackageGrade;
 use App\Enums\PackageType;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class PackageForm
@@ -40,7 +43,11 @@ class PackageForm
                         TextInput::make('duration_nights')
                             ->label('عدد الليالي')
                             ->required()
-                            ->numeric(),
+                            ->numeric()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                static::updateDates($set, $get);
+                            }),
                         TextInput::make('base_price')
                             ->label('السعر الأساسي')
                             ->required()
@@ -52,39 +59,100 @@ class PackageForm
 
                 Section::make('المقاعد والتواريخ')
                     ->components([
+                        DatePicker::make('departure_date')
+                            ->label('تاريخ المغادرة')
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                static::updateDuration($set, $get);
+                            }),
+                        DatePicker::make('return_date')
+                            ->label('تاريخ العودة')
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                static::updateDuration($set, $get);
+                            }),
                         TextInput::make('total_seats')
                             ->label('إجمالي المقاعد')
                             ->required()
-                            ->numeric(),
+                            ->numeric()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                static::updateAvailableSeats($set, $get);
+                            }),
                         TextInput::make('reserved_seats')
                             ->label('المقاعد المحجوزة')
                             ->numeric()
-                            ->default(0),
-                        DatePicker::make('departure_date')
-                            ->label('تاريخ المغادرة')
-                            ->native(false),
-                        DatePicker::make('return_date')
-                            ->label('تاريخ العودة')
-                            ->native(false),
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(false),
+                        TextInput::make('available_seats')
+                            ->label('المقاعد المتاحة')
+                            ->numeric()
+                            ->disabled()
+                            ->dehydrated(false),
                         Toggle::make('is_active')
-                            ->label('نشط'),
+                            ->label('نشط')
+                            ->default(true),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),
 
                 Section::make('تفاصيل إضافية')
                     ->components([
-                        Textarea::make('includes')
+                        RichEditor::make('includes')
                             ->label('يشمل')
                             ->columnSpanFull(),
-                        Textarea::make('excludes')
+                        RichEditor::make('excludes')
                             ->label('لا يشمل')
                             ->columnSpanFull(),
-                        Textarea::make('notes')
+                        RichEditor::make('notes')
                             ->label('ملاحظات')
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
             ]);
+    }
+
+    protected static function updateDuration(Set $set, Get $get): void
+    {
+        $departure = $get('departure_date');
+        $return = $get('return_date');
+
+        if ($departure && $return) {
+            $diff = Carbon::parse($departure)->diffInDays($return);
+            $set('duration_nights', max($diff, 0));
+
+            return;
+        }
+
+        static::updateDates($set, $get);
+    }
+
+    protected static function updateDates(Set $set, Get $get): void
+    {
+        $departure = $get('departure_date');
+        $duration = (int) ($get('duration_nights') ?? 0);
+
+        if ($departure && $duration) {
+            $set('return_date', Carbon::parse($departure)->addDays($duration));
+
+            return;
+        }
+
+        $return = $get('return_date');
+
+        if ($return && $duration) {
+            $set('departure_date', Carbon::parse($return)->subDays($duration));
+        }
+    }
+
+    protected static function updateAvailableSeats(Set $set, Get $get): void
+    {
+        $total = (int) ($get('total_seats') ?? 0);
+        $reserved = (int) ($get('reserved_seats') ?? 0);
+
+        $set('available_seats', max($total - $reserved, 0));
     }
 }
