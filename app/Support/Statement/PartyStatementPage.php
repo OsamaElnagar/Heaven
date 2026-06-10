@@ -22,6 +22,8 @@ abstract class PartyStatementPage extends Page implements HasTable
     use InteractsWithRecord;
     use InteractsWithTable;
 
+    protected ?array $balanceMap = null;
+
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
@@ -87,14 +89,12 @@ abstract class PartyStatementPage extends Page implements HasTable
                 TextColumn::make('balance')
                     ->label('الرصيد')
                     ->numeric()
-                    ->state(function ($record) use ($accountId) {
+                    ->state(function ($record) {
                         if (! $record instanceof JournalLine) {
                             return 0;
                         }
-                        $rows = app(BuildJournalStatementRowsAction::class)
-                            ->execute($accountId);
 
-                        return (int) ($rows->firstWhere('line_id', $record->id)['balance'] ?? 0);
+                        return (int) ($this->getBalanceMap()[$record->id]['balance'] ?? 0);
                     }),
             ])
             ->filters([
@@ -119,6 +119,28 @@ abstract class PartyStatementPage extends Page implements HasTable
             ])
             ->paginated(false)
             ->headerActions([]);
+    }
+
+    protected function getBalanceMap(): array
+    {
+        if ($this->balanceMap !== null) {
+            return $this->balanceMap;
+        }
+
+        $accountId = $this->statementAccountId();
+        if (! $accountId) {
+            $this->balanceMap = [];
+
+            return $this->balanceMap;
+        }
+
+        $filters = $this->resolveDateFilters();
+        $rows = app(BuildJournalStatementRowsAction::class)
+            ->execute($accountId, $filters['from'], $filters['to']);
+
+        $this->balanceMap = $rows->keyBy('line_id')->toArray();
+
+        return $this->balanceMap;
     }
 
     public function getViewData(): array

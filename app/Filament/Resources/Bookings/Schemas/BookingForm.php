@@ -9,6 +9,8 @@ use App\Filament\Resources\Packages\Schemas\PackageForm;
 use App\Filament\Resources\Rooms\Schemas\RoomForm;
 use App\Filament\Resources\Trips\Schemas\TripForm;
 use App\Models\Package;
+use App\Models\Trip;
+use App\Services\BookingService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -61,7 +63,19 @@ class BookingForm
                             ->editOptionModalHeading('تعديل بيانات الرحلة')
                             ->searchable()
                             ->preload()
-                            ->native(false),
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                if (! $state || ! $get('package_id')) {
+                                    return;
+                                }
+
+                                $tripPackageId = Trip::where('id', $state)->value('package_id');
+
+                                if ($tripPackageId !== $get('package_id')) {
+                                    $set('trip_id', null);
+                                }
+                            }),
                         Select::make('room_type')
                             ->label('نوع الغرفة')
                             ->options(RoomType::class)
@@ -154,21 +168,13 @@ class BookingForm
             return;
         }
 
-        $basePrice = (float) $package->base_price;
+        $pricing = app(BookingService::class)->calculatePricing(
+            $package,
+            $roomTypeEnum,
+            (float) ($get('discount') ?? 0),
+        );
 
-        $surcharge = match ($roomTypeEnum) {
-            RoomType::SINGLE => $basePrice * 0.5,
-            RoomType::DOUBLE => 0,
-            RoomType::TRIPLE => -$basePrice * 0.1,
-            RoomType::QUAD => -$basePrice * 0.2,
-            RoomType::QUINT => -$basePrice * 0.3,
-            RoomType::SEXTUPLE => -$basePrice * 0.4,
-        };
-
-        $totalPrice = $basePrice + $surcharge;
-        $discount = (float) ($get('discount') ?? 0);
-
-        $set('total_price', $totalPrice);
-        $set('net_price', max($totalPrice - $discount, 0));
+        $set('total_price', $pricing['base_price'] + $pricing['room_surcharge']);
+        $set('net_price', $pricing['net_price']);
     }
 }

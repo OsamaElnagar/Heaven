@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Employees\Tables;
 
+use App\Enums\SalaryType;
 use App\Filament\Resources\Employees\Actions\DeactivateEmployeeAction;
 use App\Models\Employee;
 use Filament\Actions\BulkActionGroup;
@@ -57,6 +58,9 @@ class EmployeesTable
                         ->whereNotNull('role')
                         ->pluck('role', 'role')
                     ),
+                SelectFilter::make('salary_type')
+                    ->label('نوع الراتب')
+                    ->options(SalaryType::class),
                 SelectFilter::make('is_active')
                     ->label('الحالة')
                     ->options([

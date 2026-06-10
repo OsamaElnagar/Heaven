@@ -43,12 +43,6 @@ class JournalEntryForm
                             ->label('تاريخ القيد')
                             ->default(now())
                             ->required(),
-                        Select::make('status')
-                            ->label('الحالة')
-                            ->options(JournalEntryStatus::class)
-                            ->default('draft')
-                            ->required()
-                            ->live(),
                         Select::make('source_type')
                             ->label('نوع المصدر')
                             ->options(JournalEntrySourceType::class)
@@ -66,7 +60,7 @@ class JournalEntryForm
                             ->relationship('postedBy', 'name')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('status') === JournalEntryStatus::POSTED),
+                            ->visible(fn (?JournalEntryModel $record): bool => $record?->status === JournalEntryStatus::POSTED),
                     ])
                     ->disabled(fn (?JournalEntryModel $record): bool => static::isReadOnly($record))
                     ->columns(2)

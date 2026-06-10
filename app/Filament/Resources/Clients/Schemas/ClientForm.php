@@ -26,9 +26,11 @@ class ClientForm
                             ->label('الاسم بالإنجليزية'),
                         TextInput::make('national_id')
                             ->label('الرقم القومي')
-                            ->required(),
+                            ->required()
+                            ->unique(ignoreRecord: true),
                         TextInput::make('passport_number')
-                            ->label('رقم جواز السفر'),
+                            ->label('رقم جواز السفر')
+                            ->unique(ignoreRecord: true),
                         DatePicker::make('passport_expiry')
                             ->label('انتهاء الجواز')
                             ->native(false),

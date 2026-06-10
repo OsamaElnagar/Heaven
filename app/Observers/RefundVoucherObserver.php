@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Enums\ExpenseStatus;
+use App\Enums\RefundPartyType;
 use App\Enums\VoucherPaymentMethod;
 use App\Models\BankAccount;
 use App\Models\Booking;
@@ -43,7 +44,7 @@ class RefundVoucherObserver
         if ($newStatus !== ExpenseStatus::POSTED) {
             return;
         }
-        if ($original === ExpenseStatus::POSTED->value) {
+        if ($original === ExpenseStatus::POSTED) {
             return;
         }
 
@@ -52,7 +53,8 @@ class RefundVoucherObserver
 
     protected function postJournalEntry(RefundVoucher $voucher): void
     {
-        if (! $voucher->client_id) {
+        $partyAccountId = $this->resolvePartyAccount($voucher);
+        if (! $partyAccountId) {
             return;
         }
 
@@ -64,10 +66,11 @@ class RefundVoucherObserver
         try {
             $je = app(JournalService::class)->post('refund_voucher', $voucher->id, [
                 [
-                    'account_id' => $voucher->client->account_id,
+                    'account_id' => $partyAccountId,
                     'debit_amount' => $voucher->amount,
                     'client_id' => $voucher->client_id,
-                    'description' => 'استرداد للعميل',
+                    'supplier_id' => $voucher->supplier_id,
+                    'description' => 'استرداد '.($voucher->party_type?->getLabel() ?? ''),
                 ],
                 [
                     'account_id' => $cashAccountId,
@@ -88,6 +91,15 @@ class RefundVoucherObserver
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    protected function resolvePartyAccount(RefundVoucher $voucher): ?int
+    {
+        return match ($voucher->party_type) {
+            RefundPartyType::CLIENT => $voucher->client?->account_id,
+            RefundPartyType::SUPPLIER => $voucher->supplier?->account_id,
+            default => null,
+        };
     }
 
     protected function syncBookingPaidAmount(RefundVoucher $voucher): void

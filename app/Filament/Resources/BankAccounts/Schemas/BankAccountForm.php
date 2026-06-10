@@ -15,6 +15,13 @@ class BankAccountForm
     {
         return $schema
             ->components([
+                TextInput::make('code')
+                    ->label('الرقم')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255)
+                    ->readOnly()
+                    ->dehydrated(true),
                 TextInput::make('bank_name')
                     ->label('اسم البنك')
                     ->required()
@@ -30,14 +37,20 @@ class BankAccountForm
                     ->label('رقم الآيبان')
                     ->maxLength(34)
                     ->placeholder('SA0380000000608010167519')
-                    ->helperText('اختياري - بين 15 و 34 خانة'),
+                    ->helperText('اختياري - بين 15 و 34 خانة')
+                    ->regex('/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/')
+                    ->rules('nullable'),
                 Select::make('account_id')
                     ->label('حساب الأستاذ')
                     ->relationship('account', 'name')
                     ->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")
-                    ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->options(fn () => Account::where('type', 'detail')
+                        ->where('is_active', true)
+                        ->where('code', 'like', '1233%')
+                        ->pluck('name', 'id'))
+                    ->helperText('يتم إنشاء الحساب تلقائياً إذا لم يتم تحديده'),
                 Toggle::make('is_active')
                     ->label('نشط')
                     ->default(true)

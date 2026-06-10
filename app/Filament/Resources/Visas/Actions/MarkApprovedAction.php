@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Visas\Actions;
 
 use App\Enums\VisaStatus;
 use App\Models\Visa;
+use App\Services\VisaService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -34,13 +35,14 @@ class MarkApprovedAction extends Action
                     ->native(false),
             ])
             ->modalHeading('تسجيل الموافقة على التأشيرة')
-            ->visible(fn (Visa $record) => $record->status !== VisaStatus::APPROVED)
+            ->visible(fn (Visa $record): bool => $record->status->canTransitionTo(VisaStatus::APPROVED))
             ->action(function (Visa $record, array $data) {
-                $record->update([
-                    'status' => VisaStatus::APPROVED,
-                    'visa_number' => $data['visa_number'],
-                    'expiry_date' => Carbon::parse($data['expiry_date']),
-                ]);
+                $visaService = app(VisaService::class);
+                $visaService->markApproved(
+                    $record,
+                    $data['visa_number'],
+                    Carbon::parse($data['expiry_date']),
+                );
                 Notification::make()->title('تم تسجيل الموافقة')->success()->send();
             });
     }

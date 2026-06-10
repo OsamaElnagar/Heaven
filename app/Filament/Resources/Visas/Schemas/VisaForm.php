@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class VisaForm
@@ -29,9 +30,11 @@ class VisaForm
                             ->label('الحالة')
                             ->options(VisaStatus::class)
                             ->required()
+                            ->live()
                             ->native(false),
                         TextInput::make('visa_number')
-                            ->label('رقم التأشيرة'),
+                            ->label('رقم التأشيرة')
+                            ->visible(fn (Get $get): bool => $get('status') === VisaStatus::APPROVED->value),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),
@@ -43,10 +46,12 @@ class VisaForm
                             ->native(false),
                         DatePicker::make('approved_at')
                             ->label('تاريخ الموافقة')
-                            ->native(false),
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('status') === VisaStatus::APPROVED->value),
                         DatePicker::make('expiry_date')
                             ->label('تاريخ الانتهاء')
-                            ->native(false),
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('status') === VisaStatus::APPROVED->value),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),
@@ -55,7 +60,8 @@ class VisaForm
                     ->components([
                         Textarea::make('rejection_reason')
                             ->label('سبب الرفض')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get): bool => $get('status') === VisaStatus::REJECTED->value),
                         Textarea::make('notes')
                             ->label('ملاحظات')
                             ->columnSpanFull(),

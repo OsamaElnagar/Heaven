@@ -12,12 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([PartyAccountObserver::class])]
 class Client extends Model
 {
     use HasEntityCode;
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'code',

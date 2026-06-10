@@ -27,15 +27,27 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    public bool $production = false;
+
     public function run(): void
     {
+        $this->production = $this->production || in_array('--production', $_SERVER['argv'] ?? []);
+
         $this->call([
             ChartOfAccountsSeeder::class,
             FiscalYearSeeder::class,
+            FaqSeeder::class,
+            PostSeeder::class,
+            GalleryItemSeeder::class,
         ]);
 
         $this->seedSafesAndBanks();
         $this->seedUsers();
+
+        if ($this->production) {
+            return;
+        }
+
         $suppliers = $this->seedSuppliers();
         $hotels = $this->seedHotels($suppliers);
         $this->seedEmployees();

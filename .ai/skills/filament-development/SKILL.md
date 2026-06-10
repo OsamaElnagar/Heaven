@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: user
 ---
+
 # Filament Development — Complete Guide
 
 ---
@@ -200,7 +201,7 @@ class ModelsTable
             ->columns([
                 TextColumn::make('code')->searchable(),
                 TextColumn::make('name')->searchable(),
-                IconColumn::make('is_active')->boolean(),
+                \Filament\Tables\Columns\ToggleColumn::make('is_active')->boolean(),
             ])
             ->filters([
                 SelectFilter::make('is_active')->options(['1' => 'Active', '0' => 'Inactive']),
@@ -237,6 +238,72 @@ DateRangeFilter::make('starts_at'),      // uses column 'starts_at'
 
 Usage: `DateRangeFilter::make(string $name, ?string $column = null, string $label = 'التاريخ')`
 
+### Relation Column Links (URL + Color + Icon)
+
+On table columns that reference related resources, add a URL link with icon and color to open the related record in a new tab. **Only do this for columns linking to a DIFFERENT resource** — never on the primary entity's own name column within its own resource table:
+
+```php
+use Filament\Support\Icons\Heroicon;
+
+TextColumn::make('warehouse.name')
+    ->label('المخزن')
+    ->url(fn ($record) => $record->warehouse
+        ? WarehouseResource::getUrl('edit', ['record' => $record->warehouse])
+        : null, true) // true = open in new tab
+    ->color('primary')
+    ->icon(Heroicon::ArrowUpRight)
+    ->searchable()
+    ->sortable()
+    ->placeholder('—'),
+```
+
+### Money Formatting
+
+Use `money()` instead of `numeric()` for currency columns:
+
+```php
+TextColumn::make('total_amount')
+    ->label('الإجمالي')
+    ->money('EGP', locale: 'en', decimalPlaces: 0)
+    ->sortable(),
+```
+
+### Created By Column
+
+Add a `createdBy` column to tables where audit trail matters:
+
+```php
+TextColumn::make('createdBy.name')
+    ->label('أنشئ بواسطة')
+    ->searchable()
+    ->placeholder('—')
+    ->toggleable(isToggledHiddenByDefault: true),
+```
+
+### Relationship Filters with Search/Preload
+
+Always add `->searchable()->preload()` to relationship SelectFilters:
+
+```php
+SelectFilter::make('warehouse_id')
+    ->label('المخزن')
+    ->relationship('warehouse', 'name')
+    ->searchable()
+    ->preload()
+    ->multiple(),
+```
+
+### Enum Badge Auto-Formatting
+
+When an enum implements `HasColor`, `HasIcon`, `HasLabel`, just use `->badge()` — Filament resolves everything automatically:
+
+```php
+// No need for formatStateUsing/color/icon callbacks
+TextColumn::make('status')
+    ->label('الحالة')
+    ->badge(),
+```
+
 ---
 
 ## 5. Enum Fields in Forms and Filters
@@ -258,7 +325,6 @@ SelectFilter::make('status')->options(FiscalYearStatus::class),
 ### Basic RM (reusing related Resource form/table)
 
 ```php
-use App\Filament\Resources\PurchaseInvoices\PurchaseInvoiceResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -268,14 +334,14 @@ class PurchaseInvoicesRelationManager extends RelationManager
     protected static string $relationship = 'purchaseInvoices';
     protected static ?string $title = 'فواتير المشتريات';
 
-    public function schema(Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
-        return PurchaseInvoiceResource::form($schema);
+        return PurchaseInvoiceForm::configure($schema);
     }
 
     public function table(Table $table): Table
     {
-        return PurchaseInvoiceResource::table($table);
+        return PurchaseInvoiceTable::configure($table);
     }
 }
 ```
@@ -365,7 +431,8 @@ class InventoryTransactionsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('number'),
+                TextColumn::make('number')
+                    ->copyable(),
                 TextColumn::make('type')->badge(),
                 TextColumn::make('quantity')->numeric(),
             ]);
@@ -784,9 +851,218 @@ Select::make('batch_id')
     }),
 ```
 
+### Hint Actions on Select Fields
+
+Add "view" and "statement" links as hintActions on relationship Select fields. Only show when a value is selected:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
+
+Select::make('client_id')
+    ->label('العميل')
+    ->relationship('client', 'name')
+    ->searchable()
+    ->preload()
+    ->hintActions([
+        Action::make('viewClient')
+            ->label('عرض العميل')
+            ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+            ->icon(Heroicon::ArrowTopRightOnSquare)
+            ->url(fn (Get $get) => ClientResource::getUrl('edit', ['record' => $get('client_id')]))
+            ->openUrlInNewTab(),
+        Action::make('viewClientStatement')
+            ->label('عرض كشف حساب العميل')
+            ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+            ->icon(Heroicon::ArrowTopRightOnSquare)
+            ->color(Color::Emerald)
+            ->url(fn (Get $get) => ClientResource::getUrl('statement', ['record' => $get('client_id')]))
+            ->openUrlInNewTab(),
+    ]),
+```
+
+### Inline Create/Edit on Select Fields
+
+Allow creating and editing related records inline from a Select field using `createOptionForm` / `editOptionForm`:
+
+```php
+use App\Filament\Resources\Projects\Schemas\ProjectForm;
+
+Select::make('project_id')
+    ->label('المشروع')
+    ->relationship('project', 'name')
+    ->createOptionForm(fn (Schema $form) => ProjectForm::configure($form))
+    ->editOptionForm(fn (Schema $form) => ProjectForm::configure($form))
+    ->searchable()
+    ->preload(),
+```
+
+### Account Label Formatting
+
+Show `code — name` on account Select fields using `getOptionLabelFromRecordUsing`:
+
+```php
+use App\Models\Account;
+
+Select::make('account_id')
+    ->label('حساب الأستاذ')
+    ->relationship('account', 'name')
+    ->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")
+    ->searchable()
+    ->preload(),
+```
+
+### Filter Inactive Records from Selects
+
+Use `modifyQueryUsing` to exclude inactive records from relationship selects:
+
+```php
+Select::make('supplier_id')
+    ->label('المورد')
+    ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
+    ->searchable()
+    ->preload(),
+```
+
+### Helper Text on Select Fields
+
+Add contextual hints on type/method selects:
+
+```php
+Select::make('payment_method')
+    ->label('طريقة الدفع')
+    ->options(VoucherPaymentMethod::class)
+    ->required()
+    ->live()
+    ->helperText(fn (Get $get): ?string => match ($get('payment_method')) {
+        'safe' => 'الصرف نقداً من الخزينة',
+        'bank' => 'تحويل بنكي مباشر',
+        'cheque' => 'إصدار شيك',
+        default => null,
+    }),
+```
+
+### Max Date on Date Pickers
+
+Prevent future dates on date pickers where appropriate:
+
+```php
+DatePicker::make('expense_date')
+    ->label('تاريخ المصروف')
+    ->default(now())
+    ->maxDate(now())
+    ->required(),
+```
+
 ---
 
-## 11. Reusable Components
+## 11. Infolist Patterns
+
+Infolists define the read-only view schema for a record. Place them in `Schemas/{Name}Infolist.php` beside the form class.
+
+### Structure
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class ThingInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Section Title')
+                ->schema([
+                    TextEntry::make('field'),
+                ])
+                ->columns(3)
+                ->columnSpanFull(),
+        ]);
+    }
+}
+```
+
+### Relational Links
+
+Link related records to their edit/view pages with an arrow icon and primary color:
+
+```php
+use App\Filament\Resources\Accounts\AccountResource;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('account.name')
+    ->label('حساب الأستاذ')
+    ->placeholder('—')
+    ->url(fn ($record) => $record->account
+        ? AccountResource::getUrl('edit', ['record' => $record->account])
+        : null, true)
+    ->icon(Heroicon::ArrowUpRight)
+    ->color('primary'),
+```
+
+- Second arg `true` in `->url()` opens in a new tab
+- Use `getUrl('view', ...)` if the resource only has a View page
+- Only link if the related resource has a corresponding page; otherwise just display the name with `->color('primary')`
+
+### Badge Formatting for Enums
+
+Enums implementing `HasColor` (and optionally `HasIcon`):
+
+```php
+// Enum with HasColor only
+TextEntry::make('type')
+    ->badge()
+    ->formatStateUsing(fn ($state) => $state->getLabel())
+    ->color(fn ($state) => $state->getColor());
+
+// Enum with HasColor + HasIcon
+TextEntry::make('status')
+    ->badge()
+    ->formatStateUsing(fn ($state) => $state->getLabel())
+    ->color(fn ($state) => $state->getColor())
+    ->icon(fn ($state) => $state->getIcon()),
+```
+
+### Placeholders
+
+Use em dash `—` (not `-`) for nullable field placeholders:
+
+```php
+TextEntry::make('notes')
+    ->label('ملاحظات')
+    ->placeholder('—'),
+```
+
+### Date Fields
+
+```php
+TextEntry::make('transaction_date')
+    ->label('التاريخ')
+    ->date('Y-m-d'),
+```
+
+### Money Fields
+
+```php
+TextEntry::make('amount')
+    ->label('المبلغ')
+    ->money('EGP', locale: 'en', decimalPlaces: 0),
+```
+
+### Copyable Fields
+
+```php
+TextEntry::make('number')
+    ->label('رقم الحركة')
+    ->copyable()
+    ->copyMessage('تم نسخ رقم الحركة'),
+```
+
+---
+
+## 12. Reusable Components
 
 ### DateRangeFilter (table filter)
 
@@ -808,29 +1084,38 @@ DateRangeFilter::make('date')->query(function (Builder $query, array $data) {
 
 ---
 
-## 12. Full Resource File Structure
+## 13. Full Resource File Structure
 
 ```
 app/Filament/Resources/{PluralName}/
 ├── {SingularName}Resource.php          # Resource class
+
 ├── Schemas/
 │   └── {SingularName}Form.php          # Form schema
+
 ├── Tables/
 │   └── {PluralName}Table.php           # Table definition
+
 ├── Pages/
 │   ├── List{PluralName}.php            # List page
+
 │   ├── Create{SingularName}.php        # Create page
+
 │   ├── Edit{SingularName}.php          # Edit page
+
 │   └── View{SingularName}.php          # View page (optional)
+
 ├── RelationManagers/                    # RM classes
+
 │   └── RelatedItemsRelationManager.php
 └── Actions/                             # Custom actions
+
     └── SomeAction.php
 ```
 
 ---
 
-## 13. Key Conventions Summary
+## 14. Key Conventions Summary
 
 | Convention       | Rule                                                                     |
 | ---------------- | ------------------------------------------------------------------------ |
@@ -846,3 +1131,17 @@ app/Filament/Resources/{PluralName}/
 | PDF              | Use `laravel-mpdf` with Blade views                                    |
 | Custom pages     | Extend `Page`, use `InteractsWithRecord` + `InteractsWithTable`    |
 | Custom actions   | Extend `Action` or `CreateAction`, override `setUp()`              |
+| Table links      | `->url(fn => Resource::getUrl('edit', [...]), true)->color('...')->icon(Heroicon::ArrowUpRight)` on relation columns pointing to OTHER resources only |
+| Table money      | `->money('EGP', locale: 'en', decimalPlaces: 0)` instead of `->numeric()` |
+| Table createdBy  | `TextColumn::make('createdBy.name')->label('أنشئ بواسطة')->toggleable(isToggledHiddenByDefault: true)` |
+| Table enum badge | Just `->badge()` — Filament auto-resolves from enum's HasColor/HasIcon/HasLabel |
+| Table placeholders | Always `—` (em dash), not `-`                                        |
+| Form hintActions | Add view/statement links on relationship Select fields                  |
+| Form inline CRUD | `->createOptionForm(fn ($f) => Form::configure($f))->editOptionForm(fn ($f) => Form::configure($f))` |
+| Form account label | `->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")` |
+| Form active filter | `->relationship('rel', 'name', modifyQueryUsing: fn ($q) => $q->where('is_active', true))` |
+| Form helperText  | Add contextual hints on type/method selects                             |
+| Form maxDate     | `->maxDate(now())` on date pickers where future dates don't make sense  |
+| Infolist links   | `->url(fn => Resource::getUrl('edit', [...]))` + `->icon(Heroicon::ArrowUpRight)->color('primary')` |
+| Infolist badges  | `->badge()->formatStateUsing(fn ($s) => $s->getLabel())->color(fn ($s) => $s->getColor())` |
+| Infolist placeholder | Always `—` (em dash), not `-`                                |

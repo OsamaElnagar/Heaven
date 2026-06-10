@@ -2,11 +2,8 @@
 
 namespace App\Filament\Resources\FiscalYears\Schemas;
 
-use App\Enums\FiscalYearStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -33,16 +30,10 @@ class FiscalYearForm
                             ->label('تاريخ الانتهاء')
                             ->required()
                             ->default(Carbon::now()->endOfYear()),
-                        Select::make('status')
-                            ->label('الحالة')
-                            ->options(FiscalYearStatus::class)
-                            ->required()
-                            ->default(FiscalYearStatus::OPEN),
                         DateTimePicker::make('closed_at')
                             ->label('تاريخ الإغلاق')
                             ->disabled()
                             ->dehydrated(false),
-                        Hidden::make('closed_by'),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),

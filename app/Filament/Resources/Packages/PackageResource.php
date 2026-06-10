@@ -7,7 +7,6 @@ use App\Filament\Resources\Packages\Pages\EditPackage;
 use App\Filament\Resources\Packages\Pages\ListPackages;
 use App\Filament\Resources\Packages\Pages\ViewPackage;
 use App\Filament\Resources\Packages\RelationManagers\BookingsRelationManager;
-use App\Filament\Resources\Packages\RelationManagers\HotelsRelationManager;
 use App\Filament\Resources\Packages\RelationManagers\TripsRelationManager;
 use App\Filament\Resources\Packages\Schemas\PackageForm;
 use App\Filament\Resources\Packages\Schemas\PackageInfolist;
@@ -56,7 +55,6 @@ class PackageResource extends Resource
     {
         return [
             TripsRelationManager::class,
-            HotelsRelationManager::class,
             BookingsRelationManager::class,
         ];
     }

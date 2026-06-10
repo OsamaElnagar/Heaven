@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TimePicker;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -46,13 +47,13 @@ class AppServiceProvider extends ServiceProvider
 
         Password::defaults(
             fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
+                ? Password::min(12)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+                : null,
         );
     }
 
@@ -72,6 +73,11 @@ class AppServiceProvider extends ServiceProvider
         DatePicker::configureUsing(fn (DatePicker $picker) => $picker->displayFormat('Y-m-d')
             ->native(false)
             ->timezone(config('app.timezone')));
+
+        TimePicker::configureUsing(fn (TimePicker $picker) => $picker->displayFormat('H:i:s')
+            ->native(false)
+            ->timezone(config('app.timezone')));
+
         DateTimePicker::configureUsing(fn (DateTimePicker $picker) => $picker->displayFormat('Y-m-d h:m')
             ->native(false)
             ->timezone(config('app.timezone')));
@@ -91,6 +97,5 @@ class AppServiceProvider extends ServiceProvider
                 return $action->slideOver();
             }
         );
-
     }
 }

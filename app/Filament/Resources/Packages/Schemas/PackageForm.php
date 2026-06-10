@@ -62,6 +62,14 @@ class PackageForm
                         DatePicker::make('departure_date')
                             ->label('تاريخ المغادرة')
                             ->native(false)
+                            ->rules(fn (Get $get): array => [
+                                function ($attribute, $value, $fail) use ($get) {
+                                    $return = $get('return_date');
+                                    if ($value && $return && Carbon::parse($value)->isAfter(Carbon::parse($return))) {
+                                        $fail('تاريخ المغادرة يجب أن يكون قبل تاريخ العودة.');
+                                    }
+                                },
+                            ])
                             ->live()
                             ->afterStateUpdated(function (Set $set, Get $get) {
                                 static::updateDuration($set, $get);
@@ -69,6 +77,14 @@ class PackageForm
                         DatePicker::make('return_date')
                             ->label('تاريخ العودة')
                             ->native(false)
+                            ->rules(fn (Get $get): array => [
+                                function ($attribute, $value, $fail) use ($get) {
+                                    $departure = $get('departure_date');
+                                    if ($value && $departure && Carbon::parse($value)->isBefore(Carbon::parse($departure))) {
+                                        $fail('تاريخ العودة يجب أن يكون بعد تاريخ المغادرة.');
+                                    }
+                                },
+                            ])
                             ->live()
                             ->afterStateUpdated(function (Set $set, Get $get) {
                                 static::updateDuration($set, $get);
@@ -77,6 +93,14 @@ class PackageForm
                             ->label('إجمالي المقاعد')
                             ->required()
                             ->numeric()
+                            ->rules(fn (Get $get): array => [
+                                function ($attribute, $value, $fail) use ($get) {
+                                    $reserved = (int) ($get('reserved_seats') ?? 0);
+                                    if ((int) $value < $reserved) {
+                                        $fail('إجمالي المقاعد لا يمكن أن يكون أقل من المقاعد المحجوزة.');
+                                    }
+                                },
+                            ])
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, Get $get) {
                                 static::updateAvailableSeats($set, $get);

@@ -6,6 +6,7 @@ use App\Filament\Resources\Packages\Widgets\SeatOccupancyWidget;
 use App\Filament\Widgets\RecentBookingsWidget;
 use App\Filament\Widgets\RevenueChartWidget;
 use App\Filament\Widgets\RevenueWidget;
+use App\Filament\Widgets\UpcomingTripsWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -47,6 +48,7 @@ class AdminPanelProvider extends PanelProvider
                 RevenueWidget::class,
                 RevenueChartWidget::class,
                 SeatOccupancyWidget::class,
+                UpcomingTripsWidget::class,
                 RecentBookingsWidget::class,
             ])
             ->middleware([
@@ -63,6 +65,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->topNavigation(false)
             ->navigationGroups([
                 NavigationGroup::make()
@@ -99,10 +102,6 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label(__('التقارير المالية'))
-                    ->collapsible()
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label(__('التقارير'))
                     ->collapsible()
                     ->collapsed(),
             ])

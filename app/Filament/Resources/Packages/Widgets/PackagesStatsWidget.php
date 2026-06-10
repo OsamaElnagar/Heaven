@@ -10,22 +10,27 @@ class PackagesStatsWidget extends BaseWidget
 {
     protected function getStats(): array
     {
-        $query = Package::query();
+        $totals = Package::query()
+            ->selectRaw('SUM(total_seats) as total, SUM(reserved_seats) as reserved')
+            ->first();
+
+        $totalSeats = (int) $totals->total;
+        $reservedSeats = (int) $totals->reserved;
 
         return [
-            Stat::make('إجمالي المقاعد', $query->sum('total_seats'))
+            Stat::make('إجمالي المقاعد', $totalSeats)
                 ->description('السعة الكلية')
                 ->icon('heroicon-o-squares-2x2')
                 ->color('info'),
 
-            Stat::make('المقاعد المحجوزة', $query->sum('reserved_seats'))
-                ->description($query->sum('total_seats') > 0
-                    ? round($query->sum('reserved_seats') / $query->sum('total_seats') * 100).'% من الإجمالي'
+            Stat::make('المقاعد المحجوزة', $reservedSeats)
+                ->description($totalSeats > 0
+                    ? round($reservedSeats / $totalSeats * 100).'% من الإجمالي'
                     : '0%')
                 ->icon('heroicon-o-user-group')
                 ->color('success'),
 
-            Stat::make('المقاعد المتاحة', $query->sum('total_seats') - $query->sum('reserved_seats'))
+            Stat::make('المقاعد المتاحة', $totalSeats - $reservedSeats)
                 ->description('متاحة للحجز')
                 ->icon('heroicon-o-check-circle')
                 ->color('warning'),

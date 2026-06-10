@@ -79,6 +79,6 @@ class SupplierResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'phone', 'email'];
+        return ['code', 'name', 'phone', 'email'];
     }
 }

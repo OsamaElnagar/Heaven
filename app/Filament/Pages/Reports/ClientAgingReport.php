@@ -24,13 +24,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ClientAgingReport extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 
     protected static ?string $navigationLabel = 'أعمار ديون العملاء';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التقارير';
+    protected static \UnitEnum|string|null $navigationGroup = 'التقارير المالية';
 
     protected static ?int $navigationSort = 7;
 
@@ -102,6 +103,7 @@ class ClientAgingReport extends Page implements HasTable
             summaries: [
                 ['', '', '', '', number_format($rows->sum('net_price')), number_format($rows->sum('paid_amount')), number_format($summary['total_outstanding']), '', ''],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'تقرير-أعمار-العملاء-'.now()->format('Y-m-d').'.pdf');
@@ -133,13 +135,13 @@ class ClientAgingReport extends Page implements HasTable
                     ->date('Y-m-d'),
                 TextColumn::make('net_price')
                     ->label('قيمة الحجز')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0),
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0),
                 TextColumn::make('paid_amount')
                     ->label('المدفوع')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0),
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0),
                 TextColumn::make('outstanding')
                     ->label('المستحق')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->getStateUsing(fn (Booking $record): int => max(0, (int) $record->net_price - (int) $record->paid_amount)),
                 TextColumn::make('aging_days')
                     ->label('عدد الأيام')

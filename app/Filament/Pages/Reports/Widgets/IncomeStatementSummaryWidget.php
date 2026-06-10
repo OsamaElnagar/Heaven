@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Reports\Widgets;
 
 use App\Enums\AccountClass;
+use App\Enums\ExpenseClass;
 use App\Models\Account;
 use App\Models\FiscalYear;
 use App\Models\JournalLine;
@@ -26,16 +27,7 @@ class IncomeStatementSummaryWidget extends BaseWidget
 
     public static function computeSummary(?int $fiscalYearId, ?string $dateFrom, ?string $dateTo): array
     {
-        $periodSub = JournalLine::query()
-            ->selectRaw('account_id, SUM(debit_amount) as period_debit, SUM(credit_amount) as period_credit')
-            ->whereHas('journalEntry', fn ($q) => $q
-                ->where('status', 'posted')
-                ->whereNull('deleted_at')
-                ->when($fiscalYearId, fn ($q) => $q->where('fiscal_year_id', $fiscalYearId))
-                ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom))
-                ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo))
-            )
-            ->groupBy('account_id');
+        $periodSub = JournalLine::periodAggregate($fiscalYearId, $dateFrom, $dateTo);
 
         $records = Account::query()
             ->whereIn('class', [AccountClass::REVENUE, AccountClass::EXPENSES])
@@ -57,11 +49,11 @@ class IncomeStatementSummaryWidget extends BaseWidget
             ->sum(fn ($r) => (int) $r->total_debit - (int) $r->total_credit);
 
         $totalDirectCosts = $records->where('class', AccountClass::EXPENSES->value)
-            ->filter(fn ($r) => $r->code && str_starts_with($r->code, '5') && ! str_starts_with($r->code, '52'))
+            ->filter(fn ($r) => ExpenseClass::DIRECT_COSTS->matchesCode($r->code))
             ->sum(fn ($r) => (int) $r->total_debit - (int) $r->total_credit);
 
         $totalOpEx = $records->where('class', AccountClass::EXPENSES->value)
-            ->filter(fn ($r) => $r->code && str_starts_with($r->code, '52'))
+            ->filter(fn ($r) => ExpenseClass::OPERATING_EXPENSES->matchesCode($r->code))
             ->sum(fn ($r) => (int) $r->total_debit - (int) $r->total_credit);
 
         return [
@@ -91,7 +83,7 @@ class IncomeStatementSummaryWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
             Stat::make('التكاليف المباشرة', number_format($summary['total_direct_costs']).' ج.م')
-                ->description('حسابات المصروفات الرئيسية (5xxx عدا 52)')
+                ->description(ExpenseClass::DIRECT_COSTS->getLabel())
                 ->descriptionIcon('heroicon-m-cog')
                 ->color('danger'),
             Stat::make('إجمالي الربح', number_format($summary['gross_profit']).' ج.م')
@@ -99,7 +91,7 @@ class IncomeStatementSummaryWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color($grossProfitColor),
             Stat::make('مصروفات عمومية', number_format($summary['total_opex']).' ج.م')
-                ->description('المصروفات الإدارية (52xx)')
+                ->description(ExpenseClass::OPERATING_EXPENSES->getLabel())
                 ->descriptionIcon('heroicon-m-presentation-chart-line')
                 ->color('warning'),
             Stat::make('إجمالي المصروفات', number_format($summary['total_expenses']).' ج.م')

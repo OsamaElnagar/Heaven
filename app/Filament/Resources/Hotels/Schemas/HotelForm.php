@@ -34,11 +34,16 @@ class HotelForm
                             ])
                             ->required()
                             ->native(false),
-                        TextInput::make('stars')
+                        Select::make('stars')
                             ->label('التصنيف (نجوم)')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(5),
+                            ->options([
+                                1 => 'نجمة واحدة',
+                                2 => 'نجمتان',
+                                3 => 'ثلاث نجوم',
+                                4 => 'أربع نجوم',
+                                5 => 'خمس نجوم',
+                            ])
+                            ->native(false),
                         TextInput::make('distance_to_haram')
                             ->label('المسافة إلى الحرم'),
                     ])

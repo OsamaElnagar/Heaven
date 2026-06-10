@@ -10,9 +10,11 @@ class FiscalYearService
 {
     public function create(array $data): FiscalYear
     {
+        $data['status'] = $data['status'] ?? FiscalYearStatus::OPEN->value;
+
         $this->validateNoOverlapping($data['starts_at'], $data['ends_at']);
 
-        if (($data['status'] ?? 'open') === 'open') {
+        if ($data['status'] === FiscalYearStatus::OPEN->value) {
             $this->ensureSingleOpenFiscalYear();
         }
 
@@ -21,6 +23,10 @@ class FiscalYearService
 
     public function update(FiscalYear $fiscalYear, array $data): FiscalYear
     {
+        if ($fiscalYear->status === FiscalYearStatus::CLOSED) {
+            throw new \InvalidArgumentException('لا يمكن تعديل سنة مالية مغلقة. يرجى إعادة فتحها أولاً.');
+        }
+
         if (isset($data['starts_at']) || isset($data['ends_at'])) {
             $this->validateNoOverlapping(
                 $data['starts_at'] ?? $fiscalYear->starts_at,
@@ -45,9 +51,11 @@ class FiscalYearService
                 'closed_by' => $closedById,
             ]);
 
+            $nextYear = $this->getOrCreateNextFiscalYear($fiscalYear);
+
             app(DocumentSequenceService::class)->duplicateToNewFiscalYear(
                 $fiscalYear,
-                $this->getOrCreateNextFiscalYear($fiscalYear)
+                $nextYear
             );
 
             return $fiscalYear->fresh();
@@ -59,6 +67,8 @@ class FiscalYearService
         if ($fiscalYear->status !== FiscalYearStatus::CLOSED) {
             throw new \InvalidArgumentException('لا يمكن إعادة فتح السنة المالية إلا إذا كانت مغلقة.');
         }
+
+        $this->ensureSingleOpenFiscalYear();
 
         $fiscalYear->update([
             'status' => 'open',
@@ -172,9 +182,15 @@ class FiscalYearService
         $nextStart = $fiscalYear->ends_at->addDay();
         $nextEnd = $fiscalYear->ends_at->addYear();
 
-        $existing = $this->findByDate($nextStart->toDateString());
+        $existing = FiscalYear::where('starts_at', '<=', $nextStart)
+            ->where('ends_at', '>=', $nextStart)
+            ->first();
 
         if ($existing) {
+            if ($existing->status === FiscalYearStatus::CLOSED) {
+                $existing->update(['status' => 'open', 'closed_at' => null, 'closed_by' => null]);
+            }
+
             return $existing;
         }
 

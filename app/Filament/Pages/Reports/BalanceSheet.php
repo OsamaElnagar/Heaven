@@ -10,7 +10,6 @@ use App\Models\AccountOpeningBalance;
 use App\Models\FiscalYear;
 use App\Models\JournalLine;
 use App\Services\PdfService;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
@@ -25,6 +24,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BalanceSheet extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-scale';
@@ -84,16 +84,7 @@ class BalanceSheet extends Page implements HasTable
         $dateFrom = $this->tableFilters['date']['date_from'] ?? null;
         $dateTo = $this->tableFilters['date']['date_to'] ?? null;
 
-        $periodSub = JournalLine::query()
-            ->selectRaw('account_id, SUM(debit_amount) as period_debit, SUM(credit_amount) as period_credit')
-            ->whereHas('journalEntry', fn ($q) => $q
-                ->where('status', 'posted')
-                ->whereNull('deleted_at')
-                ->when($fiscalYearId, fn ($q) => $q->where('fiscal_year_id', $fiscalYearId))
-                ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', Carbon::parse($dateFrom)))
-                ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', Carbon::parse($dateTo)))
-            )
-            ->groupBy('account_id');
+        $periodSub = JournalLine::periodAggregate($fiscalYearId, $dateFrom, $dateTo);
 
         return $table
             ->query(
@@ -131,15 +122,15 @@ class BalanceSheet extends Page implements HasTable
                     ->label('التصنيف'),
                 TextColumn::make('total_debit')
                     ->label('مدين')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color('danger'),
                 TextColumn::make('total_credit')
                     ->label('دائن')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color('success'),
                 TextColumn::make('net_balance')
                     ->label('الرصيد')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->getStateUsing(function (Account $record): int {
                         $totalDebit = (int) $record->total_debit + (int) ($record->opening_debit ?? 0);
                         $totalCredit = (int) $record->total_credit + (int) ($record->opening_credit ?? 0);
@@ -206,6 +197,7 @@ class BalanceSheet extends Page implements HasTable
                 ['', 'إجمالي الخصوم + حقوق الملكية', '', '', number_format($summary['total_liabilities_equity'])],
                 ['', 'الفرق', '', '', number_format($summary['difference'])],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'الميزانية-العمومية-'.now()->format('Y-m-d').'.pdf');

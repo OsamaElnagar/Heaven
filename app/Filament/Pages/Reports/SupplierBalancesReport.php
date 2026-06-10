@@ -22,13 +22,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SupplierBalancesReport extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-m-scale';
 
     protected static ?string $navigationLabel = 'أرصدة الموردين';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التقارير';
+    protected static \UnitEnum|string|null $navigationGroup = 'التقارير المالية';
 
     protected static ?int $navigationSort = 8;
 
@@ -82,6 +83,7 @@ class SupplierBalancesReport extends Page implements HasTable
             summaries: [
                 ['', 'إجمالي المستحق للموردين', '', '', number_format($summary['total_owed'])],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'تقرير-أرصدة-الموردين-'.now()->format('Y-m-d').'.pdf');
@@ -122,7 +124,7 @@ class SupplierBalancesReport extends Page implements HasTable
                     ->placeholder('-'),
                 TextColumn::make('balance')
                     ->label('الرصيد (ج.م)')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color(fn ($state): string => (int) $state > 0 ? 'warning' : ((int) $state < 0 ? 'success' : 'gray')),
             ])
             ->defaultSort('name', 'asc')

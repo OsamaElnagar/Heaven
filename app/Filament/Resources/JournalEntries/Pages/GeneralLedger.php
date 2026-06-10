@@ -7,11 +7,13 @@ use App\Models\Account;
 use App\Models\FiscalYear;
 use App\Models\JournalLine;
 use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -87,8 +89,18 @@ class GeneralLedger extends Page implements HasTable
                     ->label('الحساب')
                     ->options(fn () => Account::query()->pluck('name', 'id')->toArray())
                     ->searchable(),
-                SelectFilter::make('date')
+                Filter::make('date')
                     ->label('الفترة')
+                    ->schema([
+                        DatePicker::make('date_from')
+                            ->label('من تاريخ')
+                            ->displayFormat('Y-m-d')
+                            ->native(false),
+                        DatePicker::make('date_to')
+                            ->label('إلى تاريخ')
+                            ->displayFormat('Y-m-d')
+                            ->native(false),
+                    ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(

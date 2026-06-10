@@ -1,7 +1,11 @@
 @php
 use App\Filament\Resources\Bookings\BookingResource;
 use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Expenses\ExpenseResource;
+use App\Filament\Resources\ReceiptVouchers\ReceiptVoucherResource;
+use App\Filament\Resources\Suppliers\SupplierResource;
 use App\Filament\Resources\Trips\TripResource;
+use App\Filament\Resources\Visas\VisaResource;
 use Filament\Support\Colors\Color;
 @endphp
 
@@ -27,6 +31,26 @@ use Filament\Support\Colors\Color;
         <x-filament::button href="{{ TripResource::getUrl('create') }}" icon="heroicon-m-paper-airplane"
             :color="Color::Green" size="sm" icon-position="after" tag="a">
             رحلة جديدة
+        </x-filament::button>
+
+        <x-filament::button href="{{ ExpenseResource::getUrl('create') }}" icon="heroicon-m-receipt-refund"
+            :color="Color::Orange" size="sm" icon-position="after" tag="a">
+            مصروف جديد
+        </x-filament::button>
+
+        <x-filament::button href="{{ SupplierResource::getUrl('create') }}" icon="heroicon-m-building-storefront"
+            :color="Color::Purple" size="sm" icon-position="after" tag="a">
+            مورد جديد
+        </x-filament::button>
+
+        <x-filament::button href="{{ ReceiptVoucherResource::getUrl('create') }}" icon="heroicon-m-banknotes"
+            color="warning" size="sm" icon-position="after" tag="a">
+            سند قبض
+        </x-filament::button>
+
+        <x-filament::button href="{{ VisaResource::getUrl('create') }}" icon="heroicon-m-globe-alt"
+            :color="Color::Cyan" size="sm" icon-position="after" tag="a">
+            فيزا جديدة
         </x-filament::button>
 
     </div>
@@ -55,6 +79,26 @@ use Filament\Support\Colors\Color;
                 <x-filament::dropdown.list.item href="{{ TripResource::getUrl('create') }}"
                     icon="heroicon-m-paper-airplane" tag="a">
                     رحلة جديدة
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item href="{{ ExpenseResource::getUrl('create') }}"
+                    icon="heroicon-m-receipt-refund" tag="a">
+                    مصروف جديد
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item href="{{ SupplierResource::getUrl('create') }}"
+                    icon="heroicon-m-building-storefront" tag="a">
+                    مورد جديد
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item href="{{ ReceiptVoucherResource::getUrl('create') }}"
+                    icon="heroicon-m-banknotes" tag="a">
+                    سند قبض
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item href="{{ VisaResource::getUrl('create') }}"
+                    icon="heroicon-m-globe-alt" tag="a">
+                    فيزا جديدة
                 </x-filament::dropdown.list.item>
             </x-filament::dropdown.list>
         </x-filament::dropdown>

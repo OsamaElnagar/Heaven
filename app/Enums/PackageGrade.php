@@ -4,6 +4,7 @@ namespace App\Enums;
 
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
 enum PackageGrade: string implements HasColor, HasLabel
@@ -30,6 +31,16 @@ enum PackageGrade: string implements HasColor, HasLabel
             self::STANDARD => 'عادي',
             self::VIP => 'VIP',
             self::VVIP => 'VVIP',
+        };
+    }
+
+    public function getIcon(): string|\BackedEnum|Htmlable|null
+    {
+        return match ($this) {
+            self::ECONOMY => Heroicon::CurrencyDollar,
+            self::STANDARD => Heroicon::Star,
+            self::VIP => Heroicon::ShieldCheck,
+            self::VVIP => Heroicon::Sparkles,
         };
     }
 }

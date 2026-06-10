@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\TripStatus;
+use App\Models\Package;
 use App\Models\Trip;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -29,6 +30,7 @@ class TripFactory extends Factory
         $departure = Carbon::now()->addDays(fake()->numberBetween(7, 180));
 
         return [
+            'package_id' => Package::factory(),
             'name' => 'رحلة '.fake()->numberBetween(1, 50),
             'status' => fake()->randomElement(TripStatus::cases()),
             'airline' => $airline,

@@ -28,6 +28,9 @@ class RoomInfolist
                             ->label('السعة'),
                         TextEntry::make('occupied')
                             ->label('المشغول'),
+                        TextEntry::make('available')
+                            ->label('المتاح')
+                            ->state(fn ($record): int => max($record->capacity - $record->occupied, 0)),
                         TextEntry::make('price_per_person')
                             ->label('سعر الفرد')
                             ->money('EGP')

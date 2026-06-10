@@ -12,9 +12,7 @@ class DateRangeFilter
 {
     public static function make(string $name = 'date', ?string $column = null, string $label = 'التاريخ'): Filter
     {
-        $column ??= $name;
-
-        return Filter::make($name)
+        $filter = Filter::make($name)
             ->label($label)
             ->schema([
                 DatePicker::make('date_from')
@@ -26,17 +24,8 @@ class DateRangeFilter
                     ->displayFormat('Y-m-d')
                     ->native(false),
             ])
-            ->query(function (Builder $query, array $data) use ($column): Builder {
-                return $query
-                    ->when(
-                        $data['date_from'],
-                        fn (Builder $query, $date): Builder => $query->whereDate($column, '>=', Carbon::parse($date)),
-                    )
-                    ->when(
-                        $data['date_to'],
-                        fn (Builder $query, $date): Builder => $query->whereDate($column, '<=', Carbon::parse($date)),
-                    );
-            })->indicateUsing(function (array $data): array {
+            ->query(fn (Builder $query) => $query)
+            ->indicateUsing(function (array $data): array {
                 $indicators = [];
 
                 if ($data['date_from'] ?? null) {
@@ -51,5 +40,21 @@ class DateRangeFilter
 
                 return $indicators;
             });
+
+        if ($column) {
+            $filter->query(function (Builder $query, array $data) use ($column): Builder {
+                return $query
+                    ->when(
+                        $data['date_from'],
+                        fn (Builder $query, $date): Builder => $query->whereDate($column, '>=', Carbon::parse($date)),
+                    )
+                    ->when(
+                        $data['date_to'],
+                        fn (Builder $query, $date): Builder => $query->whereDate($column, '<=', Carbon::parse($date)),
+                    );
+            });
+        }
+
+        return $filter;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JournalEntries\RelationManagers;
 
+use App\Enums\JournalEntryStatus;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -19,6 +20,13 @@ class LinesRelationManager extends RelationManager
     protected static string $relationship = 'lines';
 
     protected static ?string $title = 'بنود القيد';
+
+    protected function isEditable(): bool
+    {
+        $parent = $this->getOwnerRecord();
+
+        return $parent->status === JournalEntryStatus::DRAFT;
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -130,15 +138,19 @@ class LinesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make()->label('إضافة بند'),
+                CreateAction::make()->label('إضافة بند')
+                    ->visible(fn (): bool => $this->isEditable()),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                    ->visible(fn (): bool => $this->isEditable()),
+                DeleteAction::make()
+                    ->visible(fn (): bool => $this->isEditable()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(fn (): bool => $this->isEditable()),
                 ]),
             ]);
     }

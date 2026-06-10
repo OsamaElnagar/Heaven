@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\Trips\Schemas;
 
 use App\Enums\TripStatus;
+use App\Models\Trip;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -24,7 +26,7 @@ class TripForm
                         Select::make('package_id')
                             ->label('الباقة')
                             ->relationship('package', 'name')
-                            ->required()
+                            ->default(fn ($livewire) => $livewire instanceof RelationManager ? $livewire->getOwnerRecord()?->id : null)->required()
                             ->searchable()
                             ->preload()
                             ->native(false),
@@ -34,7 +36,8 @@ class TripForm
                             ->required()
                             ->native(false),
                         TextInput::make('airline')
-                            ->label('شركة الطيران'),
+                            ->label('شركة الطيران')
+                            ->datalist(fn () => Trip::query()->distinct()->pluck('airline')),
                         TextInput::make('flight_number')
                             ->label('رقم الرحلة'),
                     ])
@@ -48,9 +51,13 @@ class TripForm
                             ->native(false),
                         DateTimePicker::make('return_at')
                             ->label('موعد العودة')
-                            ->native(false),
+                            ->native(false)
+                            ->afterOrEqual('departure_at')
+                            ->validationMessage('يجب أن يكون تاريخ العودة بعد أو يساوي تاريخ المغادرة'),
                         TextInput::make('departure_airport')
-                            ->label('مطار المغادرة'),
+                            ->label('مطار المغادرة')
+                            ->datalist(fn () => Trip::query()->distinct()->pluck('departure_airport')),
+
                     ])
                     ->columns(2)
                     ->columnSpanFull(),

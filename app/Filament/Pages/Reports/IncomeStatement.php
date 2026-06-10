@@ -9,7 +9,6 @@ use App\Models\Account;
 use App\Models\FiscalYear;
 use App\Models\JournalLine;
 use App\Services\PdfService;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
@@ -24,6 +23,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IncomeStatement extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-chart-bar';
@@ -83,16 +83,7 @@ class IncomeStatement extends Page implements HasTable
         $dateFrom = $this->tableFilters['date']['date_from'] ?? null;
         $dateTo = $this->tableFilters['date']['date_to'] ?? null;
 
-        $periodSub = JournalLine::query()
-            ->selectRaw('account_id, SUM(debit_amount) as period_debit, SUM(credit_amount) as period_credit')
-            ->whereHas('journalEntry', fn ($q) => $q
-                ->where('status', 'posted')
-                ->whereNull('deleted_at')
-                ->when($fiscalYearId, fn ($q) => $q->where('fiscal_year_id', $fiscalYearId))
-                ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', Carbon::parse($dateFrom)))
-                ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', Carbon::parse($dateTo)))
-            )
-            ->groupBy('account_id');
+        $periodSub = JournalLine::periodAggregate($fiscalYearId, $dateFrom, $dateTo);
 
         return $table
             ->query(
@@ -121,15 +112,15 @@ class IncomeStatement extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('total_debit')
                     ->label('مدين')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color('danger'),
                 TextColumn::make('total_credit')
                     ->label('دائن')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color('success'),
                 TextColumn::make('net_balance')
                     ->label('صافي')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->getStateUsing(function (Account $record): int {
                         $net = (int) $record->total_credit - (int) $record->total_debit;
 
@@ -187,6 +178,7 @@ class IncomeStatement extends Page implements HasTable
                 ['', 'إجمالي المصروفات', '', '', number_format($summary['total_expenses'])],
                 ['', 'صافي الدخل', '', '', number_format($summary['net_income'])],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'قائمة-الدخل-'.now()->format('Y-m-d').'.pdf');

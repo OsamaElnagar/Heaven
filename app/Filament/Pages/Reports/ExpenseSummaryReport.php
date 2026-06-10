@@ -22,13 +22,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExpenseSummaryReport extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
 
     protected static ?string $navigationLabel = 'تقرير المصروفات';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التقارير';
+    protected static \UnitEnum|string|null $navigationGroup = 'التقارير المالية';
 
     protected static ?int $navigationSort = 5;
 
@@ -92,6 +93,7 @@ class ExpenseSummaryReport extends Page implements HasTable
             summaries: [
                 ['', '', '', '', "عدد: {$count}", number_format($total)],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'تقرير-المصروفات-'.now()->format('Y-m-d').'.pdf');
@@ -126,9 +128,9 @@ class ExpenseSummaryReport extends Page implements HasTable
                     ->placeholder('-'),
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->sortable()
-                    ->summarize(Sum::make()->money('EGP', locale: 'en', decimalPlaces: 0)->label('الإجمالي')),
+                    ->summarize(Sum::make()->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)->label('الإجمالي')),
             ])
             ->defaultSort('paid_at', 'desc')
             ->filters([

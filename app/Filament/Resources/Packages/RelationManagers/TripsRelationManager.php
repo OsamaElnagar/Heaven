@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Packages\RelationManagers;
 
 use App\Filament\Resources\Trips\Schemas\TripForm;
 use App\Filament\Resources\Trips\Tables\TripsTable;
+use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -14,6 +15,10 @@ class TripsRelationManager extends RelationManager
 
     protected static ?string $title = 'الرحلات';
 
+    protected static ?string $modelLabel = 'رحلة';
+
+    protected static ?string $pluralModelLabel = 'رحلات';
+
     public function form(Schema $schema): Schema
     {
         return TripForm::configure($schema);
@@ -21,6 +26,9 @@ class TripsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        return TripsTable::configure($table);
+        return TripsTable::configure($table)
+            ->headerActions([
+                CreateAction::make(),
+            ]);
     }
 }

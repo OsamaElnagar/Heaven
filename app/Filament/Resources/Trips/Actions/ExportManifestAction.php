@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Trips\Actions;
 
-use App\Enums\BookingStatus;
 use App\Models\Trip;
+use App\Services\TripService;
 use Filament\Actions\Action;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 
@@ -22,10 +22,7 @@ class ExportManifestAction extends Action
             ->icon('heroicon-o-document-arrow-down')
             ->color('gray')
             ->action(function (Trip $record) {
-                $bookings = $record->bookings()
-                    ->where('status', BookingStatus::CONFIRMED)
-                    ->with(['client', 'visa'])
-                    ->get();
+                $bookings = (new TripService)->getManifest($record);
 
                 $pdf = PDF::loadView('pdf.trip-manifest', [
                     'trip' => $record,

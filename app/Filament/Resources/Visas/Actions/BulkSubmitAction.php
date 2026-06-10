@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Visas\Actions;
 
 use App\Enums\VisaStatus;
-use Carbon\Carbon;
+use App\Services\VisaService;
 use Filament\Actions\BulkAction;
 use Filament\Notifications\Notification;
 
@@ -25,13 +25,11 @@ class BulkSubmitAction extends BulkAction
             ->modalHeading('تقديم التأشيرات')
             ->modalDescription('سيتم تحديث حالة التأشيرات المحددة إلى "تم التقديم".')
             ->action(function ($records) {
+                $visaService = app(VisaService::class);
                 $count = 0;
                 foreach ($records as $visa) {
-                    if ($visa->status === VisaStatus::NOT_APPLIED) {
-                        $visa->update([
-                            'status' => VisaStatus::APPLIED,
-                            'applied_at' => Carbon::today(),
-                        ]);
+                    if ($visa->status->canTransitionTo(VisaStatus::APPLIED)) {
+                        $visaService->submitApplication($visa);
                         $count++;
                     }
                 }

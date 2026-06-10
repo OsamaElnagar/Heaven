@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Enums\TripStatus;
+use App\Models\Booking;
 use App\Models\Trip;
 use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;

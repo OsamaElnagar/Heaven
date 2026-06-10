@@ -41,6 +41,7 @@ class BookingService
 
     /**
      * Assign a room to a booking, validating capacity.
+     * Decrements the previous room's occupied count if reassigning.
      */
     public function assignRoom(Booking $booking, Room $room): void
     {
@@ -48,8 +49,35 @@ class BookingService
             throw new InvalidArgumentException('Room is at full capacity.');
         }
 
+        if ($booking->room_id && $booking->room_id !== $room->id) {
+            $this->decrementOccupied($booking->room);
+        }
+
         $booking->update(['room_id' => $room->id]);
         $room->increment('occupied');
+    }
+
+    /**
+     * Remove the room assignment from a booking, decrementing occupied count.
+     */
+    public function unassignRoom(Booking $booking): void
+    {
+        if (! $booking->room_id) {
+            return;
+        }
+
+        $this->decrementOccupied($booking->room);
+        $booking->update(['room_id' => null]);
+    }
+
+    /**
+     * Safely decrement a room's occupied count (floor at 0).
+     */
+    protected function decrementOccupied(Room $room): void
+    {
+        if ($room->occupied > 0) {
+            $room->decrement('occupied');
+        }
     }
 
     /**

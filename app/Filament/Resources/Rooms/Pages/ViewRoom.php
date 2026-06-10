@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Rooms\Pages;
 
 use App\Filament\Resources\Rooms\Actions\AssignClientAction;
+use App\Filament\Resources\Rooms\Actions\UnassignClientAction;
 use App\Filament\Resources\Rooms\RoomResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -17,6 +18,7 @@ class ViewRoom extends ViewRecord
     {
         return [
             AssignClientAction::make(),
+            UnassignClientAction::make(),
             EditAction::make()->label('تعديل'),
         ];
     }

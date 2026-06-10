@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Visas\Actions;
 
 use App\Enums\VisaStatus;
 use App\Models\Visa;
+use App\Services\VisaService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -28,12 +29,10 @@ class MarkRejectedAction extends Action
                     ->required(),
             ])
             ->modalHeading('تسجيل رفض التأشيرة')
-            ->visible(fn (Visa $record) => ! in_array($record->status, [VisaStatus::APPROVED, VisaStatus::REJECTED], true))
+            ->visible(fn (Visa $record): bool => $record->status->canTransitionTo(VisaStatus::REJECTED))
             ->action(function (Visa $record, array $data) {
-                $record->update([
-                    'status' => VisaStatus::REJECTED,
-                    'rejection_reason' => $data['reason'],
-                ]);
+                $visaService = app(VisaService::class);
+                $visaService->markRejected($record, $data['reason']);
                 Notification::make()->title('تم تسجيل الرفض')->success()->send();
             });
     }

@@ -22,6 +22,6 @@ class BookingsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return BookingsTable::configure($table)
-            ->recordTitleAttribute('client_id');
+            ->recordTitleAttribute('reference');
     }
 }

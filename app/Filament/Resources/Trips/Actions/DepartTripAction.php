@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Trips\Actions;
 
-use App\Enums\BookingStatus;
 use App\Enums\TripStatus;
 use App\Models\Trip;
+use App\Services\TripService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
@@ -27,18 +27,12 @@ class DepartTripAction extends Action
             ->modalDescription('سيتم تغيير حالة الرحلة إلى "مغادرة". تأكد من أن جميع الحجوزات مؤكدة.')
             ->visible(fn (Trip $record) => $record->status !== TripStatus::DEPARTED && $record->status !== TripStatus::COMPLETED)
             ->action(function (Trip $record) {
-                $unconfirmed = $record->bookings()
-                    ->whereNot('status', BookingStatus::CONFIRMED)
-                    ->exists();
-
-                if ($unconfirmed) {
-                    Notification::make()->title('يجب تأكيد جميع الحجوزات أولاً')->danger()->send();
-
-                    return;
+                try {
+                    (new TripService)->depart($record);
+                    Notification::make()->title('تم تسجيل مغادرة الرحلة')->success()->send();
+                } catch (\InvalidArgumentException $e) {
+                    Notification::make()->title($e->getMessage())->danger()->send();
                 }
-
-                $record->update(['status' => TripStatus::DEPARTED]);
-                Notification::make()->title('تم تسجيل مغادرة الرحلة')->success()->send();
             });
     }
 }

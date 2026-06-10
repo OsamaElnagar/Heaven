@@ -154,15 +154,13 @@ class DocumentSequenceService
         $fiscalYearId = $fiscalYear->id;
 
         foreach (array_keys(self::DEFAULT_PREFIXES) as $docType) {
-            $prefix = $this->getPrefix($docType).$fiscalYear->starts_at->format('Y').'-';
-
             DocumentSequence::firstOrCreate(
                 [
                     'document_type' => $docType,
                     'fiscal_year_id' => $fiscalYearId,
                 ],
                 [
-                    'prefix' => $prefix,
+                    'prefix' => $this->getPrefix($docType),
                     'last_number' => 0,
                     'padding' => $this->getPadding($docType),
                 ]
@@ -175,16 +173,19 @@ class DocumentSequenceService
         FiscalYear $toFiscalYear
     ): void {
         $sequences = DocumentSequence::where('fiscal_year_id', $fromFiscalYear->id)->get();
-        $newYear = $toFiscalYear->starts_at->format('Y');
 
         foreach ($sequences as $sequence) {
-            DocumentSequence::create([
-                'document_type' => $sequence->document_type,
-                'fiscal_year_id' => $toFiscalYear->id,
-                'prefix' => $this->getPrefix($sequence->document_type).$newYear.'-',
-                'last_number' => 0,
-                'padding' => $sequence->padding,
-            ]);
+            DocumentSequence::firstOrCreate(
+                [
+                    'document_type' => $sequence->document_type,
+                    'fiscal_year_id' => $toFiscalYear->id,
+                ],
+                [
+                    'prefix' => $this->getPrefix($sequence->document_type),
+                    'last_number' => 0,
+                    'padding' => $sequence->padding,
+                ]
+            );
         }
     }
 
@@ -214,6 +215,8 @@ class DocumentSequenceService
 
     private function currentFiscalYear(): ?FiscalYear
     {
-        return FiscalYear::where('status', 'open')->first();
+        return FiscalYear::where('status', 'open')
+            ->orderBy('starts_at', 'desc')
+            ->first();
     }
 }

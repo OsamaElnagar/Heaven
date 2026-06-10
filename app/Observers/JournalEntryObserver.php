@@ -16,10 +16,6 @@ class JournalEntryObserver
         }
 
         if ($entry->isDirty('status') && $entry->status === JournalEntryStatus::POSTED) {
-            if (! $entry->isBalanced()) {
-                throw new \RuntimeException('القيد غير متوازن. مجموع المدين يجب أن يساوي مجموع الدائن.');
-            }
-
             if (empty($entry->fiscal_year_id)) {
                 throw new \RuntimeException('يجب تحديد السنة المالية للقيد.');
             }

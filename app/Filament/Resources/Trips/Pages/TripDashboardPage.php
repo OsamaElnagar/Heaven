@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Trips\Pages;
 
+use App\Enums\BookingStatus;
 use App\Filament\Resources\Trips\TripResource;
 use App\Services\ReportService;
 use Filament\Infolists\Components\TextEntry;
@@ -38,10 +39,20 @@ class TripDashboardPage extends Page
 
     public function infolist(Schema $schema): Schema
     {
-        $totalBookings = $this->record->bookings()->count();
-        $confirmedBookings = $this->record->bookings()->where('status', 'confirmed')->count();
-        $totalPaid = $this->record->bookings()->sum('paid_amount');
-        $totalNet = $this->record->bookings()->sum('net_price');
+        $stats = $this->record->bookings()
+            ->selectRaw('
+                count(*) as total_bookings,
+                sum(case when status = ? then 1 else 0 end) as confirmed_bookings,
+                sum(paid_amount) as total_paid,
+                sum(net_price) as total_net
+            ', [BookingStatus::CONFIRMED->value])
+            ->first();
+
+        $totalBookings = $stats->total_bookings ?? 0;
+        $confirmedBookings = $stats->confirmed_bookings ?? 0;
+        $totalPaid = $stats->total_paid ?? 0;
+        $totalNet = $stats->total_net ?? 0;
+
         $visas = (new ReportService)->visaDashboard($this->record);
 
         return $schema
@@ -79,11 +90,9 @@ class TripDashboardPage extends Page
 
     protected function getViewData(): array
     {
-        $visas = (new ReportService)->visaDashboard($this->record);
         $occupancy = (new ReportService)->occupancyReport($this->record);
 
         return [
-            'visas' => $visas,
             'occupancy' => $occupancy,
         ];
     }

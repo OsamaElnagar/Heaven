@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Safes\Schemas;
 
+use App\Models\Account;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -18,7 +19,9 @@ class SafeForm
                     ->label('الرقم')
                     ->required()
                     ->unique(ignoreRecord: true)
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->readOnly()
+                    ->dehydrated(true),
                 TextInput::make('name')
                     ->label('الاسم')
                     ->required()
@@ -28,7 +31,11 @@ class SafeForm
                     ->relationship('account', 'name')
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->options(fn () => Account::where('type', 'detail')
+                        ->where('is_active', true)
+                        ->where('code', 'like', '1231%')
+                        ->pluck('name', 'id'))
+                    ->helperText('يتم إنشاء الحساب تلقائياً إذا لم يتم تحديده'),
                 Select::make('responsible_employee_id')
                     ->label('المسؤول')
                     ->relationship('responsibleEmployee', 'name')

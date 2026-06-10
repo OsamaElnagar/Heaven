@@ -43,6 +43,10 @@ class JournalEntryService
             throw new \InvalidArgumentException('يجب أن يكون القيد في حالة مسودة ليتم ترحيله.');
         }
 
+        if ($entry->lines()->count() === 0) {
+            throw new \InvalidArgumentException('لا يمكن ترحيل قيد بدون بنود.');
+        }
+
         if (! $this->isBalanced($entry)) {
             throw new \InvalidArgumentException('القيد غير متوازن. مجموع المدين يجب أن يساوي مجموع الدائن.');
         }
@@ -76,6 +80,8 @@ class JournalEntryService
                 'source_type' => 'reversal',
                 'created_by' => $reversedById,
             ], $this->getReversalLines($entry));
+
+            $reversalEntry = $this->post($reversalEntry, $reversedById);
 
             $entry->update([
                 'status' => 'reversed',
@@ -261,9 +267,12 @@ class JournalEntryService
                 'debit_amount' => $line->credit_amount,
                 'credit_amount' => $line->debit_amount,
                 'description' => $line->description,
+                'sort_order' => $line->sort_order,
                 'client_id' => $line->client_id,
                 'supplier_id' => $line->supplier_id,
                 'employee_id' => $line->employee_id,
+                'safe_id' => $line->safe_id,
+                'bank_account_id' => $line->bank_account_id,
             ];
         });
     }

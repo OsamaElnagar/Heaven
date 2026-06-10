@@ -21,9 +21,9 @@ enum RoomType: string implements HasColor, HasLabel
             self::SINGLE => 'warning',
             self::DOUBLE => 'info',
             self::TRIPLE => 'success',
-            self::QUAD => 'gray',
+            self::QUAD => 'primary',
             self::QUINT => 'gray',
-            self::SEXTUPLE => 'gray',
+            self::SEXTUPLE => 'danger',
         };
     }
 

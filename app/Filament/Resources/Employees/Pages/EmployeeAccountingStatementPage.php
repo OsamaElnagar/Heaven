@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Employees\Pages;
 
 use App\Filament\Resources\Employees\EmployeeResource;
-use App\Models\Employee;
 use App\Support\Statement\PartyStatementPage;
 
 class EmployeeAccountingStatementPage extends PartyStatementPage
@@ -16,15 +15,11 @@ class EmployeeAccountingStatementPage extends PartyStatementPage
 
     protected function statementAccountId(): ?int
     {
-        $employee = Employee::find((int) $this->record->getKey());
-
-        return $employee?->account_id;
+        return $this->record->account_id;
     }
 
     protected function statementEntityLabel(): string
     {
-        $employee = Employee::find((int) $this->record->getKey());
-
-        return $employee?->name ?? '-';
+        return $this->record->name ?? '-';
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Reports;
 
+use App\Enums\AccountClass;
+use App\Enums\CashFlowCategory;
 use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Pages\Reports\Widgets\CashFlowSummaryWidget;
 use App\Models\FiscalYear;
@@ -24,6 +26,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CashFlowStatement extends Page implements HasTable
 {
+    use HasReportFilters;
     use InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
@@ -119,6 +122,49 @@ class CashFlowStatement extends Page implements HasTable
         return $model->newQuery()->fromSub($union, 'cash_flows');
     }
 
+    protected function resolveCategory(string $voucherType, int $voucherId): CashFlowCategory
+    {
+        $voucher = match ($voucherType) {
+            'receipt' => ReceiptVoucher::with('journalEntry.lines.account')->find($voucherId),
+            'payment' => PaymentVoucher::with('journalEntry.lines.account')->find($voucherId),
+            default => null,
+        };
+
+        if (! $voucher || ! $voucher->journalEntry) {
+            return CashFlowCategory::OPERATING;
+        }
+
+        $accountClasses = $voucher->journalEntry->lines
+            ->pluck('account.class')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $hasRevenueOrExpense = collect($accountClasses)->contains(fn ($c) => in_array($c, [
+            AccountClass::REVENUE->value,
+            AccountClass::EXPENSES->value,
+        ]));
+
+        $hasLiabilityOrEquity = collect($accountClasses)->contains(fn ($c) => in_array($c, [
+            AccountClass::LIABILITIES->value,
+            AccountClass::EQUITY->value,
+        ]));
+
+        $hasNonCashAsset = collect($accountClasses)->contains(AccountClass::ASSETS->value)
+            && ! $voucher->journalEntry->lines->every(fn ($l) => in_array($l->account?->code, ['1110', '1120', '1130']));
+
+        if ($hasLiabilityOrEquity) {
+            return CashFlowCategory::FINANCING;
+        }
+
+        if ($hasNonCashAsset) {
+            return CashFlowCategory::INVESTING;
+        }
+
+        return CashFlowCategory::OPERATING;
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -145,15 +191,20 @@ class CashFlowStatement extends Page implements HasTable
                 TextColumn::make('cf_category')
                     ->label('تصنيف التدفق')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'تشغيلي' => 'info',
-                        'تمويلي' => 'success',
+                    ->color(fn (string $state): string => match (CashFlowCategory::tryFrom($state)) {
+                        CashFlowCategory::OPERATING => 'info',
+                        CashFlowCategory::INVESTING => 'success',
+                        CashFlowCategory::FINANCING => 'warning',
                         default => 'gray',
                     })
-                    ->getStateUsing(fn (): string => 'تشغيلي'),
+                    ->getStateUsing(function (Model $record): string {
+                        $category = $this->resolveCategory($record->voucher_type, $record->id);
+
+                        return $category->getLabel();
+                    }),
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->money('EGP', locale: 'en', decimalPlaces: 0)
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)
                     ->color(fn ($record): string => $record->direction === 'وارد نقدي' ? 'success' : 'danger'),
             ])
             ->filters([
@@ -177,7 +228,9 @@ class CashFlowStatement extends Page implements HasTable
     public function exportPdf(): StreamedResponse
     {
         $rows = $this->getFilteredSortedTableQuery()->get();
-        $rows->each(fn ($r) => $r->cf_category = 'تشغيلي');
+        $rows->each(function ($r) {
+            $r->cf_category = $this->resolveCategory($r->voucher_type, $r->id)->getLabel();
+        });
         $summary = $this->getCashFlowSummary();
 
         $pdf = app(PdfService::class)->generateReportPdf(
@@ -198,6 +251,7 @@ class CashFlowStatement extends Page implements HasTable
                 ['', '', '', 'صافي الأنشطة التشغيلية', '', number_format($summary['operating_net'])],
                 ['', '', '', 'صافي التدفق النقدي', '', number_format($summary['total_net'])],
             ],
+            filters: $this->buildFilterText(),
         );
 
         return response()->streamDownload(fn () => print ($pdf->output()), 'التدفقات-النقدية-'.now()->format('Y-m-d').'.pdf');

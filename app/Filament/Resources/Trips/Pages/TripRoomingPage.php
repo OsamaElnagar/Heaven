@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Trips\Pages;
 
+use App\Filament\Resources\Rooms\RoomResource;
 use App\Filament\Resources\Trips\TripResource;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
@@ -61,6 +62,7 @@ class TripRoomingPage extends Page implements HasTable
                     ->label('عدد النزلاء')
                     ->counts('bookings'),
             ])
-            ->recordUrl(fn ($record): string => TripResource::getUrl('view', ['record' => $this->record->id]));
+            ->paginate(15)
+            ->recordUrl(fn ($record): string => RoomResource::getUrl('view', ['record' => $record]));
     }
 }

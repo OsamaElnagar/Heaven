@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Clients\Pages;
 
 use App\Filament\Resources\Clients\ClientResource;
-use App\Models\Client;
 use App\Support\Statement\PartyStatementPage;
 
 class ClientAccountingStatementPage extends PartyStatementPage
@@ -16,18 +15,11 @@ class ClientAccountingStatementPage extends PartyStatementPage
 
     protected function statementAccountId(): ?int
     {
-        $client = Client::find((int) $this->record->getKey());
-        if (! $client) {
-            return null;
-        }
-
-        return $client->account_id;
+        return $this->record->account_id;
     }
 
     protected function statementEntityLabel(): string
     {
-        $client = Client::find((int) $this->record->getKey());
-
-        return $client?->name ?? '-';
+        return $this->record->name ?? '-';
     }
 }

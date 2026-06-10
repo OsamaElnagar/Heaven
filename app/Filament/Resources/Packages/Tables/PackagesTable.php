@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Packages\Tables;
 
+use App\Enums\PackageGrade;
 use App\Enums\PackageType;
-use App\Filament\Resources\Packages\Actions\DuplicatePackageAction;
 use App\Filament\Resources\Packages\Actions\ToggleActiveAction;
 use App\Models\Package;
 use Filament\Actions\BulkActionGroup;
@@ -68,12 +68,16 @@ class PackagesTable
                 SelectFilter::make('type')
                     ->label('النوع')
                     ->options(PackageType::class),
+                SelectFilter::make('grade')
+                    ->label('الدرجة')
+                    ->options(PackageGrade::class),
                 SelectFilter::make('season_year')
                     ->label('الموسم')
-                    ->options(fn () => Package::query()
-                        ->distinct()
-                        ->orderByDesc('season_year')
-                        ->pluck('season_year', 'season_year')
+                    ->options(
+                        fn () => Package::query()
+                            ->distinct()
+                            ->orderByDesc('season_year')
+                            ->pluck('season_year', 'season_year')
                     ),
                 TrashedFilter::make(),
             ])
@@ -81,7 +85,6 @@ class PackagesTable
                 ViewAction::make(),
                 EditAction::make(),
                 ToggleActiveAction::make(),
-                DuplicatePackageAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

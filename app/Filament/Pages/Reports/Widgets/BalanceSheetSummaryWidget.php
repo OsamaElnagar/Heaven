@@ -33,16 +33,7 @@ class BalanceSheetSummaryWidget extends BaseWidget
 
     public static function computeSummary(?int $fiscalYearId, ?string $dateFrom, ?string $dateTo): array
     {
-        $periodSub = JournalLine::query()
-            ->selectRaw('account_id, SUM(debit_amount) as period_debit, SUM(credit_amount) as period_credit')
-            ->whereHas('journalEntry', fn ($q) => $q
-                ->where('status', 'posted')
-                ->whereNull('deleted_at')
-                ->when($fiscalYearId, fn ($q) => $q->where('fiscal_year_id', $fiscalYearId))
-                ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom))
-                ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo))
-            )
-            ->groupBy('account_id');
+        $periodSub = JournalLine::periodAggregate($fiscalYearId, $dateFrom, $dateTo);
 
         $netIncomeSub = JournalLine::query()
             ->selectRaw('

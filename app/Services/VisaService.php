@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\BookingStatus;
 use App\Enums\VisaStatus;
-use App\Models\Trip;
 use App\Models\Visa;
 use Carbon\Carbon;
 
@@ -45,18 +43,12 @@ class VisaService
     }
 
     /**
-     * Bulk submit visa applications for all confirmed bookings on a trip
-     * that have not yet applied for a visa.
+     * Expire visas whose expiry date has passed.
      */
-    public function bulkSubmitForTrip(Trip $trip): void
+    public function expireOverdueVisas(): int
     {
-        $visas = Visa::whereHas('booking', function ($query) use ($trip) {
-            $query->where('trip_id', $trip->id)
-                ->where('status', BookingStatus::CONFIRMED);
-        })->where('status', VisaStatus::NOT_APPLIED)->get();
-
-        foreach ($visas as $visa) {
-            $this->submitApplication($visa);
-        }
+        return Visa::where('status', VisaStatus::APPROVED)
+            ->where('expiry_date', '<', Carbon::today())
+            ->update(['status' => VisaStatus::EXPIRED]);
     }
 }

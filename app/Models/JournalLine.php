@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Observers\JournalLineObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -90,5 +91,19 @@ class JournalLine extends Model
     public function getAmountAttribute(): int
     {
         return $this->debit_amount > 0 ? $this->debit_amount : $this->credit_amount;
+    }
+
+    public function scopePeriodAggregate($query, ?int $fiscalYearId = null, ?string $dateFrom = null, ?string $dateTo = null): Builder
+    {
+        return JournalLine::query()
+            ->selectRaw('account_id, SUM(debit_amount) as period_debit, SUM(credit_amount) as period_credit')
+            ->whereHas('journalEntry', fn ($q) => $q
+                ->where('status', 'posted')
+                ->whereNull('deleted_at')
+                ->when($fiscalYearId, fn ($q) => $q->where('fiscal_year_id', $fiscalYearId))
+                ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom))
+                ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo))
+            )
+            ->groupBy('account_id');
     }
 }

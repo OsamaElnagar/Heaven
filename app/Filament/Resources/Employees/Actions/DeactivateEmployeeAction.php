@@ -26,7 +26,7 @@ class DeactivateEmployeeAction extends Action
             ->action(function (Employee $record) {
                 $record->update([
                     'is_active' => ! $record->is_active,
-                    'left_at' => $record->is_active ? null : Carbon::today(),
+                    'left_at' => $record->is_active ? Carbon::today() : null,
                 ]);
                 Notification::make()->title('تم تحديث الحالة')->success()->send();
             });

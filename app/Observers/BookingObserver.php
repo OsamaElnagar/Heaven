@@ -56,7 +56,7 @@ class BookingObserver
         $original = $booking->getOriginal('status');
         $current = $booking->status;
 
-        if ($current === BookingStatus::CONFIRMED && $original !== BookingStatus::CONFIRMED->value) {
+        if ($current === BookingStatus::CONFIRMED && $original?->value !== BookingStatus::CONFIRMED->value) {
             $this->incrementReservedSeats($booking);
 
             if (! Visa::where('booking_id', $booking->id)->exists()) {
@@ -67,7 +67,7 @@ class BookingObserver
             }
         }
 
-        if ($original === BookingStatus::CONFIRMED->value && $current === BookingStatus::CANCELLED) {
+        if ($original?->value === BookingStatus::CONFIRMED->value && $current === BookingStatus::CANCELLED) {
             $this->decrementReservedSeats($booking);
         }
     }
@@ -96,7 +96,20 @@ class BookingObserver
 
     /**
      * Recalculate the booking's paid_amount based on posted receipt/refund vouchers.
-     * Called from ReceiptVoucher/RefundVoucher observers.
+     *
+     * Called externally from ReceiptVoucherObserver and RefundVoucherObserver after
+     * a voucher is posted or unposted. This method MUST be invoked via
+     * BookingObserver::withoutEvents() from those observers to prevent infinite
+     * recursion — voucher changes trigger this recalc, which updates the booking,
+     * which would otherwise re-trigger the observer chain.
+     *
+     * This method intentionally uses `updateQuietly()` inside `withoutEvents()` to
+     * skip all BookingObserver hooks (reference generation, net_price recalc, seat
+     * tracking). The caller is responsible for ensuring the booking state is
+     * consistent before invoking this.
+     *
+     * @see ReceiptVoucherObserver
+     * @see RefundVoucherObserver
      */
     public function recalculatePaidAmount(Booking $booking): void
     {

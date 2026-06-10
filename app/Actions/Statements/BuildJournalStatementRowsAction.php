@@ -61,13 +61,13 @@ class BuildJournalStatementRowsAction
             return 0;
         }
 
-        $query = JournalLine::query()
+        $result = JournalLine::query()
             ->where('account_id', $accountId)
             ->whereHas('journalEntry', fn ($q) => $q->where('status', 'posted'))
-            ->whereHas('journalEntry', fn ($sub) => $sub->whereDate('entry_date', '<', $beforeDate));
+            ->whereHas('journalEntry', fn ($sub) => $sub->whereDate('entry_date', '<', $beforeDate))
+            ->selectRaw('COALESCE(SUM(debit_amount), 0) - COALESCE(SUM(credit_amount), 0) as balance')
+            ->value('balance');
 
-        $lines = $query->get();
-
-        return (int) $lines->sum('debit_amount') - (int) $lines->sum('credit_amount');
+        return (int) $result;
     }
 }

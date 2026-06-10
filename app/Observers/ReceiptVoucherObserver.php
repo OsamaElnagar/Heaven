@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Enums\ExpenseStatus;
+use App\Enums\PayerType;
 use App\Enums\VoucherPaymentMethod;
 use App\Models\BankAccount;
 use App\Models\Booking;
@@ -43,7 +44,7 @@ class ReceiptVoucherObserver
         if ($newStatus !== ExpenseStatus::POSTED) {
             return;
         }
-        if ($original === ExpenseStatus::POSTED->value) {
+        if ($original === ExpenseStatus::POSTED) {
             return;
         }
 
@@ -52,7 +53,8 @@ class ReceiptVoucherObserver
 
     protected function postJournalEntry(ReceiptVoucher $voucher): void
     {
-        if (! $voucher->client_id) {
+        $partyAccountId = $this->resolvePartyAccount($voucher);
+        if (! $partyAccountId) {
             return;
         }
 
@@ -71,10 +73,12 @@ class ReceiptVoucherObserver
                     'description' => 'استلام دفعة',
                 ],
                 [
-                    'account_id' => $voucher->client->account_id,
+                    'account_id' => $partyAccountId,
                     'credit_amount' => $voucher->amount,
                     'client_id' => $voucher->client_id,
-                    'description' => 'دفعة من العميل',
+                    'supplier_id' => $voucher->supplier_id,
+                    'employee_id' => $voucher->employee_id,
+                    'description' => 'دفعة من '.$voucher->payerLabel(),
                 ],
             ]);
 
@@ -88,6 +92,16 @@ class ReceiptVoucherObserver
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    protected function resolvePartyAccount(ReceiptVoucher $voucher): ?int
+    {
+        return match ($voucher->payer_type) {
+            PayerType::CLIENT => $voucher->client?->account_id,
+            PayerType::SUPPLIER => $voucher->supplier?->account_id,
+            PayerType::EMPLOYEE => $voucher->employee?->account_id,
+            default => null,
+        };
     }
 
     protected function syncBookingPaidAmount(ReceiptVoucher $voucher): void

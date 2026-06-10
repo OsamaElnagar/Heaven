@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\Packages\Pages;
 
+use App\Enums\PackageGrade;
+use App\Enums\PackageType;
 use App\Filament\Resources\Packages\PackageResource;
 use App\Filament\Resources\Packages\Widgets\PackagesStatsWidget;
 use App\Filament\Resources\Packages\Widgets\SeatOccupancyWidget;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListPackages extends ListRecords
 {
@@ -27,5 +31,25 @@ class ListPackages extends ListRecords
             PackagesStatsWidget::class,
             SeatOccupancyWidget::class,
         ];
+    }
+
+    public function getTabs(): array
+    {
+        $tabs = [
+            'all' => Tab::make('الكل')->icon('heroicon-m-rectangle-stack'),
+        ];
+
+        foreach (PackageType::cases() as $status) {
+            $tabs[$status->value] = Tab::make($status->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('type', $status->value))
+                ->icon($status->getIcon());
+        }
+        foreach (PackageGrade::cases() as $status) {
+            $tabs[$status->value] = Tab::make($status->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('grade', $status->value))
+                ->icon($status->getIcon());
+        }
+
+        return $tabs;
     }
 }

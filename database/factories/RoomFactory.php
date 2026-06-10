@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Enums\RoomType;
+use App\Models\Hotel;
 use App\Models\Room;
+use App\Models\Trip;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<Room> */
@@ -24,6 +26,8 @@ class RoomFactory extends Factory
         };
 
         return [
+            'hotel_id' => Hotel::factory(),
+            'trip_id' => Trip::factory(),
             'room_number' => fake()->numberBetween(100, 9999),
             'type' => $type,
             'capacity' => $capacity,

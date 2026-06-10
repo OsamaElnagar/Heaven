@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\BookingStatus;
 use App\Models\Booking;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,6 +18,7 @@ class RecentBookingsWidget extends BaseWidget
     protected function query(): Builder
     {
         return Booking::with('client', 'package')
+            ->whereIn('status', [BookingStatus::PENDING, BookingStatus::CONFIRMED, BookingStatus::COMPLETED])
             ->latest()
             ->limit(10);
     }
@@ -44,11 +46,11 @@ class RecentBookingsWidget extends BaseWidget
 
                 TextColumn::make('net_price')
                     ->label('الصافي')
-                    ->money('EGP'),
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0),
 
                 TextColumn::make('paid_amount')
                     ->label('المدفوع')
-                    ->money('EGP'),
+                    ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0),
 
                 TextColumn::make('created_at')
                     ->label('التاريخ')

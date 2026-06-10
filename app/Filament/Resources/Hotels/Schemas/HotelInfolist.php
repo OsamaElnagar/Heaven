@@ -29,6 +29,14 @@ class HotelInfolist
                             ->placeholder('-'),
                     ])
                     ->columns(2),
+
+                Section::make('ملاحظات')
+                    ->components([
+                        TextEntry::make('notes')
+                            ->label('ملاحظات')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

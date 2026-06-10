@@ -22,6 +22,8 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+
+            $table->index('booking_id');
         });
     }
 

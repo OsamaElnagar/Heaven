@@ -65,7 +65,7 @@ class TripManifestPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn () => $this->record->bookings()->where('status', 'confirmed')->with(['client', 'visa']))
+            ->query(fn () => (new TripService)->getManifest($this->record))
             ->columns([
                 TextColumn::make('client.name')->label('الاسم')->searchable(),
                 TextColumn::make('client.passport_number')->label('رقم الجواز')->searchable(),
@@ -73,6 +73,7 @@ class TripManifestPage extends Page implements HasTable
                 TextColumn::make('visa.visa_number')->label('رقم التأشيرة')->placeholder('-'),
                 TextColumn::make('visa.status')->label('حالة التأشيرة')->badge(),
                 TextColumn::make('room_type')->label('نوع الغرفة')->badge(),
-            ]);
+            ])
+            ->paginate(15);
     }
 }

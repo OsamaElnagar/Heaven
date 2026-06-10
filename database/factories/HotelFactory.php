@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Hotel;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<Hotel> */
@@ -31,6 +32,7 @@ class HotelFactory extends Factory
         $isMakkah = $city === 'makkah';
 
         return [
+            'supplier_id' => Supplier::factory(),
             'name' => $isMakkah ? fake()->randomElement(self::$makkahHotels) : fake()->randomElement(self::$madinahHotels),
             'city' => $city,
             'stars' => fake()->numberBetween(3, 5),

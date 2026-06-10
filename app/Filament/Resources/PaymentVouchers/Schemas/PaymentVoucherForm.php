@@ -111,7 +111,7 @@ class PaymentVoucherForm
                         TextInput::make('net_amount')
                             ->label('الصافي')
                             ->numeric()
-                            ->readOnly()
+                            ->disabled()
                             ->dehydrated(),
                     ])
                     ->columns(3)

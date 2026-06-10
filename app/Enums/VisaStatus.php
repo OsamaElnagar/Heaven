@@ -47,4 +47,20 @@ enum VisaStatus: string implements HasColor, HasIcon, HasLabel
             self::EXPIRED => 'منتهية',
         };
     }
+
+    public function getValidTransitions(): array
+    {
+        return match ($this) {
+            self::NOT_APPLIED => [self::APPLIED],
+            self::APPLIED => [self::APPROVED, self::REJECTED],
+            self::APPROVED => [self::EXPIRED],
+            self::REJECTED => [],
+            self::EXPIRED => [],
+        };
+    }
+
+    public function canTransitionTo(self $target): bool
+    {
+        return in_array($target, $this->getValidTransitions(), true);
+    }
 }

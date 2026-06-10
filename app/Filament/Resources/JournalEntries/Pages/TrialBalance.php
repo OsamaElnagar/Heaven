@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JournalEntries\Pages;
 
+use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\JournalEntries\JournalEntryResource;
 use App\Models\Account;
 use App\Models\AccountOpeningBalance;
@@ -110,11 +111,16 @@ class TrialBalance extends Page implements HasTable
                           - ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
                         : ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
                           - ((int) ($record->opening_debit ?? 0) + (int) $record->total_debit))
-                    ->color(fn ($record) => (($record->normal_balance === 'debit'
-                        ? ((int) ($record->opening_debit ?? 0) + (int) $record->total_debit)
-                          - ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
-                        : ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
-                          - ((int) ($record->opening_debit ?? 0) + (int) $record->total_debit))) >= 0 ? 'danger' : 'success'),
+                    ->color(fn ($record): string => match (true) {
+                        $record->normal_balance === 'debit' => (
+                            ((int) ($record->opening_debit ?? 0) + (int) $record->total_debit)
+                            - ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
+                        ) >= 0 ? 'danger' : 'success',
+                        default => (
+                            ((int) ($record->opening_credit ?? 0) + (int) $record->total_credit)
+                            - ((int) ($record->opening_debit ?? 0) + (int) $record->total_debit)
+                        ) >= 0 ? 'danger' : 'success',
+                    }),
             ])
             ->defaultSort('accounts.code')
             ->filters([
@@ -122,6 +128,8 @@ class TrialBalance extends Page implements HasTable
                     ->label('السنة المالية')
                     ->options(fn () => FiscalYear::pluck('name', 'id')->toArray())
                     ->default(fn () => FiscalYear::where('status', 'open')->value('id')),
+                DateRangeFilter::make('entry_date')
+                    ->label('التاريخ'),
             ]);
     }
 }

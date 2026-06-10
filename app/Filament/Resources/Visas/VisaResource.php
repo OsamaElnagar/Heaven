@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Visas;
 
+use App\Filament\Resources\Visas\Pages\CreateVisa;
 use App\Filament\Resources\Visas\Pages\EditVisa;
 use App\Filament\Resources\Visas\Pages\ListVisas;
 use App\Filament\Resources\Visas\Pages\ViewVisa;
@@ -57,6 +58,7 @@ class VisaResource extends Resource
     {
         return [
             'index' => ListVisas::route('/'),
+            'create' => CreateVisa::route('/create'),
             'view' => ViewVisa::route('/{record}'),
             'edit' => EditVisa::route('/{record}/edit'),
         ];

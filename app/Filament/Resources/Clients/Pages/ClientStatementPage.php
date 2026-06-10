@@ -123,6 +123,7 @@ class ClientStatementPage extends Page implements HasTable
                     ->label('التأشيرة')
                     ->badge()
                     ->placeholder('-'),
-            ]);
+            ])
+            ->paginate(15);
     }
 }

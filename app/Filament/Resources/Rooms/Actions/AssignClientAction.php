@@ -7,6 +7,7 @@ use App\Models\Room;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 
 class AssignClientAction extends Action
 {
@@ -38,15 +39,24 @@ class AssignClientAction extends Action
             ])
             ->modalHeading('إضافة حاج للغرفة')
             ->action(function (Room $record, array $data) {
-                if ($record->occupied >= $record->capacity) {
-                    Notification::make()->title('الغرفة ممتلئة')->danger()->send();
+                $updated = DB::transaction(function () use ($record, $data) {
+                    $room = Room::lockForUpdate()->find($record->id);
 
-                    return;
+                    if ($room->occupied >= $room->capacity) {
+                        return false;
+                    }
+
+                    Booking::where('id', $data['booking_id'])->update(['room_id' => $room->id]);
+                    $room->increment('occupied');
+
+                    return true;
+                });
+
+                if ($updated) {
+                    Notification::make()->title('تمت الإضافة')->success()->send();
+                } else {
+                    Notification::make()->title('الغرفة ممتلئة')->danger()->send();
                 }
-                Booking::where('id', $data['booking_id'])
-                    ->update(['room_id' => $record->id]);
-                $record->increment('occupied');
-                Notification::make()->title('تمت الإضافة')->success()->send();
             });
     }
 }

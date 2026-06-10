@@ -125,4 +125,7 @@ return [
 
     'editor' => 'vscode',
 
+    'currency' => env('APP_CURRENCY', 'EGP'),
+    'currency_locale' => env('APP_CURRENCY_LOCALE', 'en'),
+
 ];

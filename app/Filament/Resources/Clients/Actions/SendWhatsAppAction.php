@@ -18,7 +18,25 @@ class SendWhatsAppAction extends Action
         $this->label('واتساب')
             ->icon('heroicon-o-chat-bubble-left-ellipsis')
             ->color('success')
-            ->url(fn ($record) => 'https://wa.me/'.$record->phone)
+            ->url(function ($record): ?string {
+                $phone = $record->phone;
+
+                if (blank($phone)) {
+                    return null;
+                }
+
+                $phone = preg_replace('/[\s\-]/', '', $phone);
+
+                if (str_starts_with($phone, '+20')) {
+                    return 'https://wa.me/'.$phone;
+                }
+
+                if (str_starts_with($phone, '0')) {
+                    return 'https://wa.me/20'.$phone;
+                }
+
+                return null;
+            })
             ->openUrlInNewTab();
     }
 }
