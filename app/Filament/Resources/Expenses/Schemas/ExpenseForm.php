@@ -59,6 +59,7 @@ class ExpenseForm
                             ->label('تاريخ الدفع')
                             ->required()
                             ->default(now())
+                            ->maxDate(now())
                             ->native(false),
                         Select::make('paid_by')
                             ->label('مدفوع بواسطة')

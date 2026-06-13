@@ -29,6 +29,8 @@ class SafeResource extends Resource
 
     protected static ?string $navigationLabel = 'الخزائن';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $recordTitleAttribute = 'code';
 
     protected static ?string $modelLabel = 'خزينة';

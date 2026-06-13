@@ -69,6 +69,6 @@ class HotelResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'city'];
+        return ['name'];
     }
 }

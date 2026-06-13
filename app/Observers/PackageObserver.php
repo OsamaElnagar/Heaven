@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Enums\PackageType;
 use App\Models\Package;
 
 class PackageObserver
@@ -17,7 +16,7 @@ class PackageObserver
         }
 
         if (
-            $package->type === PackageType::HAJJ
+            $package->type && $package->type->slug === 'hajj'
             && (int) $package->season_year < (int) now()->year
         ) {
             $package->is_active = false;

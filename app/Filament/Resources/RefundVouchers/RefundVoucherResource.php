@@ -28,9 +28,9 @@ class RefundVoucherResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'الخزينة والسندات';
 
-    protected static ?int $navigationSort = 3;
-
     protected static ?string $navigationLabel = 'سندات الاسترداد';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'number';
 

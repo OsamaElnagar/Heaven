@@ -73,7 +73,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">النوع</p>
-                        <flux:badge variant="solid" color="zinc" size="sm">{{ $booking->package->type->getLabel() }}
+                        <flux:badge variant="solid" color="zinc" size="sm">{{ $booking->package->type?->name_ar ?? '—' }}
                         </flux:badge>
                     </div>
                     <div>

@@ -30,6 +30,7 @@ class SuppliersTable
                     ->sortable(),
                 TextColumn::make('country')
                     ->label('البلد')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('city')
                     ->label('المدينة')
@@ -66,6 +67,7 @@ class SuppliersTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name');
     }
 }

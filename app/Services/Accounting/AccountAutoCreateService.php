@@ -6,7 +6,9 @@ use App\Enums\AccountClass;
 use App\Enums\AccountNormalBalance;
 use App\Enums\AccountType;
 use App\Models\Account;
+use App\Models\Agent;
 use App\Models\BankAccount;
+use App\Models\Branch;
 use App\Models\Client;
 use App\Models\Employee;
 use App\Models\Safe;
@@ -20,6 +22,8 @@ class AccountAutoCreateService
         Employee::class => '2231',
         Safe::class => '1231',
         BankAccount::class => '1233',
+        Branch::class => '2233',
+        Agent::class => '2234',
     ];
 
     private const PARENT_INHERITANCE = [
@@ -28,6 +32,8 @@ class AccountAutoCreateService
         Employee::class => ['class' => AccountClass::LIABILITIES, 'normal' => AccountNormalBalance::CREDIT],
         Safe::class => ['class' => AccountClass::ASSETS, 'normal' => AccountNormalBalance::DEBIT],
         BankAccount::class => ['class' => AccountClass::ASSETS, 'normal' => AccountNormalBalance::DEBIT],
+        Branch::class => ['class' => AccountClass::LIABILITIES, 'normal' => AccountNormalBalance::CREDIT],
+        Agent::class => ['class' => AccountClass::LIABILITIES, 'normal' => AccountNormalBalance::CREDIT],
     ];
 
     public function createFor(object $party): ?Account
@@ -67,7 +73,7 @@ class AccountAutoCreateService
         $name = $party->name ?? '';
 
         return match ($party::class) {
-            Client::class, Supplier::class, Employee::class, Safe::class => "{$code} - {$name}",
+            Client::class, Supplier::class, Employee::class, Safe::class, Branch::class, Agent::class => "{$code} - {$name}",
             BankAccount::class => ($party->bank_name ?? 'Bank').' - '.($party->account_number ?? ''),
         };
     }

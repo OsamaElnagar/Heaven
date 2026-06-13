@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Rooms\Schemas;
 
 use App\Enums\RoomType;
+use App\Filament\Resources\Hotels\Schemas\HotelForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,8 @@ class RoomForm
                         Select::make('hotel_id')
                             ->label('الفندق')
                             ->relationship('hotel', 'name')
+                            ->createOptionForm(fn ($schema) => HotelForm::configure($schema))
+                            ->editOptionForm(fn ($schema) => HotelForm::configure($schema))
                             ->required()
                             ->searchable()
                             ->preload()
@@ -42,8 +45,8 @@ class RoomForm
                             ->required()
                             ->native(false)
                             ->live()
-                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                $capacity = match (RoomType::tryFrom($state)) {
+                            ->afterStateUpdated(function (Set $set, RoomType|string|null $state) {
+                                $capacity = match ($state instanceof RoomType ? $state : RoomType::tryFrom($state)) {
                                     RoomType::SINGLE => 1,
                                     RoomType::DOUBLE => 2,
                                     RoomType::TRIPLE => 3,

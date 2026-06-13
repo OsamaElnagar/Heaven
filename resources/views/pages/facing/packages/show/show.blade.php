@@ -13,8 +13,8 @@
     <div class="mb-8">
         <div class="mb-3 flex flex-wrap items-center gap-3">
             <flux:badge variant="solid"
-                color="{{ $package->type === App\Enums\PackageType::HAJJ ? 'warning' : 'success' }}" size="lg">
-                {{ $package->type->getLabel() }}
+                color="{{ $package->type?->color ?? 'gray' }}" size="lg">
+                {{ $package->type?->name_ar ?? '—' }}
             </flux:badge>
             <flux:badge variant="subtle" color="{{ match ($package->grade) {
     App\Enums\PackageGrade::ECONOMY => 'zinc',

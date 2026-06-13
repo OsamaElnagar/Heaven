@@ -138,7 +138,7 @@ class DatabaseSeeder extends Seeder
             $selectedHotels = collect($hotels)->random(fake()->numberBetween(1, 3));
             foreach ($selectedHotels as $hotel) {
                 $package->hotels()->attach($hotel->id, [
-                    'city' => $hotel->city,
+                    'city' => $hotel->city?->name ?? 'Unknown',
                     'nights' => fake()->numberBetween(3, 7),
                     'cost_per_person' => fake()->numberBetween(1000, 5000),
                 ]);

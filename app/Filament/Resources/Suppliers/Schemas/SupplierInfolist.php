@@ -23,7 +23,7 @@ class SupplierInfolist
                             ->label('البلد'),
                         TextEntry::make('city')
                             ->label('المدينة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
 
@@ -31,13 +31,13 @@ class SupplierInfolist
                     ->components([
                         TextEntry::make('contact_person')
                             ->label('الشخص المسؤول')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('phone')
                             ->label('رقم الهاتف')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('email')
                             ->label('البريد الإلكتروني')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
             ]);

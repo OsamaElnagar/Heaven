@@ -2,10 +2,13 @@
 
 namespace App\Observers;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
+use App\Enums\CommissionStatus;
 use App\Enums\ExpenseStatus;
 use App\Enums\VisaStatus;
 use App\Models\Booking;
+use App\Models\Commission;
 use App\Models\Package;
 use App\Models\Visa;
 use Carbon\CarbonImmutable;
@@ -65,11 +68,49 @@ class BookingObserver
                     'status' => VisaStatus::NOT_APPLIED,
                 ]);
             }
+
+            $this->createCommission($booking);
         }
 
         if ($original?->value === BookingStatus::CONFIRMED->value && $current === BookingStatus::CANCELLED) {
             $this->decrementReservedSeats($booking);
         }
+    }
+
+    /**
+     * Create a commission record if the booking was made through a branch or agent.
+     */
+    protected function createCommission(Booking $booking): void
+    {
+        if ($booking->channel === BookingChannel::DIRECT) {
+            return;
+        }
+
+        $rate = match ($booking->channel) {
+            BookingChannel::BRANCH => $booking->branch?->commission_percentage,
+            BookingChannel::AGENT => $booking->agent?->commission_percentage,
+            default => 0,
+        };
+
+        $rate = (float) ($rate ?? 0);
+
+        if ($rate <= 0) {
+            return;
+        }
+
+        $amount = ($booking->net_price * $rate) / 100;
+
+        Commission::withoutEvents(function () use ($booking, $rate, $amount) {
+            Commission::create([
+                'booking_id' => $booking->id,
+                'branch_id' => $booking->channel === BookingChannel::BRANCH ? $booking->branch_id : null,
+                'agent_id' => $booking->channel === BookingChannel::AGENT ? $booking->agent_id : null,
+                'commission_type' => 'percentage',
+                'commission_rate' => $rate,
+                'amount' => $amount,
+                'status' => CommissionStatus::PENDING,
+            ]);
+        });
     }
 
     /**

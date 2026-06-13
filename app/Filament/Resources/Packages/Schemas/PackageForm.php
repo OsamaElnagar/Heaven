@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Packages\Schemas;
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
@@ -26,14 +25,17 @@ class PackageForm
                         TextInput::make('name')
                             ->label('الاسم')
                             ->required(),
-                        Select::make('type')
+                        Select::make('type_id')
                             ->label('النوع')
-                            ->options(PackageType::class)
+                            ->relationship('type', 'name_ar')
                             ->required()
+                            ->searchable()
+                            ->preload()
                             ->native(false),
                         Select::make('grade')
                             ->label('الدرجة')
                             ->options(PackageGrade::class)
+                            ->default(PackageGrade::STANDARD)
                             ->required()
                             ->native(false),
                         TextInput::make('season_year')
@@ -118,6 +120,9 @@ class PackageForm
                             ->dehydrated(false),
                         Toggle::make('is_active')
                             ->label('نشط')
+                            ->default(true),
+                        Toggle::make('front_office_visible')
+                            ->label('ظاهرة للمكتب الأمامي')
                             ->default(true),
                     ])
                     ->columns(2)

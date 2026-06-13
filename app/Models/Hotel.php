@@ -14,10 +14,12 @@ class Hotel extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $with = ['city'];
+
     protected $fillable = [
         'supplier_id',
         'name',
-        'city',
+        'city_id',
         'stars',
         'distance_to_haram',
         'notes',
@@ -26,6 +28,11 @@ class Hotel extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function rooms(): HasMany

@@ -40,7 +40,7 @@ class EmployeeInfolist
                         TextEntry::make('left_at')
                             ->label('تاريخ ترك العمل')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         IconEntry::make('is_active')
                             ->label('نشط')
                             ->boolean(),
@@ -54,7 +54,7 @@ class EmployeeInfolist
                             ->placeholder('غير مرتبط'),
                         TextEntry::make('user.email')
                             ->label('البريد الإلكتروني')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
             ]);

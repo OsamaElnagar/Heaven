@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
 use App\Models\Package;
+use App\Models\PackageType;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -37,7 +37,7 @@ class extends Component
 
     public function types(): array
     {
-        return collect(PackageType::cases())->map(fn ($t) => ['value' => $t->value, 'label' => $t->getLabel()])->toArray();
+        return PackageType::all()->map(fn ($t) => ['value' => (string) $t->id, 'label' => $t->name_ar])->toArray();
     }
 
     public function grades(): array
@@ -60,7 +60,7 @@ class extends Component
     {
         return Package::query()
             ->where('is_active', true)
-            ->when($this->type, fn ($q) => $q->where('type', $this->type))
+            ->when($this->type, fn ($q) => $q->whereHas('type', fn ($sub) => $sub->where('slug', $this->type)->orWhere('id', $this->type)))
             ->when($this->grade, fn ($q) => $q->where('grade', $this->grade))
             ->when($this->year, fn ($q) => $q->where('season_year', $this->year))
             ->when($this->minPrice > 0, fn ($q) => $q->where('base_price', '>=', $this->minPrice))

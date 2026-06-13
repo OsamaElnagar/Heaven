@@ -29,6 +29,8 @@ class BankAccountResource extends Resource
 
     protected static ?string $navigationLabel = 'الحسابات البنكية';
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $recordTitleAttribute = 'code';
 
     protected static ?string $modelLabel = 'حساب بنكي';

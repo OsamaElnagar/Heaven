@@ -5,6 +5,11 @@ namespace App\Filament\Resources\ReceiptVouchers\Schemas;
 use App\Enums\PayerType;
 use App\Enums\PaymentType;
 use App\Enums\VoucherPaymentMethod;
+use App\Filament\Resources\Bookings\BookingResource;
+use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Employees\EmployeeResource;
+use App\Filament\Resources\Suppliers\SupplierResource;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -14,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class ReceiptVoucherForm
 {
@@ -37,7 +43,13 @@ class ReceiptVoucherForm
                             ->options(VoucherPaymentMethod::class)
                             ->required()
                             ->default('safe')
-                            ->live(),
+                            ->live()
+                            ->helperText(fn (Get $get): ?string => match ($get('receipt_method')) {
+                                'safe' => 'التحصيل نقداً في الخزينة',
+                                'bank' => 'إيداع بنكي مباشر',
+                                'cheque' => 'استلام شيك',
+                                default => null,
+                            }),
                         Select::make('safe_id')
                             ->label('الخزينة')
                             ->relationship('safe', 'name')
@@ -73,29 +85,61 @@ class ReceiptVoucherForm
                             ->relationship('client', 'name')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT),
+                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT)
+                            ->hintActions([
+                                Action::make('viewClient')
+                                    ->label('عرض العميل')
+                                    ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => ClientResource::getUrl('edit', ['record' => $get('client_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('booking_id')
                             ->label('الحجز')
                             ->relationship('booking', 'reference')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT),
+                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT)
+                            ->hintActions([
+                                Action::make('viewBooking')
+                                    ->label('عرض الحجز')
+                                    ->visible(fn (Get $get): bool => (bool) $get('booking_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => BookingResource::getUrl('edit', ['record' => $get('booking_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('payment_type')
                             ->label('نوع الدفعة')
                             ->options(PaymentType::class)
                             ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT),
                         Select::make('supplier_id')
                             ->label('المورد')
-                            ->relationship('supplier', 'name')
+                            ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::SUPPLIER),
+                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::SUPPLIER)
+                            ->hintActions([
+                                Action::make('viewSupplier')
+                                    ->label('عرض المورد')
+                                    ->visible(fn (Get $get): bool => (bool) $get('supplier_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => SupplierResource::getUrl('edit', ['record' => $get('supplier_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('employee_id')
                             ->label('الموظف')
                             ->relationship('employee', 'name')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::EMPLOYEE),
+                            ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::EMPLOYEE)
+                            ->hintActions([
+                                Action::make('viewEmployee')
+                                    ->label('عرض الموظف')
+                                    ->visible(fn (Get $get): bool => (bool) $get('employee_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => EmployeeResource::getUrl('edit', ['record' => $get('employee_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         TextInput::make('payer_name')
                             ->label('اسم الدافع')
                             ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::OTHER),

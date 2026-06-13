@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Hotels\Schemas;
 
+use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -21,18 +22,19 @@ class HotelForm
                             ->required(),
                         Select::make('supplier_id')
                             ->label('المورد')
-                            ->relationship('supplier', 'name')
+                            ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
+                            ->createOptionForm(fn ($schema) => SupplierForm::configure($schema))
+                            ->editOptionForm(fn ($schema) => SupplierForm::configure($schema))
                             ->required()
                             ->searchable()
                             ->preload()
                             ->native(false),
-                        Select::make('city')
+                        Select::make('city_id')
                             ->label('المدينة')
-                            ->options([
-                                'makkah' => 'مكة المكرمة',
-                                'madinah' => 'المدينة المنورة',
-                            ])
+                            ->relationship('city', 'name_ar')
                             ->required()
+                            ->searchable()
+                            ->preload()
                             ->native(false),
                         Select::make('stars')
                             ->label('التصنيف (نجوم)')

@@ -3,7 +3,6 @@
 namespace App\Filament\Pages\Reports;
 
 use App\Enums\ExpenseStatus;
-use App\Enums\PackageType;
 use App\Filament\Pages\Reports\Widgets\PackageProfitabilitySummaryWidget;
 use App\Filament\Resources\Packages\PackageResource;
 use App\Models\Booking;
@@ -52,7 +51,7 @@ class PackageProfitabilityReport extends Page implements HasTable
     protected function getHeaderWidgetsData(): array
     {
         return [
-            'type' => $this->tableFilters['type']['value'] ?? null,
+            'type' => $this->tableFilters['type_id']['value'] ?? null,
         ];
     }
 
@@ -84,7 +83,7 @@ class PackageProfitabilityReport extends Page implements HasTable
             columns: ['الباقة', 'النوع', 'عدد الحجوزات', 'إجمالي قيمة', 'المحصل', 'المستحق', 'نسبة التحصيل'],
             rows: $rows->map(fn (Package $package) => [
                 $package->name,
-                $package->type?->getLabel() ?? '-',
+                $package->type?->name_ar ?? '-',
                 (string) $package->bookings_count,
                 number_format($package->total_revenue),
                 number_format($package->collected),
@@ -158,15 +157,15 @@ class PackageProfitabilityReport extends Page implements HasTable
             ])
             ->defaultSort('total_revenue', 'desc')
             ->filters([
-                SelectFilter::make('type')
+                SelectFilter::make('type_id')
                     ->label('نوع الباقة')
-                    ->options(PackageType::class),
+                    ->relationship('type', 'name_ar'),
             ]);
     }
 
     public function getProfitabilitySummary(): array
     {
-        $type = $this->tableFilters['type']['value'] ?? null;
+        $type = $this->tableFilters['type_id']['value'] ?? null;
 
         return PackageProfitabilitySummaryWidget::computeSummary($type);
     }

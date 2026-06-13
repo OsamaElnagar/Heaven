@@ -75,9 +75,11 @@ class EmployeeForm
                             ->label('تاريخ التعيين')
                             ->required()
                             ->default(now())
+                            ->maxDate(now())
                             ->native(false),
                         DatePicker::make('left_at')
                             ->label('تاريخ ترك العمل')
+                            ->maxDate(now())
                             ->native(false),
                         Toggle::make('is_active')
                             ->label('نشط')

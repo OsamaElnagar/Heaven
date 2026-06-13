@@ -30,6 +30,8 @@ class ReceiptVoucherResource extends Resource
 
     protected static ?string $navigationLabel = 'سندات القبض';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $recordTitleAttribute = 'number';
 
     protected static ?string $modelLabel = 'سند قبض';

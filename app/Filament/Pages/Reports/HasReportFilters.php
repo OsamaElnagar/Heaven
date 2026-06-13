@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Reports;
 
 use App\Models\FiscalYear;
+use App\Models\PackageType;
 
 trait HasReportFilters
 {
@@ -36,9 +37,9 @@ trait HasReportFilters
             $filters[] = 'حتى '.$asOfDate;
         }
 
-        $type = $this->tableFilters['type']['value'] ?? null;
-        if ($type) {
-            $filters[] = 'النوع: '.$type;
+        $typeId = $this->tableFilters['type_id']['value'] ?? null;
+        if ($typeId) {
+            $filters[] = 'النوع: '.PackageType::find($typeId)?->name_ar;
         }
 
         return $filters !== null && $filters !== [] ? implode(' | ', $filters) : null;

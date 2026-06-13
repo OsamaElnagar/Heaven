@@ -40,7 +40,7 @@
         <flux:card class="mb-8">
             <div class="flex flex-wrap items-center gap-3">
                 <flux:heading size="lg" class="text-white">{{ $package->name }}</flux:heading>
-                <flux:badge variant="solid" color="zinc">{{ $package->type->getLabel() }}</flux:badge>
+                <flux:badge variant="solid" color="zinc">{{ $package->type?->name_ar ?? '—' }}</flux:badge>
                 <flux:badge variant="solid" color="zinc">{{ $package->grade->getLabel() }}</flux:badge>
                 <span class="text-sm text-zinc-400">
                     <flux:icon.calendar-days class="inline size-4 me-1" />

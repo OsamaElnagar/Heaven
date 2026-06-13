@@ -26,8 +26,8 @@
 
                     <div class="mb-4 flex flex-wrap gap-2">
                         <flux:badge variant="solid"
-                            color="{{ $package->type === App\Enums\PackageType::HAJJ ? 'warning' : 'success' }}">
-                            {{ $package->type->getLabel() }}
+                            color="{{ $package->type?->color ?? 'gray' }}">
+                            {{ $package->type?->name_ar ?? '—' }}
                         </flux:badge>
                         <flux:badge variant="subtle" color="{{ match ($package->grade) {
                             App\Enums\PackageGrade::ECONOMY => 'zinc',

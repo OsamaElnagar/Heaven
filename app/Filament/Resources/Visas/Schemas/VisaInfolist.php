@@ -23,7 +23,7 @@ class VisaInfolist
                             ->badge(),
                         TextEntry::make('visa_number')
                             ->label('رقم التأشيرة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
 
@@ -32,15 +32,15 @@ class VisaInfolist
                         TextEntry::make('applied_at')
                             ->label('تاريخ التقديم')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('approved_at')
                             ->label('تاريخ الموافقة')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('expiry_date')
                             ->label('تاريخ الانتهاء')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
 
@@ -48,11 +48,11 @@ class VisaInfolist
                     ->components([
                         TextEntry::make('rejection_reason')
                             ->label('سبب الرفض')
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                         TextEntry::make('notes')
                             ->label('ملاحظات')
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                     ]),
             ]);

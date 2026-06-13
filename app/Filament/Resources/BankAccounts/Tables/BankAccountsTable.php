@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -21,10 +22,12 @@ class BankAccountsTable
                 TextColumn::make('code')
                     ->label('الرقم')
                     ->searchable()
-                    ->copyable(),
+                    ->copyable()
+                    ->sortable(),
                 TextColumn::make('bank_name')
                     ->label('اسم البنك')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('branch')
                     ->label('الفرع')
                     ->searchable(),
@@ -36,7 +39,8 @@ class BankAccountsTable
                     ->searchable(),
                 TextColumn::make('account.name')
                     ->label('حساب الأستاذ')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—'),
                 ToggleColumn::make('is_active')
                     ->label('نشط'),
                 TextColumn::make('created_at')
@@ -49,6 +53,7 @@ class BankAccountsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -57,6 +62,7 @@ class BankAccountsTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('code');
     }
 }

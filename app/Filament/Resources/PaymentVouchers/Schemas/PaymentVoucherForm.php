@@ -4,6 +4,12 @@ namespace App\Filament\Resources\PaymentVouchers\Schemas;
 
 use App\Enums\PayeeType;
 use App\Enums\VoucherPaymentMethod;
+use App\Filament\Resources\Agents\AgentResource;
+use App\Filament\Resources\Branches\BranchResource;
+use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Employees\EmployeeResource;
+use App\Filament\Resources\Suppliers\SupplierResource;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -14,6 +20,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class PaymentVoucherForm
 {
@@ -37,7 +44,13 @@ class PaymentVoucherForm
                             ->options(VoucherPaymentMethod::class)
                             ->required()
                             ->default('safe')
-                            ->live(),
+                            ->live()
+                            ->helperText(fn (Get $get): ?string => match ($get('payment_method')) {
+                                'safe' => 'الصرف نقداً من الخزينة',
+                                'bank' => 'تحويل بنكي مباشر',
+                                'cheque' => 'إصدار شيك',
+                                default => null,
+                            }),
                         Select::make('safe_id')
                             ->label('الخزينة')
                             ->relationship('safe', 'name')
@@ -70,22 +83,76 @@ class PaymentVoucherForm
                             ->live(),
                         Select::make('supplier_id')
                             ->label('المورد')
-                            ->relationship('supplier', 'name')
+                            ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::SUPPLIER),
+                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::SUPPLIER)
+                            ->hintActions([
+                                Action::make('viewSupplier')
+                                    ->label('عرض المورد')
+                                    ->visible(fn (Get $get): bool => (bool) $get('supplier_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => SupplierResource::getUrl('edit', ['record' => $get('supplier_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('client_id')
                             ->label('العميل')
                             ->relationship('client', 'name')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::CLIENT),
+                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::CLIENT)
+                            ->hintActions([
+                                Action::make('viewClient')
+                                    ->label('عرض العميل')
+                                    ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => ClientResource::getUrl('edit', ['record' => $get('client_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('employee_id')
                             ->label('الموظف')
                             ->relationship('employee', 'name')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::EMPLOYEE),
+                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::EMPLOYEE)
+                            ->hintActions([
+                                Action::make('viewEmployee')
+                                    ->label('عرض الموظف')
+                                    ->visible(fn (Get $get): bool => (bool) $get('employee_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => EmployeeResource::getUrl('edit', ['record' => $get('employee_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
+                        Select::make('branch_id')
+                            ->label('الفرع')
+                            ->relationship('branch', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::BRANCH)
+                            ->hintActions([
+                                Action::make('viewBranch')
+                                    ->label('عرض الفرع')
+                                    ->visible(fn (Get $get): bool => (bool) $get('branch_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => BranchResource::getUrl('edit', ['record' => $get('branch_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
+                        Select::make('agent_id')
+                            ->label('الوكيل')
+                            ->relationship('agent', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::AGENT)
+                            ->hintActions([
+                                Action::make('viewAgent')
+                                    ->label('عرض الوكيل')
+                                    ->visible(fn (Get $get): bool => (bool) $get('agent_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => AgentResource::getUrl('edit', ['record' => $get('agent_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         TextInput::make('payee_name')
                             ->label('اسم المستلم')
                             ->visible(fn (Get $get): bool => $get('payee_type') === PayeeType::OTHER),

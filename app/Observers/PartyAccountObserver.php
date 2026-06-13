@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Models\Agent;
 use App\Models\BankAccount;
+use App\Models\Branch;
 use App\Models\Client;
 use App\Models\Employee;
 use App\Models\Safe;
@@ -13,7 +15,7 @@ class PartyAccountObserver
 {
     public function __construct(private readonly AccountAutoCreateService $service) {}
 
-    public function creating(Client|Supplier|Employee|Safe|BankAccount $party): void
+    public function creating(Client|Supplier|Employee|Safe|BankAccount|Branch|Agent $party): void
     {
         if ($party->account_id) {
             return;

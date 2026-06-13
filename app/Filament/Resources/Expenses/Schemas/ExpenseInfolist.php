@@ -16,7 +16,7 @@ class ExpenseInfolist
                     ->components([
                         TextEntry::make('trip.name')
                             ->label('الرحلة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('category')
                             ->label('الفئة')
                             ->badge(),
@@ -38,7 +38,7 @@ class ExpenseInfolist
                             ->date(),
                         TextEntry::make('paidBy.name')
                             ->label('مدفوع بواسطة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
             ]);

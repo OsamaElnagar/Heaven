@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Visas\Tables;
 
 use App\Enums\VisaStatus;
+use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\Visas\Actions\BulkSubmitAction;
 use App\Filament\Resources\Visas\Actions\MarkApprovedAction;
 use App\Filament\Resources\Visas\Actions\MarkRejectedAction;
@@ -34,7 +35,7 @@ class VisasTable
                 TextColumn::make('visa_number')
                     ->label('رقم التأشيرة')
                     ->searchable()
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('applied_at')
                     ->label('تاريخ التقديم')
                     ->date()
@@ -57,6 +58,8 @@ class VisasTable
                 SelectFilter::make('booking.trip_id')
                     ->label('الرحلة')
                     ->relationship('booking.trip', 'name'),
+                DateRangeFilter::make('applied_at')
+                    ->label('تاريخ التقديم'),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -68,6 +71,7 @@ class VisasTable
                 BulkActionGroup::make([
                     BulkSubmitAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('applied_at', 'desc');
     }
 }

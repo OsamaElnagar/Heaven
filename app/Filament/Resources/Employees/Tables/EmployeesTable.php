@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Employees\Tables;
 
 use App\Enums\SalaryType;
+use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\Employees\Actions\DeactivateEmployeeAction;
 use App\Models\Employee;
 use Filament\Actions\BulkActionGroup;
@@ -67,6 +68,8 @@ class EmployeesTable
                         '1' => 'نشط',
                         '0' => 'غير نشط',
                     ]),
+                DateRangeFilter::make('hired_at')
+                    ->label('تاريخ التعيين'),
                 TrashedFilter::make(),
             ])
             ->recordActions([
@@ -80,6 +83,7 @@ class EmployeesTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('hired_at', 'desc');
     }
 }

@@ -24,7 +24,7 @@ class PackageProfitabilitySummaryWidget extends BaseWidget
             ->with(['bookings.receiptVouchers', 'bookings.refundVouchers']);
 
         if ($type) {
-            $query->where('type', $type);
+            $query->where('type_id', $type);
         }
 
         $totalPackages = 0;

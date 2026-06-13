@@ -46,7 +46,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold">البريد الإلكتروني</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400">info@heaven-travel.com</p>
+                    <p class="text-zinc-600 dark:text-zinc-400">{{config('app.email')}}</p>
                 </div>
             </div>
 

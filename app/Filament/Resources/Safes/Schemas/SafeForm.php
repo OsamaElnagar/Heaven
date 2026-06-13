@@ -29,6 +29,7 @@ class SafeForm
                 Select::make('account_id')
                     ->label('حساب الأستاذ')
                     ->relationship('account', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")
                     ->searchable()
                     ->preload()
                     ->options(fn () => Account::where('type', 'detail')

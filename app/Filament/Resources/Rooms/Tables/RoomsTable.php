@@ -6,10 +6,13 @@ use App\Enums\RoomType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class RoomsTable
@@ -21,15 +24,18 @@ class RoomsTable
                 TextColumn::make('room_number')
                     ->label('رقم الغرفة')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->copyable(),
                 TextColumn::make('hotel.name')
                     ->label('الفندق')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('trip.name')
                     ->label('الرحلة')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('type')
                     ->label('النوع')
                     ->badge()
@@ -51,10 +57,15 @@ class RoomsTable
                     ->options(RoomType::class),
                 SelectFilter::make('hotel_id')
                     ->label('الفندق')
-                    ->relationship('hotel', 'name'),
+                    ->relationship('hotel', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('trip_id')
                     ->label('الرحلة')
-                    ->relationship('trip', 'name'),
+                    ->relationship('trip', 'name')
+                    ->searchable()
+                    ->preload(),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -63,6 +74,8 @@ class RoomsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }

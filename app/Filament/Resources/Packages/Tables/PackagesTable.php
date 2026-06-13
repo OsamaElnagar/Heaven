@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Packages\Tables;
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
+use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\Packages\Actions\ToggleActiveAction;
 use App\Models\Package;
 use Filament\Actions\BulkActionGroup;
@@ -29,9 +29,10 @@ class PackagesTable
                     ->label('الاسم')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('type')
+                TextColumn::make('type.name_ar')
                     ->label('النوع')
                     ->badge()
+                    ->color(fn ($record) => $record->type?->color ?? 'gray')
                     ->sortable(),
                 TextColumn::make('grade')
                     ->label('الدرجة')
@@ -65,9 +66,9 @@ class PackagesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('type')
+                SelectFilter::make('type_id')
                     ->label('النوع')
-                    ->options(PackageType::class),
+                    ->relationship('type', 'name_ar'),
                 SelectFilter::make('grade')
                     ->label('الدرجة')
                     ->options(PackageGrade::class),
@@ -79,6 +80,8 @@ class PackagesTable
                             ->orderByDesc('season_year')
                             ->pluck('season_year', 'season_year')
                     ),
+                DateRangeFilter::make('departure_date')
+                    ->label('تاريخ المغادرة'),
                 TrashedFilter::make(),
             ])
             ->recordActions([
@@ -92,6 +95,7 @@ class PackagesTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('departure_date', 'desc');
     }
 }

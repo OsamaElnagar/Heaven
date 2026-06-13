@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
 use App\Enums\RoomType;
 use App\Observers\BookingObserver;
@@ -27,6 +28,9 @@ class Booking extends Model
         'room_id',
         'status',
         'room_type',
+        'channel',
+        'branch_id',
+        'agent_id',
         'total_price',
         'discount',
         'net_price',
@@ -39,6 +43,7 @@ class Booking extends Model
     protected $casts = [
         'status' => BookingStatus::class,
         'room_type' => RoomType::class,
+        'channel' => BookingChannel::class,
     ];
 
     public function client(): BelongsTo
@@ -79,5 +84,20 @@ class Booking extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
     }
 }

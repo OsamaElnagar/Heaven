@@ -36,7 +36,8 @@ class JournalEntriesTable
                 TextColumn::make('fiscalYear.name')
                     ->label('السنة المالية')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('—'),
                 TextColumn::make('status')
                     ->label('الحالة')
                     ->badge()
@@ -63,7 +64,8 @@ class JournalEntriesTable
                     ->label('أنشأه')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('—'),
                 TextColumn::make('posted_at')
                     ->label('تاريخ الترحيل')
                     ->dateTime()
@@ -82,7 +84,9 @@ class JournalEntriesTable
                     ->options(JournalEntrySourceType::class),
                 SelectFilter::make('fiscal_year_id')
                     ->label('السنة المالية')
-                    ->relationship('fiscalYear', 'name'),
+                    ->relationship('fiscalYear', 'name')
+                    ->searchable()
+                    ->preload(),
                 TrashedFilter::make(),
             ])
             ->recordActions([

@@ -41,11 +41,13 @@ class ClientForm
                             ->label('الجنس')
                             ->options(Gender::class)
                             ->required()
+                            ->default(Gender::MALE)
                             ->native(false),
                         Select::make('marital_status')
                             ->label('الحالة الاجتماعية')
                             ->options(MaritalStatus::class)
                             ->required()
+                            ->default(MaritalStatus::SINGLE)
                             ->native(false),
                         TextInput::make('blood_type')
                             ->label('فصيلة الدم'),

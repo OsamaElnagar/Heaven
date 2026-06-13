@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -34,15 +35,16 @@ class ReceiptVouchersTable
                 TextColumn::make('booking.reference')
                     ->label('الحجز')
                     ->searchable()
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('payment_type')
                     ->label('نوع الدفعة')
                     ->badge()
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->numeric()
-                    ->sortable(),
+                    ->money('EGP')
+                    ->sortable()
+                    ->summarize(Sum::make()->label('الإجمالي')->money('EGP')),
                 TextColumn::make('payer_type')
                     ->label('نوع الدافع')
                     ->badge()
@@ -54,14 +56,19 @@ class ReceiptVouchersTable
                     ->sortable(),
                 TextColumn::make('safe.name')
                     ->label('الخزنة')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('bankAccount.bank_name')
                     ->label('الحساب البنكي')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('description')
                     ->label('البيان')
                     ->searchable()
-                    ->limit(30),
+                    ->limit(30)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('voucher_date', 'desc')
             ->filters([

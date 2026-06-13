@@ -109,6 +109,9 @@ class ChartOfAccountsSeeder extends Seeder
             ['code' => '223', 'name' => 'مصروفات مستحقة', 'name_en' => 'Accrued Expenses', 'class' => 'liabilities', 'type' => 'header', 'normal_balance' => 'credit', 'parent_code' => '22', 'level' => 3],
             ['code' => '2231', 'name' => 'رواتب مستحقة', 'name_en' => 'Accrued Salaries', 'class' => 'liabilities', 'type' => 'detail', 'normal_balance' => 'credit', 'parent_code' => '223', 'level' => 4, 'is_system' => true],
             ['code' => '2232', 'name' => 'تأمينات اجتماعية مستحقة', 'name_en' => 'Social Insurance Payable', 'class' => 'liabilities', 'type' => 'detail', 'normal_balance' => 'credit', 'parent_code' => '223', 'level' => 4],
+            ['code' => '2233', 'name' => 'عمولات الفروع مستحقة', 'name_en' => 'Branch Commissions Payable', 'class' => 'liabilities', 'type' => 'detail', 'normal_balance' => 'credit', 'parent_code' => '223', 'level' => 4, 'is_system' => true],
+            ['code' => '2234', 'name' => 'عمولات الوكلاء مستحقة', 'name_en' => 'Agent Commissions Payable', 'class' => 'liabilities', 'type' => 'detail', 'normal_balance' => 'credit', 'parent_code' => '223', 'level' => 4, 'is_system' => true],
+            ['code' => '5222', 'name' => 'عمولات الفروع والوكلاء', 'name_en' => 'Branch & Agent Commissions', 'class' => 'expenses', 'type' => 'detail', 'normal_balance' => 'debit', 'parent_code' => '52', 'level' => 3, 'is_system' => true],
 
             // ============================================================
             // CLASS 3 — EQUITY — حقوق الملكية

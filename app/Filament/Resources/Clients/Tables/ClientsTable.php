@@ -26,16 +26,23 @@ class ClientsTable
                     ->sortable(),
                 TextColumn::make('national_id')
                     ->label('الرقم القومي')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->sortable(),
                 TextColumn::make('passport_number')
                     ->label('جواز السفر')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->sortable(),
                 TextColumn::make('phone')
                     ->label('الهاتف')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->sortable(),
                 TextColumn::make('governorate')
                     ->label('المحافظة')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('gender')
                     ->label('الجنس')
                     ->badge()
@@ -75,6 +82,7 @@ class ClientsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }

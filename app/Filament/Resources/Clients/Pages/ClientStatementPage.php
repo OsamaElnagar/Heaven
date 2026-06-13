@@ -122,8 +122,8 @@ class ClientStatementPage extends Page implements HasTable
                 TextColumn::make('visa.status')
                     ->label('التأشيرة')
                     ->badge()
-                    ->placeholder('-'),
+                    ->placeholder('—'),
             ])
-            ->paginate(15);
+            ->paginated();
     }
 }

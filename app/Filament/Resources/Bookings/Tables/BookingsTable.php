@@ -6,12 +6,14 @@ use App\Enums\BookingStatus;
 use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\Bookings\Actions\PrintReceiptAction;
 use App\Filament\Resources\Bookings\Actions\RecordPaymentAction;
+use App\Filament\Resources\Clients\ClientResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -27,15 +29,41 @@ class BookingsTable
                 TextColumn::make('reference')
                     ->label('المرجع')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->copyable(),
                 TextColumn::make('client.name')
                     ->label('العميل')
+                    ->placeholder('—')
+                    ->url(fn ($record) => $record->client
+                        ? ClientResource::getUrl('edit', ['record' => $record->client])
+                        : null, true)
+                    ->icon(Heroicon::ArrowUpRight)
+                    ->color('primary')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('package.name')
                     ->label('الباقة')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
+                TextColumn::make('channel')
+                    ->label('المصدر')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('branch.name')
+                    ->label('الفرع')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('agent.name')
+                    ->label('الوكيل')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->label('الحالة')
                     ->badge()
@@ -67,15 +95,22 @@ class BookingsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('channel')
+                    ->label('المصدر')
+                    ->options(BookingChannel::class),
                 SelectFilter::make('status')
                     ->label('الحالة')
                     ->options(BookingStatus::class),
                 SelectFilter::make('package_id')
                     ->label('الباقة')
-                    ->relationship('package', 'name'),
+                    ->relationship('package', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('trip_id')
                     ->label('الرحلة')
-                    ->relationship('trip', 'name'),
+                    ->relationship('trip', 'name')
+                    ->searchable()
+                    ->preload(),
                 DateRangeFilter::make('due_date'),
                 TrashedFilter::make(),
             ])

@@ -26,6 +26,14 @@ class ExpensesTable
                 TextColumn::make('category')
                     ->label('الفئة')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'office' => 'info',
+                        'marketing' => 'success',
+                        'transport' => 'warning',
+                        'hotel_cost' => 'danger',
+                        'airline_cost' => 'primary',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 TextColumn::make('amount')
                     ->label('المبلغ')
@@ -43,10 +51,12 @@ class ExpensesTable
                 TextColumn::make('trip.name')
                     ->label('الرحلة')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('paidBy.name')
                     ->label('مدفوع بواسطة')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('—'),
             ])
             ->filters([
                 SelectFilter::make('category')
@@ -64,10 +74,14 @@ class ExpensesTable
                     ->options(PaymentMethod::class),
                 SelectFilter::make('trip_id')
                     ->label('الرحلة')
-                    ->relationship('trip', 'name'),
+                    ->relationship('trip', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('paid_by')
                     ->label('مدفوع بواسطة')
-                    ->relationship('paidBy', 'name'),
+                    ->relationship('paidBy', 'name')
+                    ->searchable()
+                    ->preload(),
                 DateRangeFilter::make('paid_at'),
             ])
             ->recordActions([

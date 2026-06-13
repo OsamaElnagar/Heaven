@@ -15,6 +15,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -65,28 +66,30 @@ class RefundVouchersTable
                     }),
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->numeric()
-                    ->sortable(),
+                    ->money('EGP')
+                    ->sortable()
+                    ->summarize(Sum::make()->label('الإجمالي')->money('EGP')),
                 TextColumn::make('payment_method')
                     ->label('طريقة الدفع')
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state?->getLabel()),
                 TextColumn::make('safe.name')
                     ->label('الخزنة')
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('bankAccount.bank_name')
                     ->label('الحساب البنكي')
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('booking.reference')
                     ->label('الحجز')
-                    ->placeholder('-')
+                    ->placeholder('—')
                     ->url(fn ($record) => $record->booking_id
                         ? BookingResource::getUrl('edit', ['record' => $record->booking_id])
                         : null),
                 TextColumn::make('status')
                     ->label('الحالة')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('description')
                     ->label('البيان')
                     ->searchable()

@@ -2,15 +2,21 @@
 
 namespace App\Filament\Resources\Bookings\Schemas;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
 use App\Enums\RoomType;
+use App\Filament\Resources\Clients\ClientResource;
 use App\Filament\Resources\Clients\Schemas\ClientForm;
+use App\Filament\Resources\Packages\PackageResource;
 use App\Filament\Resources\Packages\Schemas\PackageForm;
+use App\Filament\Resources\Rooms\RoomResource;
 use App\Filament\Resources\Rooms\Schemas\RoomForm;
 use App\Filament\Resources\Trips\Schemas\TripForm;
+use App\Filament\Resources\Trips\TripResource;
 use App\Models\Package;
 use App\Models\Trip;
 use App\Services\BookingService;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -19,6 +25,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class BookingForm
 {
@@ -38,7 +45,15 @@ class BookingForm
                             ->editOptionModalHeading('تعديل بيانات العميل')
                             ->searchable()
                             ->preload()
-                            ->native(false),
+                            ->native(false)
+                            ->hintActions([
+                                Action::make('viewClient')
+                                    ->label('عرض العميل')
+                                    ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => ClientResource::getUrl('edit', ['record' => $get('client_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('package_id')
                             ->label('الباقة')
                             ->relationship('package', 'name')
@@ -53,7 +68,15 @@ class BookingForm
                             ->live()
                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
                                 static::updatePricing($set, $get, $state, $get('room_type'));
-                            }),
+                            })
+                            ->hintActions([
+                                Action::make('viewPackage')
+                                    ->label('عرض الباقة')
+                                    ->visible(fn (Get $get): bool => (bool) $get('package_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => PackageResource::getUrl('edit', ['record' => $get('package_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('trip_id')
                             ->label('الرحلة')
                             ->relationship('trip', 'name')
@@ -75,7 +98,15 @@ class BookingForm
                                 if ($tripPackageId !== $get('package_id')) {
                                     $set('trip_id', null);
                                 }
-                            }),
+                            })
+                            ->hintActions([
+                                Action::make('viewTrip')
+                                    ->label('عرض الرحلة')
+                                    ->visible(fn (Get $get): bool => (bool) $get('trip_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => TripResource::getUrl('edit', ['record' => $get('trip_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('room_type')
                             ->label('نوع الغرفة')
                             ->options(RoomType::class)
@@ -85,6 +116,29 @@ class BookingForm
                             ->afterStateUpdated(function (Set $set, Get $get, RoomType|string|null $state) {
                                 static::updatePricing($set, $get, $get('package_id'), $state);
                             }),
+                        Select::make('channel')
+                            ->label('مصدر العميل')
+                            ->options(BookingChannel::class)
+                            ->default(BookingChannel::DIRECT)
+                            ->required()
+                            ->native(false)
+                            ->live(),
+                        Select::make('branch_id')
+                            ->label('الفرع')
+                            ->relationship('branch', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('channel') === BookingChannel::BRANCH)
+                            ->required(fn (Get $get): bool => $get('channel') === BookingChannel::BRANCH),
+                        Select::make('agent_id')
+                            ->label('الوكيل')
+                            ->relationship('agent', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->visible(fn (Get $get): bool => $get('channel') === BookingChannel::AGENT)
+                            ->required(fn (Get $get): bool => $get('channel') === BookingChannel::AGENT),
                         Select::make('status')
                             ->label('الحالة')
                             ->options(BookingStatus::class)
@@ -142,7 +196,15 @@ class BookingForm
                             ->editOptionModalHeading('تعديل بيانات الغرفة')
                             ->searchable()
                             ->preload()
-                            ->native(false),
+                            ->native(false)
+                            ->hintActions([
+                                Action::make('viewRoom')
+                                    ->label('عرض الغرفة')
+                                    ->visible(fn (Get $get): bool => (bool) $get('room_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => RoomResource::getUrl('edit', ['record' => $get('room_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         DatePicker::make('due_date')
                             ->label('تاريخ الاستحقاق')
                             ->native(false),

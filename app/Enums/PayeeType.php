@@ -12,6 +12,8 @@ enum PayeeType: string implements HasColor, HasIcon, HasLabel
     case CLIENT = 'client';
     case SUPPLIER = 'supplier';
     case EMPLOYEE = 'employee';
+    case BRANCH = 'branch';
+    case AGENT = 'agent';
     case OTHER = 'other';
 
     public function getColor(): string|array|null
@@ -20,6 +22,8 @@ enum PayeeType: string implements HasColor, HasIcon, HasLabel
             self::CLIENT => 'info',
             self::SUPPLIER => 'warning',
             self::EMPLOYEE => 'success',
+            self::BRANCH => 'success',
+            self::AGENT => 'warning',
             self::OTHER => 'gray',
         };
     }
@@ -30,6 +34,8 @@ enum PayeeType: string implements HasColor, HasIcon, HasLabel
             self::CLIENT => 'heroicon-o-user-group',
             self::SUPPLIER => 'heroicon-o-shopping-cart',
             self::EMPLOYEE => 'heroicon-o-user',
+            self::BRANCH => 'heroicon-o-building-storefront',
+            self::AGENT => 'heroicon-o-user',
             self::OTHER => 'heroicon-o-ellipsis-horizontal',
         };
     }
@@ -40,6 +46,8 @@ enum PayeeType: string implements HasColor, HasIcon, HasLabel
             self::CLIENT => 'عميل',
             self::SUPPLIER => 'مورد',
             self::EMPLOYEE => 'موظف',
+            self::BRANCH => 'فرع',
+            self::AGENT => 'وكيل',
             self::OTHER => 'أخرى',
         };
     }

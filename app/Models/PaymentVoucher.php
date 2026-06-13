@@ -33,6 +33,8 @@ class PaymentVoucher extends Model
         'client_id',
         'supplier_id',
         'employee_id',
+        'branch_id',
+        'agent_id',
         'payee_name',
         'expense_id',
         'description',
@@ -82,6 +84,16 @@ class PaymentVoucher extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
     public function expense(): BelongsTo
     {
         return $this->belongsTo(Expense::class);
@@ -123,6 +135,8 @@ class PaymentVoucher extends Model
             PayeeType::CLIENT => $this->client?->name ?? 'عميل',
             PayeeType::SUPPLIER => $this->supplier?->name ?? 'مورد',
             PayeeType::EMPLOYEE => $this->employee?->name ?? 'موظف',
+            PayeeType::BRANCH => $this->branch?->name ?? 'فرع',
+            PayeeType::AGENT => $this->agent?->name ?? 'وكيل',
             PayeeType::OTHER => $this->payee_name ?? 'آخر',
             default => '-',
         };

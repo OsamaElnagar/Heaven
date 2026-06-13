@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
+use App\Models\PackageType;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -16,7 +16,7 @@ new class extends Component
     #[Computed]
     public function types(): array
     {
-        return collect(PackageType::cases())->map(fn ($t) => ['value' => $t->value, 'label' => $t->getLabel()])->toArray();
+        return PackageType::all()->map(fn ($t) => ['value' => (string) $t->id, 'label' => $t->name_ar])->toArray();
     }
 
     #[Computed]

@@ -121,7 +121,7 @@ class SupplierBalancesReport extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('city')
                     ->label('المدينة')
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('balance')
                     ->label('الرصيد (ج.م)')
                     ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)

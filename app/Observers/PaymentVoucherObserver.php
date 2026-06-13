@@ -14,5 +14,7 @@ class PaymentVoucherObserver
         $voucher->supplier_id = $payee === 'supplier' ? $voucher->supplier_id : null;
         $voucher->client_id = $payee === 'client' ? $voucher->client_id : null;
         $voucher->employee_id = $payee === 'employee' ? $voucher->employee_id : null;
+        $voucher->branch_id = $payee === 'branch' ? $voucher->branch_id : null;
+        $voucher->agent_id = $payee === 'agent' ? $voucher->agent_id : null;
     }
 }

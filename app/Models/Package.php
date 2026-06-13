@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
 use App\Observers\PackageObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,14 +34,15 @@ class Package extends Model
         'excludes',
         'notes',
         'is_active',
+        'front_office_visible',
     ];
 
     protected $casts = [
-        'type' => PackageType::class,
         'grade' => PackageGrade::class,
         'departure_date' => 'date',
         'return_date' => 'date',
         'is_active' => 'boolean',
+        'front_office_visible' => 'boolean',
     ];
 
     public function trips(): HasMany

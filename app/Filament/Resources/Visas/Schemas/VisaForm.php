@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Visas\Schemas;
 
 use App\Enums\VisaStatus;
+use App\Filament\Resources\Bookings\BookingResource;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -10,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class VisaForm
 {
@@ -25,7 +28,15 @@ class VisaForm
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->native(false),
+                            ->native(false)
+                            ->hintActions([
+                                Action::make('viewBooking')
+                                    ->label('عرض الحجز')
+                                    ->visible(fn (Get $get): bool => (bool) $get('booking_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => BookingResource::getUrl('edit', ['record' => $get('booking_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('status')
                             ->label('الحالة')
                             ->options(VisaStatus::class)
@@ -43,6 +54,7 @@ class VisaForm
                     ->components([
                         DatePicker::make('applied_at')
                             ->label('تاريخ التقديم')
+                            ->maxDate(now())
                             ->native(false),
                         DatePicker::make('approved_at')
                             ->label('تاريخ الموافقة')

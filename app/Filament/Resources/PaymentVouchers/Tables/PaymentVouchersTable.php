@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -33,16 +34,19 @@ class PaymentVouchersTable
                     ->sortable(),
                 TextColumn::make('amount')
                     ->label('المبلغ')
-                    ->numeric()
-                    ->sortable(),
+                    ->money('EGP')
+                    ->sortable()
+                    ->summarize(Sum::make()->label('الإجمالي')->money('EGP')),
                 TextColumn::make('net_amount')
                     ->label('الصافي')
-                    ->numeric()
-                    ->sortable(),
+                    ->money('EGP')
+                    ->sortable()
+                    ->summarize(Sum::make()->label('الإجمالي')->money('EGP')),
                 TextColumn::make('payee_type')
                     ->label('نوع المستلم')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('status')
                     ->label('الحالة')
                     ->badge()
@@ -50,14 +54,19 @@ class PaymentVouchersTable
                     ->sortable(),
                 TextColumn::make('safe.name')
                     ->label('الخزنة')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('bankAccount.bank_name')
                     ->label('الحساب البنكي')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('description')
                     ->label('البيان')
                     ->searchable()
-                    ->limit(30),
+                    ->limit(30)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('voucher_date', 'desc')
             ->filters([

@@ -101,7 +101,7 @@
             للاستفسار عن هذه الشروط والأحكام، يرجى التواصل معنا عبر:
         </p>
         <ul class="mb-4 list-inside list-disc space-y-2 leading-relaxed text-zinc-600 dark:text-zinc-300">
-            <li>البريد الإلكتروني: info@heaven-travel.com</li>
+            <li>البريد الإلكتروني: {{config('app.email')}}</li>
             <li>الهاتف: +966 12 345 6789</li>
             <li>العنوان: القاهرة، مصر - شارع التسعين، التجمع الخامس</li>
         </ul>

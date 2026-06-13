@@ -5,10 +5,13 @@ namespace App\Filament\Resources\Hotels\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class HotelsTable
@@ -21,7 +24,7 @@ class HotelsTable
                     ->label('اسم الفندق')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('city')
+                TextColumn::make('city.name_ar')
                     ->label('المدينة')
                     ->badge()
                     ->sortable(),
@@ -33,19 +36,17 @@ class HotelsTable
                 TextColumn::make('supplier.name')
                     ->label('المورد')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('distance_to_haram')
                     ->label('المسافة إلى الحرم')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('city')
+                SelectFilter::make('city_id')
                     ->label('المدينة')
-                    ->options([
-                        'makkah' => 'مكة المكرمة',
-                        'madinah' => 'المدينة المنورة',
-                    ]),
+                    ->relationship('city', 'name_ar'),
                 SelectFilter::make('stars')
                     ->label('التصنيف')
                     ->options([
@@ -57,7 +58,8 @@ class HotelsTable
                     ]),
                 SelectFilter::make('supplier_id')
                     ->label('المورد')
-                    ->relationship('supplier', 'name'),
+                    ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true)),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -66,7 +68,10 @@ class HotelsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name');
     }
 }

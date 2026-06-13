@@ -26,9 +26,9 @@
                                 <span class="mt-2 text-2xl font-bold">{{ $package->name }}</span>
                             </div>
                             <div class="absolute end-3 top-3 flex gap-1.5">
-                                <flux:badge variant="{{ $package->type->getColor() === 'warning' ? 'warning' : 'success' }}"
+                                <flux:badge variant="{{ $package->type?->color ?? 'gray' }}"
                                     size="sm">
-                                    {{ $package->type->getLabel() }}
+                                    {{ $package->type?->name_ar ?? '—' }}
                                 </flux:badge>
                                 <flux:badge size="sm">
                                     {{ $package->grade->getLabel() }}

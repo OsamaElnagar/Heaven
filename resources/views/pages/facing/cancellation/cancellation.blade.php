@@ -4,7 +4,7 @@
         <flux:heading size="2xl" class="mb-8 text-center">سياسة الإلغاء والاسترداد</flux:heading>
 
         <p class="mb-4 leading-relaxed text-zinc-600 dark:text-zinc-300">
-            ندرك أن الظروف قد تتغير، ولذلك نوضح فيما يلي سياسة الإلغاء والاسترداد الخاصة بشركة هيفن للسياحة. نوصي بقراءة
+            ندرك أن الظروف قد تتغير، ولذلك نوضح فيما يلي سياسة الإلغاء والاسترداد الخاصة بشركة `{{ config('app.name') }}` للسياحة. نوصي بقراءة
             هذه السياسة بعناية قبل إتمام أي حجز.
         </p>
 
@@ -86,7 +86,7 @@
         </p>
         <ul class="mb-4 list-inside list-disc space-y-2 leading-relaxed text-zinc-600 dark:text-zinc-300">
             <li>الاتصال بخدمة العملاء على الرقم: +966 12 345 6789</li>
-            <li>إرسال بريد إلكتروني إلى: info@heaven-travel.com</li>
+            <li>إرسال بريد إلكتروني إلى: {{config('app.email')}}</li>
             <li>زيارة مكتب الشركة: القاهرة، مصر - شارع التسعين، التجمع الخامس</li>
         </ul>
         <p class="mb-4 leading-relaxed text-zinc-600 dark:text-zinc-300">

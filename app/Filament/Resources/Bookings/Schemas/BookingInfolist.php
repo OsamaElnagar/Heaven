@@ -2,9 +2,14 @@
 
 namespace App\Filament\Resources\Bookings\Schemas;
 
+use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Packages\PackageResource;
+use App\Filament\Resources\Rooms\RoomResource;
+use App\Filament\Resources\Trips\TripResource;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class BookingInfolist
 {
@@ -17,12 +22,27 @@ class BookingInfolist
                         TextEntry::make('reference')
                             ->label('رقم المرجع'),
                         TextEntry::make('client.name')
-                            ->label('العميل'),
+                            ->label('العميل')
+                            ->url(fn ($record) => $record->client
+                                ? ClientResource::getUrl('edit', ['record' => $record->client])
+                                : null, true)
+                            ->icon(Heroicon::ArrowUpRight)
+                            ->color('primary'),
                         TextEntry::make('package.name')
-                            ->label('الباقة'),
+                            ->label('الباقة')
+                            ->url(fn ($record) => $record->package
+                                ? PackageResource::getUrl('edit', ['record' => $record->package])
+                                : null, true)
+                            ->icon(Heroicon::ArrowUpRight)
+                            ->color('primary'),
                         TextEntry::make('trip.name')
                             ->label('الرحلة')
-                            ->placeholder('-'),
+                            ->placeholder('—')
+                            ->url(fn ($record) => $record->trip
+                                ? TripResource::getUrl('edit', ['record' => $record->trip])
+                                : null, true)
+                            ->icon(Heroicon::ArrowUpRight)
+                            ->color('primary'),
                         TextEntry::make('status')
                             ->label('الحالة')
                             ->badge(),
@@ -56,15 +76,20 @@ class BookingInfolist
                     ->components([
                         TextEntry::make('room.room_number')
                             ->label('الغرفة')
-                            ->placeholder('-'),
+                            ->placeholder('—')
+                            ->url(fn ($record) => $record->room
+                                ? RoomResource::getUrl('edit', ['record' => $record->room])
+                                : null, true)
+                            ->icon(Heroicon::ArrowUpRight)
+                            ->color('primary'),
                         TextEntry::make('due_date')
                             ->label('تاريخ الاستحقاق')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('notes')
                             ->label('ملاحظات')
                             ->markdown()
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                     ])
                     ->columns(2),

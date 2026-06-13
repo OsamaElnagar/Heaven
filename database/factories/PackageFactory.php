@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\PackageGrade;
-use App\Enums\PackageType;
 use App\Models\Package;
+use App\Models\PackageType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,25 +13,15 @@ class PackageFactory extends Factory
 {
     protected $model = Package::class;
 
-    private static array $hajjNames = [
-        'باقة الحج الاقتصادي', 'باقة الحج المميز', 'باقة حج VIP',
-        'باقة الحج العائلي', 'باقة الحج الذهبية', 'باقة الحج الماسية',
-    ];
-
-    private static array $umrahNames = [
-        'باقة عمرة رمضان', 'باقة عمرة شوال', 'باقة عمرة رجب',
-        'باقة عمرة مميزة', 'باقة العمرة الاقتصادية', 'باقة عمرة VIP',
-    ];
-
     public function definition(): array
     {
-        $type = fake()->randomElement(PackageType::cases());
+        $type = PackageType::inRandomOrder()->first();
         $grade = fake()->randomElement(PackageGrade::cases());
         $seasonYear = fake()->numberBetween((int) now()->year - 1, (int) now()->year + 1);
-        $nights = match ($type) {
-            PackageType::HAJJ => fake()->randomElement([14, 15, 21, 28, 30]),
-            PackageType::UMRAH => fake()->randomElement([7, 10, 14, 15, 21]),
-        };
+        $nights = fake()->numberBetween(
+            $type->duration_nights_min ?? 7,
+            $type->duration_nights_max ?? 30
+        );
         $basePrice = match ($grade) {
             PackageGrade::ECONOMY => fake()->numberBetween(40000, 70000),
             PackageGrade::STANDARD => fake()->numberBetween(70000, 120000),
@@ -42,10 +32,8 @@ class PackageFactory extends Factory
         $departure = Carbon::create($seasonYear, fake()->numberBetween(1, 12), fake()->numberBetween(1, 28));
 
         return [
-            'name' => $type === PackageType::HAJJ
-                ? fake()->randomElement(self::$hajjNames)
-                : fake()->randomElement(self::$umrahNames),
-            'type' => $type,
+            'name' => 'باقة '.$type->name_ar.' - '.$grade->getLabel(),
+            'type_id' => $type->id,
             'grade' => $grade,
             'season_year' => $seasonYear,
             'duration_nights' => $nights,

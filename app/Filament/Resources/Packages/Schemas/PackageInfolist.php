@@ -17,9 +17,10 @@ class PackageInfolist
                     ->components([
                         TextEntry::make('name')
                             ->label('الاسم'),
-                        TextEntry::make('type')
+                        TextEntry::make('type.name_ar')
                             ->label('النوع')
-                            ->badge(),
+                            ->badge()
+                            ->color(fn ($record) => $record->type?->color ?? 'gray'),
                         TextEntry::make('grade')
                             ->label('الدرجة')
                             ->badge(),
@@ -42,11 +43,11 @@ class PackageInfolist
                         TextEntry::make('departure_date')
                             ->label('تاريخ المغادرة')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('return_date')
                             ->label('تاريخ العودة')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         IconEntry::make('is_active')
                             ->label('نشط')
                             ->boolean(),
@@ -58,17 +59,17 @@ class PackageInfolist
                         TextEntry::make('includes')
                             ->label('يشمل')
                             ->markdown()
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                         TextEntry::make('excludes')
                             ->label('لا يشمل')
                             ->markdown()
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                         TextEntry::make('notes')
                             ->label('ملاحظات')
                             ->markdown()
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                     ])->columnSpanFull(),
             ]);

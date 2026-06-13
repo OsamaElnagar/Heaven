@@ -16,7 +16,7 @@ class EditClient extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make()->label('عرض'),
+            ViewAction::make(),
             DeleteAction::make(),
         ];
     }

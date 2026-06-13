@@ -121,11 +121,11 @@ class ExpenseSummaryReport extends Page implements HasTable
                 TextColumn::make('trip.name')
                     ->label('الرحلة')
                     ->url(fn (Expense $record) => $record->trip ? TripResource::getUrl('edit', ['record' => $record->trip]) : null)
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('payment_method')
                     ->label('طريقة الدفع')
                     ->badge()
-                    ->placeholder('-'),
+                    ->placeholder('—'),
                 TextColumn::make('amount')
                     ->label('المبلغ')
                     ->money(config('app.currency'), locale: config('app.currency_locale'), decimalPlaces: 0)

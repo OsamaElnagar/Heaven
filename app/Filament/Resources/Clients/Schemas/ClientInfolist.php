@@ -19,20 +19,20 @@ class ClientInfolist
                             ->label('الاسم'),
                         TextEntry::make('name_en')
                             ->label('الاسم بالإنجليزية')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('national_id')
                             ->label('الرقم القومي'),
                         TextEntry::make('passport_number')
                             ->label('رقم جواز السفر')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('passport_expiry')
                             ->label('انتهاء الجواز')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('date_of_birth')
                             ->label('تاريخ الميلاد')
                             ->date()
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('gender')
                             ->label('الجنس')
                             ->badge(),
@@ -41,10 +41,10 @@ class ClientInfolist
                             ->badge(),
                         TextEntry::make('blood_type')
                             ->label('فصيلة الدم')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('governorate')
                             ->label('المحافظة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
 
@@ -54,13 +54,13 @@ class ClientInfolist
                             ->label('رقم الهاتف'),
                         TextEntry::make('phone_alt')
                             ->label('رقم هاتف بديل')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('email')
                             ->label('البريد الإلكتروني')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('address')
                             ->label('العنوان')
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
@@ -69,13 +69,13 @@ class ClientInfolist
                     ->components([
                         TextEntry::make('mahram_name')
                             ->label('اسم المحرم')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('mahram_relation')
                             ->label('صلة القرابة')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                         TextEntry::make('mahram_phone')
                             ->label('هاتف المحرم')
-                            ->placeholder('-'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
 
@@ -83,7 +83,7 @@ class ClientInfolist
                     ->components([
                         TextEntry::make('medical_notes')
                             ->label('ملاحظات طبية')
-                            ->placeholder('-')
+                            ->placeholder('—')
                             ->columnSpanFull(),
                     ])
                     ->hidden(fn (Client $record): bool => blank($record->medical_notes)),

@@ -53,7 +53,9 @@ class TripForm
                             ->label('موعد العودة')
                             ->native(false)
                             ->afterOrEqual('departure_at')
-                            ->validationMessage('يجب أن يكون تاريخ العودة بعد أو يساوي تاريخ المغادرة'),
+                            ->validationMessages([
+                                'after_or_equal' => 'يجب أن يكون تاريخ العودة بعد أو يساوي تاريخ المغادرة',
+                            ]),
                         TextInput::make('departure_airport')
                             ->label('مطار المغادرة')
                             ->datalist(fn () => Trip::query()->distinct()->pluck('departure_airport')),

@@ -5,6 +5,10 @@ namespace App\Filament\Resources\RefundVouchers\Schemas;
 use App\Enums\ExpenseStatus;
 use App\Enums\RefundPartyType;
 use App\Enums\VoucherPaymentMethod;
+use App\Filament\Resources\Bookings\BookingResource;
+use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Suppliers\SupplierResource;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -14,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class RefundVoucherForm
 {
@@ -37,7 +42,13 @@ class RefundVoucherForm
                             ->options(VoucherPaymentMethod::class)
                             ->required()
                             ->default('safe')
-                            ->live(),
+                            ->live()
+                            ->helperText(fn (Get $get): ?string => match ($get('payment_method')) {
+                                'safe' => 'الإعادة نقداً للخزينة',
+                                'bank' => 'تحويل بنكي للعميل',
+                                'cheque' => 'إصدار شيك للعميل',
+                                default => null,
+                            }),
                         Select::make('safe_id')
                             ->label('الخزينة')
                             ->relationship('safe', 'name')
@@ -75,20 +86,44 @@ class RefundVoucherForm
                             ->preload()
                             ->required(fn (Get $get): bool => $get('party_type') === RefundPartyType::CLIENT)
                             ->visible(fn (Get $get): bool => $get('party_type') === RefundPartyType::CLIENT)
-                            ->live(),
+                            ->live()
+                            ->hintActions([
+                                Action::make('viewClient')
+                                    ->label('عرض العميل')
+                                    ->visible(fn (Get $get): bool => (bool) $get('client_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => ClientResource::getUrl('edit', ['record' => $get('client_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('supplier_id')
                             ->label('المورد')
-                            ->relationship('supplier', 'name')
+                            ->relationship('supplier', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
                             ->searchable()
                             ->preload()
                             ->required(fn (Get $get): bool => $get('party_type') === RefundPartyType::SUPPLIER)
-                            ->visible(fn (Get $get): bool => $get('party_type') === RefundPartyType::SUPPLIER),
+                            ->visible(fn (Get $get): bool => $get('party_type') === RefundPartyType::SUPPLIER)
+                            ->hintActions([
+                                Action::make('viewSupplier')
+                                    ->label('عرض المورد')
+                                    ->visible(fn (Get $get): bool => (bool) $get('supplier_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => SupplierResource::getUrl('edit', ['record' => $get('supplier_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                         Select::make('booking_id')
                             ->label('الحجز')
                             ->relationship('booking', 'reference')
                             ->searchable()
                             ->preload()
-                            ->visible(fn (Get $get): bool => $get('party_type') === RefundPartyType::CLIENT),
+                            ->visible(fn (Get $get): bool => $get('party_type') === RefundPartyType::CLIENT)
+                            ->hintActions([
+                                Action::make('viewBooking')
+                                    ->label('عرض الحجز')
+                                    ->visible(fn (Get $get): bool => (bool) $get('booking_id'))
+                                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                                    ->url(fn (Get $get) => BookingResource::getUrl('edit', ['record' => $get('booking_id')]))
+                                    ->openUrlInNewTab(),
+                            ]),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),

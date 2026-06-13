@@ -70,7 +70,7 @@ class TripManifestPage extends Page implements HasTable
                 TextColumn::make('client.name')->label('الاسم')->searchable(),
                 TextColumn::make('client.passport_number')->label('رقم الجواز')->searchable(),
                 TextColumn::make('client.national_id')->label('الرقم القومي')->searchable(),
-                TextColumn::make('visa.visa_number')->label('رقم التأشيرة')->placeholder('-'),
+                TextColumn::make('visa.visa_number')->label('رقم التأشيرة')->placeholder('—'),
                 TextColumn::make('visa.status')->label('حالة التأشيرة')->badge(),
                 TextColumn::make('room_type')->label('نوع الغرفة')->badge(),
             ])

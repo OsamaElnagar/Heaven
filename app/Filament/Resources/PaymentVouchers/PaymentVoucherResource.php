@@ -30,6 +30,8 @@ class PaymentVoucherResource extends Resource
 
     protected static ?string $navigationLabel = 'سندات الصرف';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $recordTitleAttribute = 'number';
 
     protected static ?string $modelLabel = 'سند صرف';
