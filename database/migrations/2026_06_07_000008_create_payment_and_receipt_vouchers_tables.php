@@ -32,6 +32,8 @@ return new class extends Migration
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
             $table->foreignId('employee_id')->nullable()->constrained('employees');
             $table->string('payee_name')->nullable();
+            $table->foreignId('branch_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('agent_id')->nullable()->constrained()->nullOnDelete();
 
             // Optional link to a booking expense
             $table->foreignId('expense_id')->nullable()->constrained('expenses');
@@ -65,6 +67,7 @@ return new class extends Migration
             $table->string('cheque_number')->nullable();
             $table->date('cheque_date')->nullable();
             $table->bigInteger('amount');
+            $table->string('payment_type', 20)->nullable();
 
             // Payer - exactly one of these is set, gated by payer_type
             $table->string('payer_type', 20);
@@ -72,6 +75,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
             $table->foreignId('employee_id')->nullable()->constrained('employees');
             $table->string('payer_name')->nullable();
+            $table->foreignId('booking_id')->nullable()->constrained('bookings')->nullOnDelete();
 
             $table->string('description');
             $table->string('reference')->nullable();

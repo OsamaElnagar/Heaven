@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
+            $table->string('code', 20)->nullable()->unique();
+            $table->foreignId('account_id')->nullable()->constrained('accounts');
             $table->string('name');
             $table->string('name_en')->nullable();
             $table->string('national_id')->unique();

@@ -36,7 +36,7 @@ enum BookingChannel: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::DIRECT => 'مباشر',
             self::BRANCH => 'فرع',
-            self::AGENT => 'وكيل',
+            self::AGENT => 'وكيل/مندوب',
         };
     }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\Branches\Tables;
 
+use App\Filament\Resources\Cities\CityResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -20,21 +23,43 @@ class BranchesTable
             ->columns([
                 TextColumn::make('code')
                     ->label('الكود')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label('الاسم')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('phone')
                     ->label('الهاتف')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('email')
+                    ->label('البريد الإلكتروني')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('city.name')
                     ->label('المدينة')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—')
+                    ->url(fn ($record) => $record->city
+                        ? CityResource::getUrl('edit', ['record' => $record->city])
+                        : null, true)
+                    ->icon(Heroicon::ArrowUpRight)
+                    ->color('primary'),
                 TextColumn::make('manager_name')
                     ->label('المدير')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—'),
+                TextColumn::make('manager_phone')
+                    ->label('هاتف المدير')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('commission_percentage')
-                    ->label('العمولة (%)')
+                    ->label('العمولة')
                     ->suffix('%')
                     ->numeric()
                     ->sortable(),
@@ -48,6 +73,17 @@ class BranchesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('city_id')
+                    ->label('المدينة')
+                    ->relationship('city', 'name_ar')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('is_active')
+                    ->label('نشط')
+                    ->options([
+                        '1' => 'نعم',
+                        '0' => 'لا',
+                    ]),
                 TrashedFilter::make(),
             ])
             ->recordActions([

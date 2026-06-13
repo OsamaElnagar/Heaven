@@ -9,6 +9,8 @@ class GalleryItemSeeder extends Seeder
 {
     public function run(): void
     {
+        $company = config('app.name');
+
         $items = [
             ['title' => 'الحرم المكي الشريف', 'caption' => 'إطلالة ساحرة على الحرم المكي من فندق أبراج البيت', 'sort_order' => 1],
             ['title' => 'باب الملك عبدالعزيز', 'caption' => 'باب الملك عبدالعزيز - أحد أبواب الحرم المكي المزدوجة', 'sort_order' => 2],
@@ -24,7 +26,7 @@ class GalleryItemSeeder extends Seeder
             ['title' => 'الصفوف المرتدة', 'caption' => 'أثناء أداء صلاة الفجر في الحرم المكي الشريف', 'sort_order' => 12],
             ['title' => 'زقاق التاريخ في مكة', 'caption' => 'أزقة مكة التاريخية القديمة', 'sort_order' => 13],
             ['title' => 'البواكي في المشاعر المقدسة', 'caption' => 'بواكي الحجاج في منىDuring موسم الحج', 'sort_order' => 14],
-            ['title' => 'مكتب شركة هيفن', 'caption' => 'المكتب الرئيسي لشركة هيفن للسياحة بالقاهرة', 'sort_order' => 15],
+            ['title' => "مكتب شركة {$company}", 'caption' => "المكتب الرئيسي لشركة {$company} للسياحة بالقاهرة", 'sort_order' => 15],
         ];
 
         foreach ($items as $data) {

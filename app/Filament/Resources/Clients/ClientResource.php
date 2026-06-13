@@ -26,7 +26,7 @@ class ClientResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'حجاج وحجوزات';
+    protected static \UnitEnum|string|null $navigationGroup = 'عملاء وحجوزات';
 
     protected static ?string $navigationLabel = 'العملاء';
 

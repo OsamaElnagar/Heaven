@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
 use App\Enums\RoomType;
 use App\Models\Booking;
@@ -19,6 +20,7 @@ class BookingFactory extends Factory
 
         return [
             'reference' => 'BK-'.now()->year.'-'.str_pad(fake()->unique()->numberBetween(1, 99999), 5, '0', STR_PAD_LEFT),
+            'channel' => BookingChannel::DIRECT,
             'status' => fake()->randomElement(BookingStatus::cases()),
             'room_type' => fake()->randomElement(RoomType::cases()),
             'total_price' => $totalPrice,

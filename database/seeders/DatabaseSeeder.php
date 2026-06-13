@@ -2,14 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
 use App\Enums\ExpenseStatus;
 use App\Enums\PayerType;
 use App\Enums\PaymentType;
 use App\Enums\VisaStatus;
 use App\Enums\VoucherPaymentMethod;
+use App\Models\Agent;
 use App\Models\BankAccount;
 use App\Models\Booking;
+use App\Models\Branch;
+use App\Models\City;
 use App\Models\Client;
 use App\Models\Employee;
 use App\Models\Expense;
@@ -55,8 +59,10 @@ class DatabaseSeeder extends Seeder
         $this->seedPackageHotels($packages, $hotels);
         $trips = $this->seedTrips($packages);
         $rooms = $this->seedRooms($hotels, $trips);
+        $branches = $this->seedBranches();
+        $agents = $this->seedAgents();
         $clients = $this->seedClients();
-        $bookings = $this->seedBookings($clients, $packages, $trips, $rooms);
+        $bookings = $this->seedBookings($clients, $packages, $trips, $rooms, $branches, $agents);
         $this->seedPayments($bookings);
         $this->handleVisaStatuses($bookings);
         $this->seedExpenses($trips);
@@ -99,6 +105,16 @@ class DatabaseSeeder extends Seeder
         }
     }
 
+    private function seedBranches(): array
+    {
+        return Branch::factory(3)->create()->all();
+    }
+
+    private function seedAgents(): array
+    {
+        return Agent::factory(4)->create()->all();
+    }
+
     private function seedSuppliers(): array
     {
         return Supplier::factory(8)->create()->all();
@@ -108,15 +124,15 @@ class DatabaseSeeder extends Seeder
     {
         $hotels = collect();
 
-        $makkahSupplier = $suppliers[0];
-        $madinahSupplier = $suppliers[1];
+        $makkah = City::where('name', 'Makkah')->first();
+        $madinah = City::where('name', 'Madinah')->first();
 
         for ($i = 0; $i < 5; $i++) {
-            $hotels->push(Hotel::factory()->makkah()->create(['supplier_id' => $makkahSupplier->id]));
+            $hotels->push(Hotel::factory()->forCity($makkah)->create(['supplier_id' => $suppliers[0]->id]));
         }
 
         for ($i = 0; $i < 3; $i++) {
-            $hotels->push(Hotel::factory()->madinah()->create(['supplier_id' => $madinahSupplier->id]));
+            $hotels->push(Hotel::factory()->forCity($madinah)->create(['supplier_id' => $suppliers[1]->id]));
         }
 
         return $hotels->all();
@@ -189,7 +205,7 @@ class DatabaseSeeder extends Seeder
         return Client::factory(12)->create()->all();
     }
 
-    private function seedBookings(array $clients, array $packages, array $trips, array $rooms): array
+    private function seedBookings(array $clients, array $packages, array $trips, array $rooms, array $branches, array $agents): array
     {
         $bookings = collect();
 
@@ -199,11 +215,24 @@ class DatabaseSeeder extends Seeder
                 $package = fake()->randomElement($packages);
                 $trip = collect($trips)->firstWhere('package_id', $package->id);
 
+                $channel = fake()->randomElement([BookingChannel::DIRECT, BookingChannel::DIRECT, BookingChannel::BRANCH, BookingChannel::AGENT]);
+                $branchId = null;
+                $agentId = null;
+
+                if ($channel === BookingChannel::BRANCH && $branches) {
+                    $branchId = fake()->randomElement($branches)->id;
+                } elseif ($channel === BookingChannel::AGENT && $agents) {
+                    $agentId = fake()->randomElement($agents)->id;
+                }
+
                 $booking = Booking::factory()->create([
                     'client_id' => $client->id,
                     'package_id' => $package->id,
                     'trip_id' => $trip ? $trip->id : null,
                     'room_id' => fake()->boolean(40) ? fake()->randomElement($rooms)->id : null,
+                    'channel' => $channel,
+                    'branch_id' => $branchId,
+                    'agent_id' => $agentId,
                 ]);
 
                 if ($booking->room_id) {

@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('city');                 // 'makkah' | 'madinah'
+            $table->foreignId('city_id')->nullable()->constrained('cities')->nullOnDelete();
             $table->unsignedTinyInteger('stars')->nullable();
             $table->string('distance_to_haram')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

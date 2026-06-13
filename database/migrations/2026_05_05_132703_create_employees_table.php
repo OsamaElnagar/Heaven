@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->string('code', 20)->nullable()->unique();
+            $table->foreignId('account_id')->nullable()->constrained('accounts');
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('national_id')->unique();

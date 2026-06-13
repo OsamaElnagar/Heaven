@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('departure_airport')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

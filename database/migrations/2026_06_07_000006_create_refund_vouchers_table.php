@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('party_type', 20);
             $table->foreignId('client_id')->nullable()->constrained('clients');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
+            $table->foreignId('booking_id')->nullable()->constrained('bookings')->nullOnDelete();
 
             $table->string('reference')->nullable();
             $table->text('description')->nullable();

@@ -26,7 +26,7 @@ class BookingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'حجاج وحجوزات';
+    protected static \UnitEnum|string|null $navigationGroup = 'عملاء وحجوزات';
 
     protected static ?string $navigationLabel = 'الحجوزات';
 

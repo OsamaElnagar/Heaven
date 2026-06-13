@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');          // PackageType enum
+            $table->string('slug')->nullable()->unique();
+            $table->foreignId('type_id')->nullable()->constrained('package_types')->nullOnDelete();
             $table->string('grade');         // PackageGrade enum
             $table->year('season_year');
             $table->unsignedSmallInteger('duration_nights');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->text('includes')->nullable();
             $table->text('excludes')->nullable();
             $table->text('notes')->nullable();
+            $table->boolean('front_office_visible')->default(true);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

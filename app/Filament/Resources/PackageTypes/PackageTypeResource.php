@@ -26,9 +26,9 @@ class PackageTypeResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name_ar';
 
-    protected static ?string $modelLabel = 'نوع الباقة';
+    protected static ?string $modelLabel = 'نوع باقة';
 
-    protected static ?string $pluralModelLabel = 'أنواع الباقات';
+    protected static ?string $pluralModelLabel = 'أنواع باقات';
 
     public static function form(Schema $schema): Schema
     {

@@ -9,6 +9,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -20,25 +21,37 @@ class AgentsTable
             ->columns([
                 TextColumn::make('code')
                     ->label('الكود')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label('الاسم')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('phone')
                     ->label('الهاتف')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('email')
+                    ->label('البريد الإلكتروني')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('national_id')
                     ->label('الرقم القومي')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('commission_percentage')
-                    ->label('العمولة (%)')
+                    ->label('العمولة')
                     ->suffix('%')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('contract_date')
                     ->label('تاريخ العقد')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—'),
                 IconColumn::make('is_active')
                     ->label('نشط')
                     ->boolean(),
@@ -49,6 +62,12 @@ class AgentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('is_active')
+                    ->label('نشط')
+                    ->options([
+                        '1' => 'نعم',
+                        '0' => 'لا',
+                    ]),
                 TrashedFilter::make(),
             ])
             ->recordActions([

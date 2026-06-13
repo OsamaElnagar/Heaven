@@ -23,6 +23,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -34,7 +35,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('HEAVEN')
+            ->brandLogo(fn (): HtmlString => new HtmlString(
+                '<div style="display: flex; align-items: center; gap: 10px;">'.
+                    '<img src="'.asset('assets/wosol-logo.jpg').'" alt="'.config('app.name').'" style="height: 45px;">'.
+                    '<span style="font-size: 16px; font-weight: 700;">'.config('app.name').'</span>'.
+                    '</div>',
+            ))
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -69,7 +75,11 @@ class AdminPanelProvider extends PanelProvider
             ->topNavigation(false)
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(__('حجاج وحجوزات'))
+                    ->label(__('عملاء وحجوزات'))
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('الوكلاء والفروع'))
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make()

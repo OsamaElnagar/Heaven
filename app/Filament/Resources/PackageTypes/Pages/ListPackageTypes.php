@@ -15,7 +15,7 @@ class ListPackageTypes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('نوع باقة جديد'),
+            CreateAction::make(),
         ];
     }
 }

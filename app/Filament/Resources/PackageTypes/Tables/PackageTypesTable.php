@@ -6,6 +6,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PackageTypesTable
@@ -28,15 +29,27 @@ class PackageTypesTable
                 TextColumn::make('duration_nights_min')
                     ->label('الحد الأدنى (ليالي)')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('duration_nights_max')
                     ->label('الحد الأقصى (ليالي)')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('packages_count')
                     ->label('عدد الباقات')
                     ->counts('packages')
                     ->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('is_religious')
+                    ->label('ديني')
+                    ->options([
+                        '1' => 'نعم',
+                        '0' => 'لا',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),

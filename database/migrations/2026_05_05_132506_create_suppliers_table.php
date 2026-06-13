@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
+            $table->string('code', 20)->nullable()->unique();
+            $table->foreignId('account_id')->nullable()->constrained('accounts');
             $table->string('name');
             $table->string('type');          // SupplierType enum
             $table->string('country')->default('SA');

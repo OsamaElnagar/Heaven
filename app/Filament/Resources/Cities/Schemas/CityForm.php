@@ -17,14 +17,17 @@ class CityForm
                         TextInput::make('name')
                             ->label('الاسم (إنجليزي)')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->placeholder('مثال: Cairo'),
                         TextInput::make('name_ar')
                             ->label('الاسم (عربي)')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->placeholder('مثال: القاهرة'),
                         TextInput::make('country')
                             ->label('الدولة')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->placeholder('مثال: مصر'),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),

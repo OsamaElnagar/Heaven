@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->unique();   // auto-generated e.g. BK-2025-00123
+            $table->string('channel')->default('direct');
+            $table->foreignId('branch_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('agent_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('client_id')->constrained()->cascadeOnDelete();
             $table->foreignId('package_id')->constrained()->cascadeOnDelete();
             $table->foreignId('trip_id')->nullable()->constrained()->nullOnDelete();
