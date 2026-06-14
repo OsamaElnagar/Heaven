@@ -26,9 +26,11 @@ class SupplierResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق';
+    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق والرحلات';
 
     protected static ?string $navigationLabel = 'الموردون';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

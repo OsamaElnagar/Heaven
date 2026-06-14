@@ -45,12 +45,13 @@ class PackageTypeForm
                                 'primary' => 'أساسي',
                                 'secondary' => 'ثانوي',
                             ])
-                            ->default('gray')
-                            ->searchable()
-                            ->native(false),
+                            ->default('gray'),
                         TextInput::make('icon')
                             ->label('الأيقونة')
                             ->placeholder('heroicon-o-star')
+                            ->datalist([
+                                'heroicon-o-star',
+                            ])
                             ->maxLength(255)
                             ->hint('اسم أيقونة Heroicons'),
                         Toggle::make('is_religious')

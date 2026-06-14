@@ -22,7 +22,7 @@ class VisaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'التأشيرات';
+    protected static \UnitEnum|string|null $navigationGroup = 'عملاء وحجوزات';
 
     protected static ?string $navigationLabel = 'التأشيرات';
 

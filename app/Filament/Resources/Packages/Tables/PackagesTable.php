@@ -66,9 +66,9 @@ class PackagesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('type_id')
-                    ->label('النوع')
-                    ->relationship('type', 'name_ar'),
+                // SelectFilter::make('type_id')
+                //     ->label('النوع')
+                //     ->relationship('type', 'name_ar'),
                 SelectFilter::make('grade')
                     ->label('الدرجة')
                     ->options(PackageGrade::class),
@@ -85,9 +85,9 @@ class PackagesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                ToggleActiveAction::make(),
                 ViewAction::make(),
                 EditAction::make(),
-                ToggleActiveAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

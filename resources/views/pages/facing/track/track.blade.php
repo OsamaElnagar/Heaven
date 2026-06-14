@@ -1,8 +1,8 @@
-<div class="mx-auto max-w-2xl" dir="rtl">
+<div class="mx-auto max-w-7xl" dir="rtl">
     {{-- Header --}}
     <div class="mb-8 text-center">
-        <flux:heading size="xl" class="mb-2 text-white">تتبع حجزك</flux:heading>
-        <flux:text class="text-zinc-400">أدخل رقم الحجز والرقم القومي لمتابعة حالة حجزك</flux:text>
+        <flux:heading size="xl" class="mb-2">تتبع حجزك</flux:heading>
+        <flux:text>أدخل رقم الحجز والرقم القومي لمتابعة حالة حجزك</flux:text>
     </div>
 
     {{-- Search Form --}}
@@ -15,7 +15,7 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>الرقم القومي</flux:label>
+                <flux:label>الرقم القومي المدخل فى بيانات الحجز</flux:label>
                 <flux:input wire:model="nationalId" placeholder="أدخل الرقم القومي" />
                 <flux:error name="nationalId" />
             </flux:field>
@@ -35,9 +35,9 @@
     @if ($searched && $error)
         <div class="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
             <div class="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-red-500/20">
-                <flux:icon.x-mark class="size-7 text-red-400" />
+                <flux:icon.x-mark class="size-7 text-red-500" />
             </div>
-            <p class="text-red-400">{{ $error }}</p>
+            <flux:text class="text-red-500">{{ $error }}</flux:text>
         </div>
     @endif
 
@@ -48,8 +48,8 @@
             <flux:card>
                 <div class="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-right">
                     <div>
-                        <p class="text-sm text-zinc-400 mb-1">رقم الحجز المرجعي</p>
-                        <p class="text-2xl font-bold tracking-widest text-white">{{ $booking->reference }}</p>
+                        <flux:text class="mb-1">رقم الحجز المرجعي</flux:text>
+                        <flux:heading size="xl">{{ $booking->reference }}</flux:heading>
                     </div>
                     <flux:badge variant="solid" color="{{ match ($booking->status->value) {
             'pending' => 'yellow',
@@ -65,57 +65,57 @@
 
             {{-- Package Info --}}
             <flux:card>
-                <flux:heading size="base" class="mb-4 text-zinc-300">معلومات الباقة</flux:heading>
+                <flux:heading size="base" class="mb-4">معلومات الباقة</flux:heading>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">اسم الباقة</p>
-                        <p class="text-white">{{ $booking->package->name }}</p>
+                        <flux:text class="mb-1">اسم الباقة</flux:text>
+                        <flux:heading level="3">{{ $booking->package->name }}</flux:heading>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">النوع</p>
+                        <flux:text class="mb-1">النوع</flux:text>
                         <flux:badge variant="solid" color="zinc" size="sm">{{ $booking->package->type?->name_ar ?? '—' }}
                         </flux:badge>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">الدرجة</p>
+                        <flux:text class="mb-1">الدرجة</flux:text>
                         <flux:badge variant="solid" color="zinc" size="sm">{{ $booking->package->grade->getLabel() }}
                         </flux:badge>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">تاريخ المغادرة</p>
-                        <p class="text-white">{{ $booking->package->departure_date->format('Y/m/d') }}</p>
+                        <flux:text class="mb-1">تاريخ المغادرة</flux:text>
+                        <flux:heading level="3">{{ $booking->package->departure_date->format('Y/m/d') }}</flux:heading>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">المدة</p>
-                        <p class="text-white">{{ $booking->package->duration_nights }} ليلة</p>
+                        <flux:text class="mb-1">المدة</flux:text>
+                        <flux:heading level="3">{{ $booking->package->duration_nights }} ليلة</flux:heading>
                     </div>
                     <div>
-                        <p class="text-xs text-zinc-500 mb-1 dark:text-zinc-400">نوع الغرفة</p>
-                        <p class="text-white">{{ $booking->room_type?->getLabel() }}</p>
+                        <flux:text class="mb-1">نوع الغرفة</flux:text>
+                        <flux:heading level="3">{{ $booking->room_type?->getLabel() }}</flux:heading>
                     </div>
                 </div>
             </flux:card>
 
             {{-- Payment Summary --}}
             <flux:card>
-                <flux:heading size="base" class="mb-4 text-zinc-300">ملخص الدفع</flux:heading>
+                <flux:heading size="base" class="mb-4">ملخص الدفع</flux:heading>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-zinc-400">إجمالي السعر</span>
-                        <span class="font-medium text-white">{{ number_format($booking->net_price) }} egp</span>
+                        <flux:text>إجمالي السعر</flux:text>
+                        <flux:heading level="3">{{ number_format($booking->net_price) }} egp</flux:heading>
                     </div>
                     <flux:separator />
                     <div class="flex items-center justify-between">
-                        <span class="text-zinc-400">المدفوع</span>
-                        <span class="font-medium text-green-400">{{ number_format($booking->paid_amount) }} egp</span>
+                        <flux:text>المدفوع</flux:text>
+                        <flux:heading level="3">{{ number_format($booking->paid_amount) }} egp</flux:heading>
                     </div>
                     <flux:separator />
                     <div class="flex items-center justify-between">
-                        <span class="text-zinc-400">المتبقي</span>
+                        <flux:text>المتبقي</flux:text>
                         <span @class([
                             'font-bold',
-                            'text-red-400' => $this->remaining > 0,
-                            'text-green-400' => $this->remaining <= 0,
+                            'text-red-600 dark:text-red-400' => $this->remaining > 0,
+                            'text-green-600 dark:text-green-400' => $this->remaining <= 0,
                         ])>
                             {{ number_format($this->remaining) }} egp
                         </span>
@@ -125,7 +125,7 @@
 
             {{-- Visa Status --}}
             <flux:card>
-                <flux:heading size="base" class="mb-4 text-zinc-300">حالة التأشيرة</flux:heading>
+                <flux:heading size="base" class="mb-4">حالة التأشيرة</flux:heading>
                 @if ($booking->visa)
                         <flux:badge variant="solid" color="{{ match ($booking->visa->status->value) {
                         'not_applied' => 'zinc',
@@ -137,10 +137,7 @@
                             {{ $booking->visa->status->getLabel() }}
                         </flux:badge>
                 @else
-                    <div class="flex items-center gap-2 text-zinc-500">
-                        <flux:icon.clock class="size-5" />
-                        <span>لم يتم التقديم بعد</span>
-                    </div>
+                    <flux:text>{{ __('لم يتم التقديم بعد') }}</flux:text>
                 @endif
             </flux:card>
         </div>

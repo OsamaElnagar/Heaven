@@ -8,7 +8,10 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TimePicker;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -84,17 +87,29 @@ class AppServiceProvider extends ServiceProvider
 
         CreateAction::configureUsing(
             function (CreateAction $action) {
-                return $action->slideOver();
+                return $action->slideOver()->modalWidth(Width::SevenExtraLarge);
             }
         );
         EditAction::configureUsing(
             function (EditAction $action) {
-                return $action->slideOver();
+                return $action->slideOver()->modalWidth(Width::SevenExtraLarge);
             }
         );
         ViewAction::configureUsing(
             function (ViewAction $action) {
-                return $action->slideOver();
+                return $action->slideOver()->modalWidth(Width::SevenExtraLarge);
+            }
+        );
+
+        SelectFilter::configureUsing(
+            function (SelectFilter $filter) {
+                return $filter->native(false);
+            }
+        );
+
+        Select::configureUsing(
+            function (Select $select) {
+                return $select->native(false);
             }
         );
     }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Clients\Pages;
 
+use App\Filament\Resources\Clients\Actions\ExportClientCardAction;
+use App\Filament\Resources\Clients\Actions\ViewStatementAction;
 use App\Filament\Resources\Clients\ClientResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -16,6 +18,8 @@ class EditClient extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ExportClientCardAction::make(),
+            ViewStatementAction::make(),
             ViewAction::make(),
             DeleteAction::make(),
         ];

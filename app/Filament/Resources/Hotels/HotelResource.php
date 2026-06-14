@@ -24,9 +24,11 @@ class HotelResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق';
+    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق والرحلات';
 
     protected static ?string $navigationLabel = 'الفنادق';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'name';
 

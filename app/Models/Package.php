@@ -7,6 +7,7 @@ use App\Observers\PackageObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,7 +22,7 @@ class Package extends Model
     protected $fillable = [
         'name',
         'slug',
-        'type',
+        'type_id',
         'grade',
         'season_year',
         'duration_nights',
@@ -62,6 +63,11 @@ class Package extends Model
                 $package->slug = Str::slug($package->name).'-'.Str::random(6);
             }
         });
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(PackageType::class);
     }
 
     public function bookings(): HasMany

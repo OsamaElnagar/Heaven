@@ -19,7 +19,7 @@ class ViewClient extends ViewRecord
         return [
             ExportClientCardAction::make(),
             ViewStatementAction::make(),
-            EditAction::make()->label('تعديل'),
+            EditAction::make(),
         ];
     }
 }

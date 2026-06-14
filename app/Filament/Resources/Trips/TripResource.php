@@ -28,9 +28,11 @@ class TripResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الرحلات والباقات';
+    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق والرحلات';
 
     protected static ?string $navigationLabel = 'الرحلات';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

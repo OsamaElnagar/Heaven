@@ -79,6 +79,34 @@
                 </flux:field>
 
                 <flux:field>
+                    <flux:label>الجنس</flux:label>
+                    <flux:select wire:model="gender">
+                        <option value="">اختر الجنس</option>
+                        @foreach ($this->genders() as $option)
+                            <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="gender" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>الحالة الاجتماعية</flux:label>
+                    <flux:select wire:model="maritalStatus">
+                        <option value="">اختر الحالة الاجتماعية</option>
+                        @foreach ($this->maritalStatuses() as $option)
+                            <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="maritalStatus" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>تاريخ الميلاد <span class="text-zinc-500 text-xs">(اختياري)</span></flux:label>
+                    <flux:input wire:model="dateOfBirth" type="date" />
+                    <flux:error name="dateOfBirth" />
+                </flux:field>
+
+                <flux:field>
                     <flux:label>عدد المسافرين</flux:label>
                     <flux:input wire:model.number="travelersCount" type="number" min="1" max="20" />
                     <flux:error name="travelersCount" />

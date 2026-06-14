@@ -52,6 +52,10 @@
                 {{ __('معرض الصور') }}
             </flux:navbar.item>
 
+            <flux:navbar.item :href="route('news.index')" :current="request()->routeIs('news.*')" wire:navigate>
+                {{ __('الأخبار') }}
+            </flux:navbar.item>
+
             <flux:navbar.item :href="route('faq')" :current="request()->routeIs('faq')" wire:navigate>
                 {{ __('الأسئلة الشائعة') }}
             </flux:navbar.item>
@@ -113,20 +117,20 @@
             </flux:sidebar.group>
 
             <flux:sidebar.group :heading="__('خدماتنا')">
-                <flux:sidebar.item icon="magnifying-glass" :href="route('track')" :current="request()->routeIs('track')"
-                    wire:navigate>
+                <flux:sidebar.item icon="magnifying-glass" :href="route('track')"
+                    :current="request()->routeIs('track')" wire:navigate>
                     {{ __('تتبع الحجز') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="question-mark-circle" :href="route('faq')" :current="request()->routeIs('faq')"
-                    wire:navigate>
+                <flux:sidebar.item icon="question-mark-circle" :href="route('faq')"
+                    :current="request()->routeIs('faq')" wire:navigate>
                     {{ __('الأسئلة الشائعة') }}
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="photo" :href="route('gallery')" :current="request()->routeIs('gallery')"
                     wire:navigate>
                     {{ __('معرض الصور') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="newspaper" :href="route('news.index')" :current="request()->routeIs('news.*')"
-                    wire:navigate>
+                <flux:sidebar.item icon="newspaper" :href="route('news.index')"
+                    :current="request()->routeIs('news.*')" wire:navigate>
                     {{ __('الأخبار') }}
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="information-circle" :href="route('about')"
@@ -166,9 +170,9 @@
     {{ $slot }}
 
     @persist('toast')
-    <flux:toast.group>
-        <flux:toast />
-    </flux:toast.group>
+        <flux:toast.group>
+            <flux:toast />
+        </flux:toast.group>
     @endpersist
 
     @fluxScripts

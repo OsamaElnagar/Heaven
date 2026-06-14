@@ -73,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->topNavigation(false)
+            ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label(__('عملاء وحجوزات'))
@@ -87,15 +88,7 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(__('الموردون والفنادق'))
-                    ->collapsible()
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label(__('الرحلات والباقات'))
-                    ->collapsible()
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label(__('التأشيرات'))
+                    ->label(__('الموردون والفنادق والرحلات'))
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make()
@@ -111,7 +104,7 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(__('التقارير المالية'))
+                    ->label(__('الإعدادات'))
                     ->collapsible()
                     ->collapsed(),
             ])

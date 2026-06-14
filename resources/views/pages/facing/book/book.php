@@ -1,10 +1,11 @@
 <?php
 
+use App\Enums\Gender;
+use App\Enums\MaritalStatus;
 use App\Enums\RoomType;
 use App\Models\Booking;
 use App\Models\Client;
 use App\Models\Package;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -26,6 +27,12 @@ class extends Component
 
     public string $preferredRoomType = '';
 
+    public string $gender = '';
+
+    public string $maritalStatus = '';
+
+    public string $dateOfBirth = '';
+
     public string $notes = '';
 
     public bool $submitted = false;
@@ -35,6 +42,20 @@ class extends Component
     public function mount(Package $package): void
     {
         $this->package = $package;
+    }
+
+    public function genders(): array
+    {
+        return collect(Gender::cases())
+            ->map(fn ($g) => ['value' => $g->value, 'label' => $g->getLabel()])
+            ->toArray();
+    }
+
+    public function maritalStatuses(): array
+    {
+        return collect(MaritalStatus::cases())
+            ->map(fn ($m) => ['value' => $m->value, 'label' => $m->getLabel()])
+            ->toArray();
     }
 
     public function roomTypes(): array
@@ -52,6 +73,9 @@ class extends Component
             'phone' => ['required', 'string', 'max:20'],
             'nationalId' => ['required', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
+            'gender' => ['required', 'in:male,female,child'],
+            'maritalStatus' => ['required', 'in:single,married,widowed,divorced'],
+            'dateOfBirth' => ['nullable', 'date', 'before:today'],
             'travelersCount' => ['required', 'integer', 'min:1', 'max:20'],
             'preferredRoomType' => ['required', 'in:single,double,triple,quad'],
             'notes' => ['nullable', 'string', 'max:1000'],
@@ -63,6 +87,9 @@ class extends Component
                 'name' => $this->name,
                 'phone' => $this->phone,
                 'email' => $this->email ?: null,
+                'gender' => $this->gender,
+                'marital_status' => $this->maritalStatus,
+                'date_of_birth' => $this->dateOfBirth ?: null,
             ]
         );
 
@@ -71,6 +98,9 @@ class extends Component
                 'name' => $this->name,
                 'phone' => $this->phone,
                 'email' => $this->email ?: $client->email,
+                'gender' => $this->gender,
+                'marital_status' => $this->maritalStatus,
+                'date_of_birth' => $this->dateOfBirth ?: null,
             ]);
         }
 
@@ -82,10 +112,7 @@ class extends Component
         };
         $totalPrice = $this->package->base_price * $multiplier * $this->travelersCount;
 
-        $reference = 'HVN-'.strtoupper(Str::random(8));
-
         $booking = Booking::create([
-            'reference' => $reference,
             'client_id' => $client->id,
             'package_id' => $this->package->id,
             'status' => 'pending',
@@ -98,7 +125,7 @@ class extends Component
 
         $this->package->increment('reserved_seats', $this->travelersCount);
 
-        $this->bookingReference = $reference;
+        $this->bookingReference = $booking->reference;
         $this->submitted = true;
     }
 };

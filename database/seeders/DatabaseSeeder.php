@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
     {
         $admin = User::firstOrCreate(
             ['email' => 'admin@heaven.test'],
-            ['name' => 'أسامة سيد', 'password' => bcrypt('password')]
+            ['name' => 'أسامة النجار', 'password' => bcrypt('password')]
         );
 
         User::factory(2)->create();

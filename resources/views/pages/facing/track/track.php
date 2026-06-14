@@ -20,6 +20,9 @@ class extends Component
 
     public function track(): void
     {
+        $this->reference = trim($this->reference);
+        $this->nationalId = trim($this->nationalId);
+
         $this->validate([
             'reference' => ['required', 'string'],
             'nationalId' => ['required', 'string'],
@@ -27,7 +30,7 @@ class extends Component
 
         $booking = Booking::where('reference', $this->reference)
             ->whereHas('client', fn ($q) => $q->where('national_id', $this->nationalId))
-            ->with(['package', 'client', 'payments', 'visa'])
+            ->with(['package', 'client', 'visa'])
             ->first();
 
         $this->searched = true;

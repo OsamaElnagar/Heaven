@@ -107,7 +107,7 @@
                                     class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
                                     <span class="flex items-center gap-1">
                                         <flux:icon.map-pin class="size-3.5 text-zinc-400" />
-                                        {{ $hotel->city }}
+                                        {{ $hotel->city->name }}
                                     </span>
                                     <span class="flex items-center gap-1">
                                         @for ($i = 1; $i <= 5; $i++)
@@ -116,7 +116,7 @@
                                         @endfor
                                     </span>
                                     <span>
-                                        يبعد عن الحرم {{ $hotel->distance_to_haram }} متر
+                                        يبعد عن الحرم {{ $hotel->distance_to_haram }}
                                     </span>
                                 </div>
                             </div>

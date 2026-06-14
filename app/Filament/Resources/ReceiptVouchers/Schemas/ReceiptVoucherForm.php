@@ -85,6 +85,7 @@ class ReceiptVoucherForm
                             ->relationship('client', 'name')
                             ->searchable()
                             ->preload()
+                            ->live()
                             ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT)
                             ->hintActions([
                                 Action::make('viewClient')
@@ -96,7 +97,7 @@ class ReceiptVoucherForm
                             ]),
                         Select::make('booking_id')
                             ->label('الحجز')
-                            ->relationship('booking', 'reference')
+                            ->relationship('booking', 'reference', modifyQueryUsing: fn ($query, Get $get) => $query->where('client_id', $get('client_id')))
                             ->searchable()
                             ->preload()
                             ->visible(fn (Get $get): bool => $get('payer_type') === PayerType::CLIENT)

@@ -13,7 +13,7 @@
 
 ## Stack
 
-`Laravel 13` · `Filament v5` · `Livewire` · `Alpine.js` · `Tailwind CSS` · `MySQL, sqlite for local`
+`Laravel v13` · `Filament v5` · `Livewire v4` · `Alpine.js` · `Tailwind CSS` · `MySQL, sqlite for local`
 
 ## Who uses it
 

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Bookings\Tables;
 
+use App\Enums\BookingChannel;
 use App\Enums\BookingStatus;
 use App\Filament\Components\Filters\DateRangeFilter;
 use App\Filament\Resources\Bookings\Actions\PrintReceiptAction;
 use App\Filament\Resources\Bookings\Actions\RecordPaymentAction;
 use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Clients\RelationManagers\BookingsRelationManager;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -41,6 +43,7 @@ class BookingsTable
                     ->color('primary')
                     ->searchable()
                     ->sortable()
+                    ->hiddenOn(BookingsRelationManager::class)
                     ->placeholder('—'),
                 TextColumn::make('package.name')
                     ->label('الباقة')

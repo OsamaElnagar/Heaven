@@ -23,9 +23,11 @@ class RoomResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHomeModern;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'الرحلات والباقات';
+    protected static \UnitEnum|string|null $navigationGroup = 'الموردون والفنادق والرحلات';
 
     protected static ?string $navigationLabel = 'الغرف';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'room_number';
 
