@@ -11,6 +11,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TimePicker;
 use Filament\Support\Enums\Width;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Date;
@@ -70,7 +71,9 @@ class AppServiceProvider extends ServiceProvider
                 ->defaultSort('date', 'desc')
                 ->defaultCurrency('egp')
                 ->persistFiltersInSession()
-                ->defaultPaginationPageOption(25);
+                ->defaultPaginationPageOption(25)
+                ->filtersLayout(FiltersLayout::Modal);
+
         });
 
         DatePicker::configureUsing(fn (DatePicker $picker) => $picker->displayFormat('Y-m-d')

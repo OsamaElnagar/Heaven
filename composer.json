@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "achyutn/filament-log-viewer": "^2.3",
         "carlos-meneses/laravel-mpdf": "^2.1",
         "filament/filament": "^5.6",
         "filament/spatie-laravel-media-library-plugin": "^5.6",
@@ -14,7 +15,8 @@
         "laravel/framework": "^13.7",
         "laravel/tinker": "^3.0",
         "livewire/flux": "^2.13.1",
-        "livewire/livewire": "^4.1"
+        "livewire/livewire": "^4.1",
+        "shuvroroy/filament-spatie-laravel-backup": "^3.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

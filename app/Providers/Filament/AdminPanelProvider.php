@@ -24,7 +24,9 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
+use AchyutN\FilamentLogViewer\FilamentLogViewer;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,10 +37,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandLogo(fn (): HtmlString => new HtmlString(
-                '<div style="display: flex; align-items: center; gap: 10px;">'.
-                    '<img src="'.asset('assets/wosol-logo.jpg').'" alt="'.config('app.name').'" style="height: 45px;">'.
-                    '<span style="font-size: 16px; font-weight: 700;">'.config('app.name').'</span>'.
+            ->brandLogo(fn(): HtmlString => new HtmlString(
+                '<div style="display: flex; align-items: center; gap: 10px;">' .
+                    '<img src="' . asset('assets/wosol-logo.jpg') . '" alt="' . config('app.name') . '" style="height: 45px;">' .
+                    '<span style="font-size: 16px; font-weight: 700;">' . config('app.name') . '</span>' .
                     '</div>',
             ))
             ->colors([
@@ -110,7 +112,23 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
-                fn (): View => view('filament.topbar.quick-links'),
-            );
+                fn(): View => view('filament.topbar.quick-links'),
+            )
+            ->plugins([
+                FilamentLogViewer::make()
+                    ->registerNavigation(true)
+                    ->navigationGroup('الإعدادات')
+                    ->navigationIcon('heroicon-o-document-text')
+                    ->navigationLabel('Log-Viewer')
+                    ->navigationSort(10)
+                    ->navigationUrl('/logs')
+                    ->pollingTime(null),
+                FilamentSpatieLaravelBackupPlugin::make()
+                    ->navigationIcon('heroicon-o-cpu-chip')
+                    ->navigationLabel('Backups-نسخ احتياطى')
+                    ->navigationGroup('الإعدادات')
+                    ->navigationSort(3)
+                    ->usingPolingInterval('10000s'),
+            ]);
     }
 }
