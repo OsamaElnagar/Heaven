@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\Employees\Schemas;
 
+use App\Enums\EmployeeType;
 use App\Enums\SalaryType;
-use App\Models\Employee;
+use App\Models\Account;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class EmployeeForm
@@ -19,105 +19,93 @@ class EmployeeForm
     {
         return $schema
             ->components([
-                Section::make('البيانات الشخصية')
-                    ->components([
+                Section::make('معلومات الموظف')
+                    ->schema([
+                        TextInput::make('code')
+                            ->label('كود الموظف')
+                            ->readOnly()
+                            ->dehydrated(false),
                         TextInput::make('name')
-                            ->label('الاسم')
+                            ->label('اسم الموظف')
                             ->required(),
+                        TextInput::make('job_title')
+                            ->label('المسمى الوظيفي'),
                         TextInput::make('national_id')
                             ->label('الرقم القومي')
-                            ->required()
-                            ->unique(Employee::class, 'national_id', ignoreRecord: true),
+                            ->required(),
                         TextInput::make('phone')
                             ->label('رقم الهاتف')
                             ->tel()
                             ->required(),
+                        TextInput::make('email')
+                            ->label('البريد الإلكتروني')
+                            ->email(),
+                        TextInput::make('address')
+                            ->label('العنوان'),
+                        Select::make('department_id')
+                            ->relationship('department', 'name', modifyQueryUsing: fn ($query) => $query->where('is_active', true))
+                            ->label('القسم')
+                            ->searchable()
+                            ->preload(),
+                        Select::make('type')
+                            ->options(EmployeeType::class)
+                            ->required()
+                            ->label('النوع'),
                         Select::make('role')
-                            ->label('المسمى الوظيفي')
-                            ->options(fn () => Employee::query()
-                                ->distinct()
-                                ->whereNotNull('role')
-                                ->pluck('role', 'role')
-                            )
-                            ->creatable()
+                            ->label('الدور')
+                            ->options([
+                                'sales' => 'مندوب مبيعات',
+                                'operations' => 'مسؤول عمليات',
+                                'accountant' => 'محاسب',
+                                'guide' => 'مرشد ديني',
+                                'manager' => 'مدير',
+                            ])
                             ->required(),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
-
-                Section::make('الراتب والتوظيف')
-                    ->components([
                         Select::make('salary_type')
-                            ->label('نوع الراتب')
                             ->options(SalaryType::class)
                             ->required()
-                            ->native(false)
-                            ->live()
-                            ->afterStateUpdated(function (Set $set, Get $get) {
-                                static::updateMonthlyEquivalent($set, $get);
-                            }),
-                        TextInput::make('salary')
-                            ->label('الراتب')
-                            ->required()
+                            ->label('نوع المرتب'),
+                        TextInput::make('daily_hours')
+                            ->label('ساعات العمل اليومية')
                             ->numeric()
-                            ->prefix('ج.م')
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, Get $get) {
-                                static::updateMonthlyEquivalent($set, $get);
-                            }),
-                        TextInput::make('monthly_equivalent')
-                            ->label('المكافئ الشهري')
-                            ->numeric()
-                            ->prefix('ج.م')
-                            ->disabled()
-                            ->dehydrated(false),
-                        DatePicker::make('hired_at')
+                            ->suffix('ساعة')
+                            ->default(8),
+                        TextInput::make('base_salary')
+                            ->label('الراتب الأساسي')
+                            ->suffix('EGP')
+                            ->integer(),
+                        DatePicker::make('hire_date')
                             ->label('تاريخ التعيين')
                             ->required()
-                            ->default(now())
-                            ->maxDate(now())
-                            ->native(false),
-                        DatePicker::make('left_at')
-                            ->label('تاريخ ترك العمل')
-                            ->maxDate(now())
-                            ->native(false),
+                            ->default(now()),
+                        DatePicker::make('termination_date')
+                            ->label('تاريخ الإنهاء')
+                            ->maxDate(now()),
                         Toggle::make('is_active')
                             ->label('نشط')
                             ->default(true),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
-
-                Section::make('حساب المستخدم')
-                    ->components([
+                        Select::make('account_id')
+                            ->label('الحساب')
+                            ->relationship('account', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")
+                            ->searchable()
+                            ->preload(),
+                        Select::make('advance_account_id')
+                            ->label('حساب السلف')
+                            ->relationship('advanceAccount', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (Account $a) => "{$a->code} — {$a->name}")
+                            ->searchable()
+                            ->preload(),
                         Select::make('user_id')
                             ->label('حساب المستخدم')
                             ->relationship('user', 'name')
                             ->searchable()
-                            ->preload()
-                            ->native(false),
+                            ->preload(),
+                        RichEditor::make('notes')
+                            ->label('ملاحظات'),
                     ])
+                    ->columns(2)
                     ->columnSpanFull(),
             ]);
-    }
-
-    protected static function updateMonthlyEquivalent(Set $set, Get $get): void
-    {
-        $salaryType = $get('salary_type');
-        $salary = (float) ($get('salary') ?? 0);
-
-        if (! $salaryType || ! $salary) {
-            return;
-        }
-
-        $monthly = match (SalaryType::tryFrom($salaryType)) {
-            SalaryType::MONTHLY => $salary,
-            SalaryType::DAILY => $salary * 30,
-            SalaryType::PER_TRIP => $salary,
-            SalaryType::COMMISSION => $salary,
-            default => $salary,
-        };
-
-        $set('monthly_equivalent', $monthly);
     }
 }

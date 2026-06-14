@@ -7,6 +7,8 @@ use App\Filament\Resources\Employees\Pages\EditEmployee;
 use App\Filament\Resources\Employees\Pages\EmployeeAccountingStatementPage;
 use App\Filament\Resources\Employees\Pages\ListEmployees;
 use App\Filament\Resources\Employees\Pages\ViewEmployee;
+use App\Filament\Resources\Employees\RelationManagers\AttendancesRelationManager;
+use App\Filament\Resources\Employees\RelationManagers\PayrollLinesRelationManager;
 use App\Filament\Resources\Employees\Schemas\EmployeeForm;
 use App\Filament\Resources\Employees\Schemas\EmployeeInfolist;
 use App\Filament\Resources\Employees\Tables\EmployeesTable;
@@ -53,7 +55,8 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PayrollLinesRelationManager::class,
+            AttendancesRelationManager::class,
         ];
     }
 
@@ -78,6 +81,6 @@ class EmployeeResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'national_id', 'phone'];
+        return ['code', 'name', 'national_id', 'phone', 'job_title'];
     }
 }

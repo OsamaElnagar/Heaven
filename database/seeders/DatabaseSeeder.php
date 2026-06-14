@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             BranchSeeder::class,
             AgentSeeder::class,
+            DepartmentSeeder::class,
             EmployeeSeeder::class,
             ClientSeeder::class,
         ]);
@@ -44,6 +45,8 @@ class DatabaseSeeder extends Seeder
             ReceiptVoucherSeeder::class,
             VisaSeeder::class,
             ExpenseSeeder::class,
+            EmployeeAdvanceSeeder::class,
+            PayrollRunSeeder::class,
         ]);
 
         $this->fixReservedSeats();

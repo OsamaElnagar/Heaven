@@ -10,6 +10,7 @@ enum SalaryType: string implements HasColor, HasLabel
 {
     case MONTHLY = 'monthly';
     case DAILY = 'daily';
+    case HOURLY = 'hourly';
     case PER_TRIP = 'per_trip';
     case COMMISSION = 'commission';
 
@@ -18,6 +19,7 @@ enum SalaryType: string implements HasColor, HasLabel
         return match ($this) {
             self::MONTHLY => 'info',
             self::DAILY => 'warning',
+            self::HOURLY => 'gray',
             self::PER_TRIP => 'success',
             self::COMMISSION => 'danger',
         };
@@ -28,6 +30,7 @@ enum SalaryType: string implements HasColor, HasLabel
         return match ($this) {
             self::MONTHLY => 'شهري',
             self::DAILY => 'يومي',
+            self::HOURLY => 'بالساعة',
             self::PER_TRIP => 'بالرحلة',
             self::COMMISSION => 'عمولة',
         };

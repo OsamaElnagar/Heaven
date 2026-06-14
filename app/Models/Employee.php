@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmployeeType;
 use App\Enums\SalaryType;
 use App\Models\Concerns\HasEntityCode;
 use App\Observers\PartyAccountObserver;
@@ -25,20 +26,31 @@ class Employee extends Model
         'name',
         'national_id',
         'phone',
+        'email',
+        'address',
         'role',
+        'job_title',
+        'daily_hours',
+        'type',
         'salary_type',
-        'salary',
-        'hired_at',
-        'left_at',
+        'base_salary',
+        'hire_date',
+        'termination_date',
         'is_active',
         'account_id',
+        'advance_account_id',
+        'department_id',
+        'notes',
     ];
 
     protected $casts = [
+        'type' => EmployeeType::class,
         'salary_type' => SalaryType::class,
-        'hired_at' => 'date',
-        'left_at' => 'date',
+        'hire_date' => 'date',
+        'termination_date' => 'date',
         'is_active' => 'boolean',
+        'daily_hours' => 'decimal:2',
+        'base_salary' => 'integer',
     ];
 
     public function getRouteKeyName(): string
@@ -56,9 +68,39 @@ class Employee extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function advanceAccount(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'advance_account_id');
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
     public function journalLines(): HasMany
     {
         return $this->hasMany(JournalLine::class);
+    }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function employeeAdvances(): HasMany
+    {
+        return $this->hasMany(EmployeeAdvance::class);
+    }
+
+    public function payrollLines(): HasMany
+    {
+        return $this->hasMany(PayrollLine::class);
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 
     public static function entityCodeType(): string

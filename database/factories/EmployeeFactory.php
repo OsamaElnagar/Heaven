@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\EmployeeType;
 use App\Enums\SalaryType;
+use App\Models\Department;
 use App\Models\Employee;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -30,9 +32,10 @@ class EmployeeFactory extends Factory
     {
         $role = fake()->randomElement(array_keys(self::$roles));
         $salaryType = $role === 'guide' ? SalaryType::PER_TRIP : fake()->randomElement(SalaryType::cases());
-        $salary = match ($salaryType) {
+        $baseSalary = match ($salaryType) {
             SalaryType::MONTHLY => fake()->numberBetween(5000, 20000),
             SalaryType::DAILY => fake()->numberBetween(200, 800),
+            SalaryType::HOURLY => fake()->numberBetween(50, 150),
             SalaryType::PER_TRIP => fake()->numberBetween(3000, 10000),
             SalaryType::COMMISSION => fake()->numberBetween(2000, 5000),
         };
@@ -42,11 +45,15 @@ class EmployeeFactory extends Factory
             'national_id' => '2'.fake()->numerify('#############'),
             'phone' => '01'.fake()->randomElement([0, 1, 2, 5]).fake()->numerify('#########'),
             'role' => $role,
+            'job_title' => self::$roles[$role] ?? null,
+            'type' => fake()->randomElement(EmployeeType::cases()),
             'salary_type' => $salaryType,
-            'salary' => $salary,
-            'hired_at' => Carbon::now()->subMonths(fake()->numberBetween(1, 36)),
-            'left_at' => null,
+            'base_salary' => $baseSalary,
+            'daily_hours' => 8,
+            'hire_date' => Carbon::now()->subMonths(fake()->numberBetween(1, 36)),
+            'termination_date' => null,
             'is_active' => true,
+            'department_id' => Department::factory(),
         ];
     }
 
@@ -54,7 +61,7 @@ class EmployeeFactory extends Factory
     {
         return $this->state(fn () => [
             'is_active' => false,
-            'left_at' => Carbon::now()->subDays(fake()->numberBetween(1, 90)),
+            'termination_date' => Carbon::now()->subDays(fake()->numberBetween(1, 90)),
         ]);
     }
 }

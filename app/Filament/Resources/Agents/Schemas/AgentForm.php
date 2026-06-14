@@ -25,12 +25,12 @@ class AgentForm
                             ->label('الاسم')
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('اسم الوكيل'),
+                            ->placeholder('اسم المندوب'),
                         TextInput::make('phone')
                             ->label('الهاتف')
                             ->tel()
                             ->maxLength(255)
-                            ->placeholder('05xxxxxxxxx'),
+                            ->placeholder('+2010xxxxxxxx'),
                         TextInput::make('email')
                             ->label('البريد الإلكتروني')
                             ->email()
@@ -47,7 +47,7 @@ class AgentForm
                 Section::make('العمولة والعقد')
                     ->components([
                         TextInput::make('commission_percentage')
-                            ->label('نسبة العمولة (%)')
+                            ->label('نسبة العمولة لكل عميل (%)')
                             ->numeric()
                             ->default(0)
                             ->suffix('%')

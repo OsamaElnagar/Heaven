@@ -24,11 +24,11 @@ class AgentResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'الوكلاء والفروع';
 
-    protected static ?string $navigationLabel = 'الوكلاء';
+    protected static ?string $navigationLabel = 'الوكلاء/المندوبون';
 
-    protected static ?string $modelLabel = 'وكيل';
+    protected static ?string $modelLabel = 'وكيل/مندوب';
 
-    protected static ?string $pluralModelLabel = 'الوكلاء';
+    protected static ?string $pluralModelLabel = 'وكلاء/مندوبون';
 
     protected static ?string $recordTitleAttribute = 'name';
 

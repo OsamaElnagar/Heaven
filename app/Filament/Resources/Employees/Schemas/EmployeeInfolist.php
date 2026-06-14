@@ -13,32 +13,42 @@ class EmployeeInfolist
     {
         return $schema
             ->components([
-                Section::make('البيانات الشخصية')
+                Section::make('معلومات الموظف')
                     ->components([
                         TextEntry::make('name')
                             ->label('الاسم'),
+                        TextEntry::make('code')
+                            ->label('كود الموظف'),
+                        TextEntry::make('job_title')
+                            ->label('المسمى الوظيفي')
+                            ->placeholder('—'),
                         TextEntry::make('national_id')
                             ->label('الرقم القومي'),
                         TextEntry::make('phone')
                             ->label('رقم الهاتف'),
-                        TextEntry::make('role')
-                            ->label('المسمى الوظيفي'),
-                    ])
-                    ->columns(2),
-
-                Section::make('الراتب والتوظيف')
-                    ->components([
-                        TextEntry::make('salary_type')
-                            ->label('نوع الراتب')
+                        TextEntry::make('email')
+                            ->label('البريد الإلكتروني')
+                            ->placeholder('—'),
+                        TextEntry::make('department.name')
+                            ->label('القسم')
+                            ->placeholder('—'),
+                        TextEntry::make('type')
+                            ->label('النوع')
                             ->badge(),
-                        TextEntry::make('salary')
-                            ->label('الراتب')
+                        TextEntry::make('salary_type')
+                            ->label('نوع المرتب')
+                            ->badge(),
+                        TextEntry::make('base_salary')
+                            ->label('الراتب الأساسي')
                             ->money('EGP'),
-                        TextEntry::make('hired_at')
+                        TextEntry::make('daily_hours')
+                            ->label('ساعات العمل')
+                            ->suffix(' ساعة'),
+                        TextEntry::make('hire_date')
                             ->label('تاريخ التعيين')
                             ->date(),
-                        TextEntry::make('left_at')
-                            ->label('تاريخ ترك العمل')
+                        TextEntry::make('termination_date')
+                            ->label('تاريخ الإنهاء')
                             ->date()
                             ->placeholder('—'),
                         IconEntry::make('is_active')
@@ -54,6 +64,13 @@ class EmployeeInfolist
                             ->placeholder('غير مرتبط'),
                         TextEntry::make('user.email')
                             ->label('البريد الإلكتروني')
+                            ->placeholder('—'),
+                        TextEntry::make('account.code')
+                            ->label('رقم الحساب')
+                            ->placeholder('—'),
+                        TextEntry::make('notes')
+                            ->label('ملاحظات')
+                            ->html()
                             ->placeholder('—'),
                     ])
                     ->columns(2),
