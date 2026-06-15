@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Trips\Schemas;
 
+use App\Enums\BookingStatus;
 use App\Filament\Resources\Packages\PackageResource;
+use App\Models\Trip;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -52,6 +54,29 @@ class TripInfolist
                             ->placeholder('—'),
                     ])
                     ->columns(2),
+
+                Section::make('إحصائيات الحجوزات')
+                    ->components([
+                        TextEntry::make('total_bookings')
+                            ->label('إجمالي الحجوزات')
+                            ->state(fn (Trip $record) => $record->bookings()->count()),
+                        TextEntry::make('confirmed_bookings')
+                            ->label('الحجوزات المؤكدة')
+                            ->state(fn (Trip $record) => $record->bookings()
+                                ->where('bookings.status', BookingStatus::CONFIRMED->value)
+                                ->count()),
+                        TextEntry::make('total_paid')
+                            ->label('المبلغ المحصل')
+                            ->state(fn (Trip $record) => number_format(
+                                $record->bookings()->sum('paid_amount'), 2
+                            ).' ج.م'),
+                        TextEntry::make('total_outstanding')
+                            ->label('المبلغ المستحق')
+                            ->state(fn (Trip $record) => number_format(
+                                max($record->bookings()->sum('net_price') - $record->bookings()->sum('paid_amount'), 0), 2
+                            ).' ج.م'),
+                    ])
+                    ->columns(4),
             ]);
     }
 }

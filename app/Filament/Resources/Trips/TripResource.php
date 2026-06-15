@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Trips;
 use App\Filament\Resources\Trips\Pages\CreateTrip;
 use App\Filament\Resources\Trips\Pages\EditTrip;
 use App\Filament\Resources\Trips\Pages\ListTrips;
-use App\Filament\Resources\Trips\Pages\TripDashboardPage;
 use App\Filament\Resources\Trips\Pages\TripManifestPage;
 use App\Filament\Resources\Trips\Pages\TripRoomingPage;
 use App\Filament\Resources\Trips\Pages\ViewTrip;
@@ -71,7 +70,6 @@ class TripResource extends Resource
             'create' => CreateTrip::route('/create'),
             'view' => ViewTrip::route('/{record}'),
             'edit' => EditTrip::route('/{record}/edit'),
-            'dashboard' => TripDashboardPage::route('/{record}/dashboard'),
             'manifest' => TripManifestPage::route('/{record}/manifest'),
             'rooming' => TripRoomingPage::route('/{record}/rooming'),
         ];

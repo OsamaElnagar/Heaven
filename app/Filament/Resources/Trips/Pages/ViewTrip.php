@@ -8,6 +8,8 @@ use App\Filament\Resources\Trips\Actions\DepartTripAction;
 use App\Filament\Resources\Trips\Actions\ExportManifestAction;
 use App\Filament\Resources\Trips\Actions\ExportRoomingListAction;
 use App\Filament\Resources\Trips\TripResource;
+use App\Filament\Resources\Trips\Widgets\TripOccupancyWidget;
+use App\Filament\Resources\Trips\Widgets\TripVisaStatusWidget;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -21,11 +23,6 @@ class ViewTrip extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('dashboard')
-                ->label('لوحة المعلومات')
-                ->icon('heroicon-o-presentation-chart-bar')
-                ->color('info')
-                ->url(fn () => TripResource::getUrl('dashboard', ['record' => $this->record])),
             Action::make('manifest')
                 ->label('كشف المسافرين')
                 ->icon('heroicon-o-clipboard-document-list')
@@ -42,6 +39,14 @@ class ViewTrip extends ViewRecord
             ExportManifestAction::make(),
             ExportRoomingListAction::make(),
             BulkSubmitVisasAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            TripVisaStatusWidget::class,
+            TripOccupancyWidget::class,
         ];
     }
 }

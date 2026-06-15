@@ -17,11 +17,11 @@ class ReportService
     public function visaDashboard(Trip $trip): array
     {
         $visas = Booking::where('trip_id', $trip->id)
-            ->where('status', 'confirmed')
+            ->where('bookings.status', 'confirmed')
             ->join('visas', 'visas.booking_id', '=', 'bookings.id')
             ->selectRaw('visas.status, count(*) as count')
             ->groupBy('visas.status')
-            ->pluck('count', 'status')
+            ->pluck('count', 'visas.status')
             ->toArray();
 
         $result = [];

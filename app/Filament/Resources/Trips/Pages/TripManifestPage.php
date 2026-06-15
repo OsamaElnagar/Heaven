@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Trips\Pages;
 
+use App\Enums\BookingStatus;
 use App\Filament\Resources\Trips\TripResource;
 use App\Services\TripService;
 use Filament\Actions\Action;
@@ -65,7 +66,10 @@ class TripManifestPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn () => (new TripService)->getManifest($this->record))
+            ->query(fn () => $this->record->bookings()
+                ->where('bookings.status', BookingStatus::CONFIRMED)
+                ->with(['client', 'visa'])
+            )
             ->columns([
                 TextColumn::make('client.name')->label('الاسم')->searchable(),
                 TextColumn::make('client.passport_number')->label('رقم الجواز')->searchable(),
