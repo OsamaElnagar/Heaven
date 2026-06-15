@@ -62,7 +62,7 @@ class TripRoomingPage extends Page implements HasTable
                     ->label('عدد النزلاء')
                     ->counts('bookings'),
             ])
-            ->paginate(15)
+            ->paginated()
             ->recordUrl(fn ($record): string => RoomResource::getUrl('view', ['record' => $record]));
     }
 }

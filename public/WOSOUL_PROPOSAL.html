@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مقترح النظام الرقمي المتكامل - وصول</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #1a6b3a;
+      --primary-light: #e8f5ee;
+      --accent:    #c9a227;
+      --text:      #1a1a1a;
+      --muted:     #5a5a5a;
+      --border:    #d4d4d4;
+      --bg:        #f9f9f7;
+      --white:     #ffffff;
+      --radius:    10px;
+    }
+
+    body {
+      font-family: 'Cairo', 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text);
+      background: var(--bg);
+      padding: 0;
+      direction: rtl;
+      text-align: right;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(135deg, var(--primary) 0%, #0e4424 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 80px 40px 60px;
+    }
+    .cover .kaaba { font-size: 64px; margin-bottom: 16px; }
+    .cover h1 {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .cover .meta {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: var(--radius);
+      padding: 20px 40px;
+      font-size: 15px;
+    }
+    .cover .meta span { display: block; }
+    .cover .meta strong { color: var(--accent); }
+
+    /* ── Main wrapper ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 32px;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-right: 5px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 48px;
+    }
+    .toc h2 {
+      font-size: 20px;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .toc ol {
+      padding-right: 24px;
+      counter-reset: toc-item;
+    }
+    .toc li { margin-bottom: 6px; color: var(--muted); }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+    .toc ul { margin-top: 6px; padding-right: 20px; list-style: disc; }
+    .toc ul li { color: var(--muted); font-size: 14px; }
+
+    /* ── Headings ── */
+    h1, h2, h3, h4 { font-weight: 700; line-height: 1.4; }
+
+    h2 {
+      font-size: 22px;
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary-light);
+      padding-bottom: 10px;
+      margin: 48px 0 24px;
+    }
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 22px;
+      background: var(--primary);
+      border-radius: 3px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    h3 {
+      font-size: 18px;
+      color: #1f5c33;
+      margin: 36px 0 16px;
+      padding: 8px 16px;
+      background: var(--primary-light);
+      border-radius: 6px;
+    }
+
+    h4 {
+      font-size: 16px;
+      color: var(--text);
+      margin: 28px 0 12px;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 6px;
+    }
+
+    p { margin-bottom: 14px; }
+
+    /* ── Lists ── */
+    ul, ol {
+      padding-right: 24px;
+      margin-bottom: 14px;
+    }
+    li { margin-bottom: 5px; }
+
+    /* ── Checkmark list (✅) ── */
+    li:has(> span.check) { list-style: none; }
+
+    /* ── Images ── */
+    .img-block {
+      margin: 24px 0;
+      text-align: center;
+    }
+    .img-block img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    }
+    .img-block figcaption {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Inline images (inside table cells / list items) */
+    p img, li img, td img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: block;
+      margin: 8px auto;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    thead tr { background: var(--primary); color: var(--white); }
+    th, td {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tbody tr:nth-child(even) { background: var(--primary-light); }
+    tbody tr:hover { background: #d0ebda; }
+
+    /* ── Blockquote ── */
+    blockquote {
+      background: linear-gradient(135deg, #fff8e1, #fff3cd);
+      border-right: 5px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 32px 0;
+      color: #5a4500;
+      font-size: 15px;
+    }
+    blockquote p { margin-bottom: 6px; }
+    blockquote p:last-child { margin-bottom: 0; }
+
+    /* ── Strong ── */
+    strong { color: var(--primary); }
+
+    /* ── Code (tech names like "Filament") ── */
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    /* ── Section card wrapper ── */
+    .section-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 2px solid var(--border);
+      margin-top: 48px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; font-size: 13px; }
+      .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section-card { box-shadow: none; border: 1px solid #ccc; }
+      h2 { page-break-before: always; }
+      img { max-height: 300px; object-fit: contain; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 24px 16px; }
+      .cover h1 { font-size: 20px; }
+      h2 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ COVER ══════════════ -->
+<div class="cover">
+  <div class="kaaba">🕋</div>
+  <h1>مقترح النظام الرقمي المتكامل<br>لشركة وصول لرحلات الحج والعمرة والطيران</h1>
+  <div class="meta">
+    <span><strong>مقدم إلى:</strong> السيد / سمير أبوزيد</span>
+    <span><strong>من:</strong> فريق التطوير</span>
+    <span><strong>التاريخ:</strong> يونيو 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══════════════ TOC ══════════════ -->
+<div class="toc">
+  <h2>📋 فهرس المحتويات</h2>
+  <ol>
+    <li><a href="#sec1">نبذة عن المشروع</a></li>
+    <li><a href="#sec2">النظام الإداري (لوحة التحكم)</a>
+      <ul>
+        <li><a href="#sec21">2.1 العملاء والحجوزات</a></li>
+        <li><a href="#sec22">2.2 الموردون والفنادق والرحلات</a></li>
+        <li><a href="#sec23">2.3 الوكلاء والفروع</a></li>
+        <li><a href="#sec24">2.4 الموارد البشرية</a></li>
+        <li><a href="#sec25">2.5 المحتوى</a></li>
+        <li><a href="#sec26">2.6 المحاسبة (نظام القيد المزدوج)</a></li>
+        <li><a href="#sec27">2.7 الخزينة والسندات</a></li>
+        <li><a href="#sec28">2.8 التقارير المالية</a></li>
+        <li><a href="#sec29">2.9 الإعدادات</a></li>
+      </ul>
+    </li>
+    <li><a href="#sec3">الموقع الإلكتروني للعملاء (الواجهة الأمامية)</a></li>
+    <li><a href="#sec4">لوحة المعلومات والإحصائيات</a></li>
+    <li><a href="#sec5">المميزات التقنية</a></li>
+    <li><a href="#sec6">فوائد النظام للشركة</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- ══════════════ SECTION 1 ══════════════ -->
+<div class="section-card" id="sec1">
+<h2>1. نبذة عن المشروع</h2>
+
+<p>نظام متكامل لإدارة شركات الحج والعمرة والسياحة، تم تطويره خصيصاً لشركة <strong>وصول لرحلات الحج والعمرة والطيران</strong> ليكون العمود الفقري الرقمي للشركة. يجمع النظام بين <strong>لوحة تحكم إدارية متكاملة</strong> (Back Office) و<strong>موقع إلكتروني تفاعلي للعملاء</strong> (Front Office) في منصة واحدة موحدة.</p>
+
+<figure class="img-block"><img src="screenshots/01-landing-page.png" alt="الشعار الرئيسي للنظام"><figcaption>صفحة الموقع للعملاء</figcaption></figure>
+<figure class="img-block"><img src="screenshots/01-logo-login-page.png" alt="الشعار الرئيسي للنظام"><figcaption>صفحة الدخول الموحدة للنظام</figcaption></figure>
+<figure class="img-block"><img src="screenshots/01-panel-dashboard-page.png" alt="لوحة التحكم"><figcaption>صفحة لوحة التحكم</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- ══════════════ SECTION 2 ══════════════ -->
+<div class="section-card" id="sec2">
+<h2>2. النظام الإداري (لوحة التحكم)</h2>
+
+<p>لوحة تحكم احترافية مبنية بإطار Filament PHP توفر تحكماً كاملاً بجميع عمليات الشركة من خلال <strong>9 مجموعات رئيسية</strong> منظمة وواضحة.</p>
+
+<!-- 2.1 -->
+<h3 id="sec21">2.1 العملاء والحجوزات</h3>
+
+<h4>إدارة العملاء</h4>
+
+<figure class="img-block"><img src="screenshots/02-clients-list.png" alt="قائمة العملاء"><figcaption>صفحة قائمة العملاء مع إمكانية البحث والتصفية</figcaption></figure>
+
+<p>نظام متكامل لإدارة بيانات العملاء يشمل:</p>
+<ul>
+  <li><strong>البيانات الشخصية:</strong> الاسم (عربي وإنجليزي)، رقم الهوية، جواز السفر وتاريخ انتهائه، تاريخ الميلاد، النوع، الحالة الاجتماعية، فصيلة الدم، المحافظة</li>
+  <li><strong>معلومات الاتصال:</strong> رقم الجوال، جوال بديل، البريد الإلكتروني، العنوان</li>
+  <li><strong>بيانات المحرم:</strong> اسم المحرم، صلة القرابة، رقم جوال المحرم (للحج والعمرة)</li>
+  <li><strong>ملاحظات طبية:</strong> لتسجيل أي حالات صحية أو احتياجات خاصة</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/03-client-create-form.png" alt="إضافة عميل جديد"><figcaption>نموذج إضافة عميل جديد بجميع البيانات</figcaption></figure>
+
+<p>مميزات إضافية:</p>
+<ul>
+  <li><strong>بحث عام وشامل:</strong> بالاسم، رقم الهوية، رقم جواز السفر، رقم الجوال، البريد الإلكتروني</li>
+  <li><strong>تصدير كرت عميل:</strong> طباعة أو تصدير بطاقة بيانات العميل</li>
+  <li><strong>إرسال واتساب:</strong> زر مباشر للتواصل مع العميل عبر واتساب</li>
+  <li><strong>كشف حساب عميل:</strong> تقرير مفصل بجميع المعاملات المالية للعميل</li>
+</ul>
+
+<h4>إدارة الحجوزات</h4>
+
+<figure class="img-block"><img src="screenshots/04-bookings-list.png" alt="قائمة الحجوزات"><figcaption>صفحة قائمة الحجوزات مع عرض الإحصائيات</figcaption></figure>
+
+<p>نظام حجوزات متكامل يدعم:</p>
+<ul>
+  <li><strong>إنشاء حجز جديد:</strong> ربط العميل بالباقة والرحلة المناسبة</li>
+  <li><strong>قنوات البيع المتعددة:</strong>
+    <ul>
+      <li>حجز مباشر (من المكتب)</li>
+      <li>حجز عن طريق وكيل/مندوب</li>
+      <li>حجز عن طريق فرع</li>
+      <li>حجز أونلاين (من الموقع الإلكتروني)</li>
+    </ul>
+  </li>
+  <li><strong>أنواع الغرف:</strong> فردي، مزدوج، ثلاثي، رباعي</li>
+  <li><strong>حالات الحجز:</strong> قيد الانتظار، مؤكد، ملغي، مكتمل</li>
+  <li><strong>حساب التسعير التلقائي:</strong> حساب السعر تلقائياً بناءً على الباقة والغرفة والخصومات</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/05-booking-create-form.png" alt="نموذج إنشاء حجز"><figcaption>نموذج إنشاء حجز مع حساب التسعير التلقائي</figcaption></figure>
+
+<p>الإجراءات المتاحة على الحجز:</p>
+<ul>
+  <li>✅ تسجيل دفعة</li>
+  <li>✅ طباعة إيصال</li>
+  <li>✅ طباعة فوتشر حجز</li>
+  <li>✅ إصدار مرتجع (Refund)</li>
+  <li>✅ تأكيد الحجز</li>
+  <li>✅ إلغاء الحجز</li>
+  <li>✅ تعيين غرفة</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/06-booking-view-page.png" alt="صفحة عرض الحجز"><figcaption>صفحة عرض تفاصيل الحجز مع كافة المعلومات</figcaption></figure>
+
+<h4>إدارة التأشيرات</h4>
+
+<figure class="img-block"><img src="screenshots/07-visas-list.png" alt="قائمة التأشيرات"><figcaption>صفحة قائمة التأشيرات مع إمكانية التصفية حسب الحالة</figcaption></figure>
+
+<p>نظام متابعة التأشيرات يشمل:</p>
+<ul>
+  <li>تسجيل طلب تأشيرة وربطه بالحجز</li>
+  <li>متابعة الحالة (قيد الانتظار، قيد المعالجة، تمت الموافقة، مرفوض)</li>
+  <li>تواريخ التقديم والموافقة والانتهاء</li>
+  <li>إجراءات جماعية: تقديم جماعي، موافقة جماعية</li>
+  <li>تصدير قائمة التأشيرات</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/08-visa-actions.png" alt="صفحة التأشيرات مع الإجراءات"><figcaption>إجراءات التأشيرات: تقديم، موافقة، رفض</figcaption></figure>
+
+<!-- 2.2 -->
+<h3 id="sec22">2.2 الموردون والفنادق والرحلات</h3>
+
+<h4>إدارة الباقات</h4>
+
+<figure class="img-block"><img src="screenshots/09-packages-list.png" alt="قائمة الباقات"><figcaption>صفحة قائمة الباقات مع عرض الإحصائيات</figcaption></figure>
+
+<p>نظام الباقات يشمل:</p>
+<ul>
+  <li><strong>أنواع الباقات:</strong> عمرة، حج، سياحة، VIP، VVIP</li>
+  <li><strong>درجات الباقات:</strong> اقتصادية، عادية، ممتازة، VIP، VVIP</li>
+  <li><strong>الموسم والسنة:</strong> تحديد موسم الرحلة وعدد الليالي</li>
+  <li><strong>المقاعد:</strong> إجمالي المقاعد، المحجوزة، المتاحة</li>
+  <li><strong>التحكم في الظهور:</strong> إمكانية إظهار/إخفاء الباقة من الموقع الإلكتروني</li>
+  <li><strong>السعر الأساسي:</strong> تسعير مرن مع إمكانية التعديل</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/10-package-create-form.png" alt="نموذج إضافة باقة"><figcaption>نموذج إضافة باقة جديدة</figcaption></figure>
+
+<p>مميزات إضافية:</p>
+<ul>
+  <li>إحصائيات إشغال المقاعد (Widget)</li>
+  <li>ملخص الباقات (Widget)</li>
+  <li>تصدير ملخص الباقة</li>
+</ul>
+
+<h4>إدارة الرحلات</h4>
+
+<figure class="img-block"><img src="screenshots/11-trips-list.png" alt="قائمة الرحلات"><figcaption>صفحة قائمة الرحلات</figcaption></figure>
+
+<p>نظام متكامل لإدارة الرحلات الجوية:</p>
+<ul>
+  <li>بيانات الرحلة: الاسم، شركة الطيران، رقم الرحلة</li>
+  <li>مواعيد السفر: تاريخ ووقت الذهاب والعودة، مطار الإقلاع</li>
+  <li>حالات الرحلة: مجدولة، منطلقة، مكتملة، ملغاة</li>
+  <li>صفحات خاصة:
+    <ul>
+      <li><strong>لوحة معلومات الرحلة</strong> (Dashboard)</li>
+      <li><strong>كشف الرحلة</strong> (Manifest)</li>
+      <li><strong>توزيع الغرف</strong> (Rooming)</li>
+    </ul>
+  </li>
+  <li>إجراءات: تقديم تأشيرات جماعي، تسليم الرحلة، إنهاء الرحلة، تصدير المانيفست والرومينج</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/12-trip-manifest.png" alt="كشف الرحلة"><figcaption>كشف الرحلة (Manifest)</figcaption></figure>
+<figure class="img-block"><img src="screenshots/13-trip-rooming.png" alt="توزيع الغرف"><figcaption>توزيع الغرف (Rooming)</figcaption></figure>
+<figure class="img-block"><img src="screenshots/14-trip-create-form.png" alt="صفحة إضافة رحلة"><figcaption>نموذج إضافة رحلة جديدة</figcaption></figure>
+
+<h4>إدارة الموردين</h4>
+
+<figure class="img-block"><img src="screenshots/15-suppliers-list.png" alt="قائمة الموردين"><figcaption>صفحة قائمة الموردين</figcaption></figure>
+
+<p>إدارة جميع موردي الشركة:</p>
+<ul>
+  <li>أنواع الموردين: فندق، شركة طيران، نقل، تأمين، تغذية، وغيرها</li>
+  <li>معلومات الاتصال: اسم المسؤول، الجوال، البريد الإلكتروني</li>
+  <li>كشف حساب مورد: تقرير مالي مفصل</li>
+</ul>
+
+<h4>إدارة الفنادق</h4>
+
+<figure class="img-block"><img src="screenshots/16-hotels-list.png" alt="قائمة الفنادق"><figcaption>صفحة قائمة الفنادق</figcaption></figure>
+
+<p>قاعدة بيانات للفنادق المتعاقد معها:</p>
+<ul>
+  <li>اسم الفندق، المورد (المالك)، المدينة</li>
+  <li>عدد النجوم، المسافة من الحرم</li>
+  <li>ربط الغرف والباقات بالفندق</li>
+</ul>
+
+<h4>إدارة الغرف</h4>
+
+<figure class="img-block"><img src="screenshots/17-rooms-list.png" alt="قائمة الغرف"><figcaption>صفحة قائمة الغرف</figcaption></figure>
+
+<p>نظام إدارة الغرف في الفنادق:</p>
+<ul>
+  <li>رقم الغرفة، الفندق، الرحلة (اختياري)</li>
+  <li>نوع الغرفة مع سعة تلقائية: فردي (1)، مزدوج (2)، ثلاثي (3)، رباعي (4)</li>
+  <li>السعة القصوى، المشغول منها، المتاح</li>
+  <li>السعر لكل شخص</li>
+  <li>إجراءات: تعيين عميل للغرفة، إلغاء تعيين عميل</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/18-room-create-form.png" alt="نموذج إضافة غرفة"><figcaption>نموذج إضافة غرفة جديدة</figcaption></figure>
+
+<!-- 2.3 -->
+<h3 id="sec23">2.3 الوكلاء والفروع</h3>
+
+<figure class="img-block"><img src="screenshots/19-agents-branches-dashboard.png" alt="الوكلاء والفروع"><figcaption>لوحة تحكم الوكلاء والفروع</figcaption></figure>
+
+<h4>إدارة الفروع</h4>
+<ul>
+  <li>إنشاء فروع متعددة للشركة (كود، اسم، جوال، بريد، مدينة)</li>
+  <li>تعيين مدير الفرع وجواله</li>
+  <li>نسبة عمولة الفرع (%)</li>
+  <li>تفعيل/إلغاء تفعيل الفرع</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/20-branches-list.png" alt="قائمة الفروع"><figcaption>صفحة قائمة الفروع</figcaption></figure>
+
+<h4>إدارة الوكلاء / المندوبين</h4>
+<ul>
+  <li>تسجيل وكلاء ومندوبين المبيعات</li>
+  <li>كود تعريف، بيانات شخصية (الاسم، الجوال، البريد، رقم الهوية)</li>
+  <li>نسبة العمولة، تاريخ العقد</li>
+  <li>تفعيل/إلغاء تفعيل الوكيل</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/21-agents-list.png" alt="قائمة الوكلاء"><figcaption>صفحة قائمة الوكلاء</figcaption></figure>
+
+<h4>إدارة العمولات</h4>
+
+<figure class="img-block"><img src="screenshots/22-commissions-list.png" alt="قائمة العمولات"><figcaption>صفحة قائمة العمولات</figcaption></figure>
+
+<p>نظام متكامل للعمولات:</p>
+<ul>
+  <li>ربط العمولة بالحجز والفرع والوكيل</li>
+  <li>أنواع العمولة: نسبة مئوية أو مبلغ ثابت</li>
+  <li>حالات العمولة: مستحقة، مدفوعة، ملغاة</li>
+  <li>ربط بسندات الصرف للدفع</li>
+</ul>
+
+<!-- 2.4 -->
+<h3 id="sec24">2.4 الموارد البشرية</h3>
+
+<figure class="img-block"><img src="screenshots/23-hr-dashboard.png" alt="الموارد البشرية"><figcaption>لوحة تحكم الموارد البشرية</figcaption></figure>
+
+<h4>إدارة الموظفين</h4>
+
+<figure class="img-block"><img src="screenshots/24-employees-list.png" alt="قائمة الموظفين"><figcaption>صفحة قائمة الموظفين</figcaption></figure>
+
+<p>سجل كامل للموظفين:</p>
+<ul>
+  <li>البيانات الشخصية والوظيفية</li>
+  <li>القسم، نوع الموظف (إداري، محاسب، مندوب، الخ)</li>
+  <li>نظام المرتبات: شهري، يومي، بالساعة، عمولات</li>
+  <li>الراتب الأساسي، ساعات العمل اليومية</li>
+  <li>تاريخ التعيين والإنهاء</li>
+  <li>ربط بحسابات المحاسبة (حساب الراتب، حساب السلف)</li>
+  <li>ربط بحساب مستخدم للنظام</li>
+  <li>إجراء تعطيل الموظف</li>
+</ul>
+
+<figure class="img-block"><img src="screenshots/25-employee-create-form.png" alt="نموذج إضافة موظف"><figcaption>نموذج إضافة موظف جديد</figcaption></figure>
+
+<h4>الحضور والانصراف</h4>
+
+<figure class="img-block"><img src="screenshots/26-attendance-list.png" alt="قائمة الحضور"><figcaption>صفحة قائمة الحضور والانصراف</figcaption></figure>
+
+<p>نظام تسجيل الحضور:</p>
+<ul>
+  <li>تسجيل يومي للموظفين (حضور، انصراف، ساعات إضافية)</li>
+  <li>حالات الحضور: حاضر، غائب، إجازة، مأمورية</li>
+  <li>إجراءات جماعية: تسجيل حضور جماعي، تحديد عطلة نهاية الأسبوع</li>
+</ul>
+
+<h4>سلف الموظفين</h4>
+
+<figure class="img-block"><img src="screenshots/27-employee-advances-list.png" alt="قائمة السلف"><figcaption>صفحة قائمة سلف الموظفين</figcaption></figure>
+
+<p>نظام إدارة سلف الموظفين:</p>
+<ul>
+  <li>مبلغ السلفة، المبلغ المسدد، عدد الأقساط</li>
+  <li>أنواع السلف: عادية، عاجلة، علاجية، تعليمية، وغيرها</li>
+  <li>حالات السلفة: مسجلة، معتمدة، مسددة، ملغاة</li>
+</ul>
+
+<!-- 2.5 -->
+<h3 id="sec25">2.5 المحتوى</h3>
+
+<p>إدارة محتوى الموقع الإلكتروني من لوحة التحكم بالكامل، يشمل:</p>
+<ul>
+  <li><strong>الأخبار والمقالات:</strong> إضافة وتعديل الأخبار والمقالات مع صور وتصنيفات</li>
+  <li><strong>الأسئلة الشائعة (FAQ):</strong> إضافة وتنظيم الأسئلة والأجوبة</li>
+  <li><strong>معرض الصور:</strong> إدارة صور الموقع وتنظيمها في ألبومات</li>
+  <li><strong>آراء العملاء:</strong> إضافة وإدارة توصيات وشهادات العملاء</li>
+  <li><strong>الصفحات الثابتة:</strong> تعديل محتوى صفحات (من نحن، اتصل بنا، سياسة الخصوصية، الشروط والأحكام، سياسة الإلغاء)</li>
+  <li><strong>إعدادات الموقع:</strong> اسم الشركة، اللوجو، بيانات التواصل الاجتماعي، رقم الواتساب</li>
+</ul>
+
+<!-- 2.6 -->
+<h3 id="sec26">2.6 المحاسبة (نظام القيد المزدوج)</h3>
+
+<p>نظام محاسبي متكامل مبني على أساس القيد المزدوج (Double-Entry Accounting) متوافق مع المعايير المحاسبية المصرية.</p>
+
+<h4>دليل الحسابات (Chart of Accounts)</h4>
+<p>هيكل حسابات هرمي متكامل:</p>
+<ul>
+  <li>الأصول (Assets): نقدية، بنوك، ذمم مدينة، أصول ثابتة</li>
+  <li>الخصوم (Liabilities): ذمم دائنة، قروض، التزامات</li>
+  <li>حقوق الملكية (Equity): رأس المال، الأرباح المحتجزة</li>
+  <li>الإيرادات (Revenue): مبيعات الباقات، العمولات، الخ</li>
+  <li>المصروفات (Expenses): تكاليف تشغيلية وإدارية</li>
+</ul>
+
+<h4>القيود اليومية (Journal Entries)</h4>
+<ul>
+  <li>تسجيل القيود اليدوية</li>
+  <li>توليد تلقائي للقيود من: سندات القبض والصرف، مسيرات الرواتب، الحجوزات</li>
+  <li>مراجعة وترحيل القيود</li>
+  <li>سجل أوراق العمل</li>
+</ul>
+
+<h4>مسيرات الرواتب (Payroll)</h4>
+<ul>
+  <li>توليد مسيرة راتب شهرية للموظفين</li>
+  <li>احتساب تلقائي بناءً على: الراتب الأساسي، ساعات العمل، الحضور والغياب، السلف المستحقة</li>
+  <li>الاستقطاعات والبدلات</li>
+  <li>إنشاء قيد محاسبي تلقائي لكل مسيرة</li>
+  <li>طباعة كشف الرواتب</li>
+</ul>
+
+<!-- 2.7 -->
+<h3 id="sec27">2.7 الخزينة والسندات</h3>
+
+<h4>سندات القبض (Receipt Vouchers)</h4>
+<ul>
+  <li>تسجيل كل مدفوعات العملاء</li>
+  <li>ربط بالحجز والعميل</li>
+  <li>طرق الدفع: نقدي، تحويل بنكي، شيك، بطاقة ائتمان، محفظة إلكترونية</li>
+  <li>توليد قيد محاسبي تلقائي</li>
+  <li>طباعة إيصال قبض</li>
+</ul>
+
+<h4>سندات الصرف (Payment Vouchers)</h4>
+<ul>
+  <li>تسجيل جميع المصروفات والمدفوعات</li>
+  <li>ربط بالمورد أو الموظف أو الوكيل</li>
+  <li>أنواع: مصروف تشغيلي، دفعة لمورد، عمولة وكيل/فرع، سلفة موظف</li>
+  <li>توليد قيد محاسبي تلقائي</li>
+  <li>طباعة سند الصرف</li>
+</ul>
+
+<h4>إدارة الخزائن</h4>
+<ul>
+  <li>تعريف خزائن نقدية متعددة</li>
+  <li>تتبع الرصيد الحالي لكل خزينة</li>
+  <li>عمليات التحويل بين الخزائن</li>
+  <li>كشف حركة كل خزينة</li>
+</ul>
+
+<h4>إدارة البنوك</h4>
+<ul>
+  <li>تسجيل حسابات بنكية متعددة</li>
+  <li>تتبع الرصيد البنكي</li>
+  <li>كشف حركة الحساب البنكي</li>
+  <li>التسوية البنكية</li>
+</ul>
+
+<!-- 2.8 -->
+<h3 id="sec28">2.8 التقارير المالية</h3>
+
+<h4>قائمة الدخل (Income Statement)</h4>
+<figure class="img-block"><img src="screenshots/50-income-statement.png" alt="قائمة الدخل"><figcaption>تقرير قائمة الدخل مع تصفية حسب الفترة المالية</figcaption></figure>
+<p>تقرير يوضح:</p>
+<ul>
+  <li>الإيرادات (مبيعات الباقات، العمولات، الخ)</li>
+  <li>المصروفات (مكتبية، تسويق، نقل، تكاليف فنادق وطيران)</li>
+  <li>صافي الربح أو الخسارة</li>
+</ul>
+
+<h4>الميزانية العمومية (Balance Sheet)</h4>
+<figure class="img-block"><img src="screenshots/51-balance-sheet.png" alt="الميزانية العمومية"><figcaption>تقرير الميزانية العمومية</figcaption></figure>
+<p>تقرير يوضح:</p>
+<ul>
+  <li>الأصول (متداولة وثابتة)</li>
+  <li>الخصوم (متداولة وطويلة الأجل)</li>
+  <li>حقوق الملكية</li>
+  <li>صافي المركز المالي للشركة</li>
+</ul>
+
+<h4>قائمة التدفقات النقدية (Cash Flow Statement)</h4>
+<figure class="img-block"><img src="screenshots/52-cash-flow-statement.png" alt="التدفقات النقدية"><figcaption>تقرير التدفقات النقدية</figcaption></figure>
+<p>تحليل التدفقات النقدية:</p>
+<ul>
+  <li>الأنشطة التشغيلية</li>
+  <li>الأنشطة الاستثمارية</li>
+  <li>الأنشطة التمويلية</li>
+</ul>
+
+<h4>تقرير المصروفات (Expense Summary Report)</h4>
+<figure class="img-block"><img src="screenshots/53-expense-summary-report.png" alt="تقرير المصروفات"><figcaption>تقرير ملخص المصروفات</figcaption></figure>
+<p>تحليل المصروفات حسب: التصنيف، الفترة الزمنية، الرحلة.</p>
+
+<h4>تقرير ربحية الباقات (Package Profitability Report)</h4>
+<figure class="img-block"><img src="screenshots/54-package-profitability.png" alt="ربحية الباقات"><figcaption>تقرير ربحية الباقات</figcaption></figure>
+<p>تحليل ربحية كل باقة: إجمالي المبيعات، التكاليف المرتبطة، صافي الربح لكل باقة.</p>
+
+<h4>تقرير أعمار ديون العملاء (Client Aging Report)</h4>
+<figure class="img-block"><img src="screenshots/55-client-aging-report.png" alt="أعمار الديون"><figcaption>تقرير أعمار ديون العملاء</figcaption></figure>
+<p>متابعة المستحقات:</p>
+<ul>
+  <li>تصنيف الديون حسب عمرها (0–30 يوم، 31–60، 61–90، +90)</li>
+  <li>متابعة التحصيل</li>
+</ul>
+
+<h4>تقرير أرصدة الموردين (Supplier Balances Report)</h4>
+<figure class="img-block"><img src="screenshots/56-supplier-balances-report.png" alt="أرصدة الموردين"><figcaption>تقرير أرصدة الموردين</figcaption></figure>
+<p>متابعة المستحقات للموردين: الأرصدة الدائنة والمدينة، صافي الرصيد.</p>
+
+<!-- 2.9 -->
+<h3 id="sec29">2.9 الإعدادات</h3>
+
+<figure class="img-block"><img src="screenshots/57-settings-dashboard.png" alt="الإعدادات"><figcaption>لوحة تحكم الإعدادات</figcaption></figure>
+
+<h4>أنواع الباقات</h4>
+<figure class="img-block"><img src="screenshots/58-package-types-list.png" alt="أنواع الباقات"><figcaption>صفحة أنواع الباقات</figcaption></figure>
+<ul>
+  <li>الاسم (عربي وإنجليزي)، الرابط المختصر</li>
+  <li>لون وأيقونة لكل نوع</li>
+  <li>هل هي رحلة دينية؟</li>
+  <li>حد أدنى وأقصى لعدد ليالي الرحلة</li>
+</ul>
+
+<h4>المدن</h4>
+<figure class="img-block"><img src="screenshots/59-cities-list.png" alt="المدن"><figcaption>صفحة المدن</figcaption></figure>
+<p>قاعدة بيانات المدن: الاسم (عربي وإنجليزي)، الدولة، عدد الفنادق المسجلة في كل مدينة.</p>
+
+<h4>النسخ الاحتياطي (Backups)</h4>
+<figure class="img-block"><img src="screenshots/60-backups-page.png" alt="النسخ الاحتياطي"><figcaption>صفحة إدارة النسخ الاحتياطي</figcaption></figure>
+<ul>
+  <li>إنشاء نسخ احتياطية يدوياً أو تلقائياً</li>
+  <li>تنزيل النسخ الاحتياطية</li>
+  <li>استعادة النظام من نسخة احتياطية</li>
+</ul>
+
+<h4>سجل النظام (Log Viewer)</h4>
+<figure class="img-block"><img src="screenshots/61-log-viewer.png" alt="سجل النظام"><figcaption>صفحة سجل النظام</figcaption></figure>
+<p>مشاهدة أخطاء وسجلات النظام لتسهيل الدعم الفني والصيانة.</p>
+
+</div><!-- /section-card -->
+
+<hr>
+
+<!-- ══════════════ SECTION 3 ══════════════ -->
+<div class="section-card" id="sec3">
+<h2>3. الموقع الإلكتروني للعملاء (الواجهة الأمامية)</h2>
+
+<figure class="img-block"><img src="screenshots/62-website-homepage.png" alt="الموقع الإلكتروني"><figcaption>الصفحة الرئيسية للموقع الإلكتروني</figcaption></figure>
+
+<p>موقع إلكتروني عصري وتفاعلي مخصص للعملاء، مبني بتقنية Livewire لتجربة مستخدم سلسة دون الحاجة لإعادة تحميل الصفحة.</p>
+
+<h3>الصفحة الرئيسية</h3>
+
+<figure class="img-block"><img src="screenshots/63-homepage-full.png" alt="الصفحة الرئيسية كاملة"><figcaption>الصفحة الرئيسية بجميع أقسامها</figcaption></figure>
+
+<p>الصفحة الرئيسية تتضمن:</p>
+<ul>
+  <li>✅ <strong>Hero Section</strong> - بانر ترحيبي مع صور جذابة للحرمين</li>
+  <li>✅ <strong>باقات مميزة</strong> - عرض أبرز الباقات المتاحة</li>
+  <li>✅ <strong>لماذا نحن؟</strong> - نقاط القوة والميزات التنافسية</li>
+  <li>✅ <strong>كيف تعمل؟</strong> - شرح مبسط لخطوات الحجز</li>
+  <li>✅ <strong>آراء العملاء</strong> - شهادات وتوصيات العملاء السابقين</li>
+  <li>✅ <strong>آخر الأخبار</strong> - عرض أحدث الأخبار والإعلانات</li>
+  <li>✅ <strong>زر واتساب عائم</strong> - للتواصل المباشر والدعم الفوري</li>
+</ul>
+
+<h3>صفحة الباقات</h3>
+
+<figure class="img-block"><img src="screenshots/64-packages-index.png" alt="قائمة الباقات"><figcaption>صفحة عرض جميع الباقات</figcaption></figure>
+
+<p>عرض جميع الباقات المتاحة مع إمكانية التصفية حسب النوع، الدرجة، السنة، السعر، المدة. وتشمل صفحات متخصصة:</p>
+
+<figure class="img-block"><img src="screenshots/65-packages-vip.png" alt="باقات VIP"><figcaption>باقات VIP</figcaption></figure>
+<figure class="img-block"><img src="screenshots/66-packages-featured.png" alt="العروض المميزة"><figcaption>العروض المميزة</figcaption></figure>
+<figure class="img-block"><img src="screenshots/67-packages-groups.png" alt="رحلات المجموعات"><figcaption>رحلات المجموعات</figcaption></figure>
+
+<h3>صفحة تفاصيل الباقة</h3>
+
+<figure class="img-block"><img src="screenshots/68-package-show.png" alt="تفاصيل الباقة"><figcaption>صفحة عرض تفاصيل الباقة</figcaption></figure>
+
+<p>عرض كامل للباقة يتضمن:</p>
+<ul>
+  <li>صور الباقة</li>
+  <li>الوصف والميزات</li>
+  <li>جدول التسعير (فردي، مزدوج، ثلاثي، رباعي)</li>
+  <li>تاريخ المغادرة والعودة</li>
+  <li>مقاعد متاحة</li>
+  <li>ما يشمل وما لا يشمل</li>
+  <li>زر "احجز الآن"</li>
+</ul>
+
+<h3>صفحة الحجز</h3>
+
+<figure class="img-block"><img src="screenshots/69-booking-form.png" alt="نموذج الحجز"><figcaption>نموذج الحجز الإلكتروني</figcaption></figure>
+
+<p>نموذج حجز متكامل:</p>
+<ul>
+  <li>إدخال بيانات العميل الشخصية</li>
+  <li>اختيار نوع الغرفة</li>
+  <li>عرض السعر الإجمالي</li>
+  <li>إرسال الحجز (يتم إنشاء عميل وحجز في النظام تلقائياً)</li>
+</ul>
+
+<h3>صفحة تتبع الحجز</h3>
+
+<figure class="img-block"><img src="screenshots/70-track-booking.png" alt="تتبع الحجز"><figcaption>صفحة تتبع الحجز</figcaption></figure>
+
+<p>العميل يمكنه متابعة حالة حجزه عن طريق:</p>
+<ul>
+  <li>إدخال رقم الحجز المرجعي</li>
+  <li>إدخال رقم الهوية الوطنية</li>
+  <li>عرض حالة الحجز والتأشيرة والدفعات</li>
+</ul>
+
+<h3>صفحات المحتوى</h3>
+
+<table>
+  <thead><tr><th>الصفحة</th><th>لقطة الشاشة</th></tr></thead>
+  <tbody>
+    <tr><td>من نحن</td><td><img src="screenshots/71-about-page.png" alt="من نحن"></td></tr>
+    <tr><td>اتصل بنا</td><td><img src="screenshots/72-contact-page.png" alt="اتصل بنا"></td></tr>
+    <tr><td>الأخبار</td><td><img src="screenshots/73-news-index.png" alt="الأخبار"></td></tr>
+    <tr><td>تفاصيل الخبر</td><td><img src="screenshots/74-news-show.png" alt="تفاصيل الخبر"></td></tr>
+    <tr><td>الأسئلة الشائعة</td><td><img src="screenshots/75-faq-page.png" alt="الأسئلة الشائعة"></td></tr>
+    <tr><td>معرض الصور</td><td><img src="screenshots/76-gallery-page.png" alt="معرض الصور"></td></tr>
+    <tr><td>سياسة الخصوصية</td><td><img src="screenshots/77-privacy-page.png" alt="سياسة الخصوصية"></td></tr>
+    <tr><td>الشروط والأحكام</td><td><img src="screenshots/78-terms-page.png" alt="الشروط والأحكام"></td></tr>
+    <tr><td>سياسة الإلغاء</td><td><img src="screenshots/79-cancellation-page.png" alt="سياسة الإلغاء"></td></tr>
+  </tbody>
+</table>
+
+<h3>التحكم في الظهور</h3>
+<p>النظام يتيح <strong>التحكم في إظهار وإخفاء</strong> الباقات من الموقع الإلكتروني بسهولة من لوحة التحكم، عن طريق زر تبديل (Toggle) في شاشة تعديل الباقة.</p>
+
+<figure class="img-block"><img src="screenshots/80-front-office-visibility-toggle.png" alt="تحكم الظهور"><figcaption>خاصية إظهار/إخفاء الباقة من الموقع الإلكتروني</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- ══════════════ SECTION 4 ══════════════ -->
+<div class="section-card" id="sec4">
+<h2>4. لوحة المعلومات والإحصائيات</h2>
+
+<p>النظام مزود بلوحات معلومات (Widgets) في مختلف الأقسام تعطي نظرة سريعة على المؤشرات الهامة:</p>
+
+<figure class="img-block"><img src="screenshots/81-dashboard-widgets.png" alt="لوحة الإحصائيات"><figcaption>نماذج من لوحات المعلومات والإحصائيات</figcaption></figure>
+
+<p>أبرز اللوحات:</p>
+<ul>
+  <li>📊 <strong>إحصائيات الحجوزات</strong> - إجمالي الحجوزات، المؤكدة، المعلقة، الملغاة</li>
+  <li>📊 <strong>إشغال المقاعد</strong> - نسبة إشغال الباقات</li>
+  <li>📊 <strong>حالة التأشيرات</strong> - إحصائيات التأشيرات (قيد الانتظار، موافق، مرفوض)</li>
+  <li>📊 <strong>إحصائيات المصروفات</strong> - إجمالي المصروفات وتصنيفاتها</li>
+  <li>📊 <strong>إحصائيات مسيرات الرواتب</strong> - إجمالي الرواتب والاستقطاعات</li>
+</ul>
+</div>
+
+<hr>
+
+<!-- ══════════════ SECTION 5 ══════════════ -->
+<div class="section-card" id="sec5">
+<h2>5. المميزات التقنية</h2>
+
+<h3>واجهة المستخدم (UI/UX)</h3>
+<ul>
+  <li>🌐 <strong>واجهة عربية بالكامل</strong> - جميع أقسام النظام وأزراره وحقول باللغة العربية</li>
+  <li>🎨 <strong>تصميم عصري</strong> - واجهة جميلة وسهلة الاستخدام</li>
+  <li>📱 <strong>متجاوب بالكامل</strong> - يعمل على جميع الأجهزة (حاسوب، جهاز لوحي، جوال)</li>
+</ul>
+
+<h3>الأمان</h3>
+<ul>
+  <li>🔐 <strong>نظام صلاحيات متكامل</strong> - التحكم في صلاحيات المستخدمين (قيد التطوير)</li>
+  <li>🔒 <strong>تشفير البيانات</strong> - حماية كاملة للبيانات الحساسة</li>
+  <li>💾 <strong>نسخ احتياطي تلقائي</strong> - حماية البيانات من الفقدان</li>
+</ul>
+
+<h3>الأداء</h3>
+<ul>
+  <li>⚡ <strong>تقنية Livewire</strong> - تفاعل سريع دون إعادة تحميل الصفحة</li>
+  <li>🚀 <strong>أداء عالي</strong> - استعلامات محسنة للقاعدة البيانات</li>
+  <li>🔍 <strong>بحث سريع</strong> - بحث عام وشامل في جميع أقسام النظام</li>
+</ul>
+
+<h3>التكامل</h3>
+<ul>
+  <li>📱 <strong>واتساب</strong> - تواصل مباشر مع العملاء</li>
+  <li>📄 <strong>PDF</strong> - تصدير التقارير والفواتير والفوتشرات</li>
+  <li>📧 <strong>بريد إلكتروني</strong> - إشعارات وتواصل (قيد التطوير)</li>
+</ul>
+
+<h3>الصيانة</h3>
+<ul>
+  <li>🛠️ <strong>سجل أخطاء</strong> - متابعة أخطاء النظام لسهولة الدعم الفني</li>
+  <li>📋 <strong>جميع الأكواد موثقة ومنظمة</strong> - سهولة التطوير والإضافة</li>
+  <li>🔄 <strong>قابلية التوسع</strong> - إمكانية إضافة ميزات جديدة بسهولة</li>
+</ul>
+</div>
+
+<hr>
+
+<!-- ══════════════ SECTION 6 ══════════════ -->
+<div class="section-card" id="sec6">
+<h2>6. فوائد النظام للشركة</h2>
+
+<table>
+  <thead>
+    <tr><th>الفائدة</th><th>الشرح</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>🎯 <strong>توحيد البيانات</strong></td><td>جميع بيانات الشركة في نظام واحد بدلاً من ملفات إكسل متفرقة</td></tr>
+    <tr><td>⏱️ <strong>توفير الوقت</strong></td><td>أتمتة العمليات اليومية (الحجوزات، السندات، التقارير)</td></tr>
+    <tr><td>📊 <strong>قرارات أفضل</strong></td><td>تقارير دقيقة تساعد في اتخاذ القرارات الإدارية</td></tr>
+    <tr><td>🔍 <strong>متابعة دقيقة</strong></td><td>تتبع الحجوزات والتأشيرات والمدفوعات في الوقت الفعلي</td></tr>
+    <tr><td>💰 <strong>رقابة مالية</strong></td><td>نظام محاسبي متكامل يمنع الأخطاء والتسريبات المالية</td></tr>
+    <tr><td>🤝 <strong>توسع المبيعات</strong></td><td>موقع إلكتروني احترافي لاستقبال الحجوزات أونلاين</td></tr>
+    <tr><td>📱 <strong>تنقل سهل</strong></td><td>وصول للبيانات من أي جهاز وفي أي وقت</td></tr>
+    <tr><td>🛡️ <strong>أمان البيانات</strong></td><td>نسخ احتياطي وحماية للبيانات من الفقدان والاختراق</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr>
+
+<blockquote>
+  <p><strong>هذا النظام هو الحل الرقمي المتكامل لشركة وصول لرحلات الحج والعمرة والطيران.</strong></p>
+  <p>تم بناؤه بأحدث التقنيات (Laravel + Filament + Livewire + Tailwind CSS) لضمان أعلى مستويات الجودة والأداء والأمان.</p>
+</blockquote>
+
+</div><!-- /container -->
+
+<div class="footer">
+  تم إعداد هذا المقترح بواسطة فريق التطوير &mdash; يونيو 2026
+</div>
+
+</body>
+</html>

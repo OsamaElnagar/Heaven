@@ -74,6 +74,6 @@ class TripManifestPage extends Page implements HasTable
                 TextColumn::make('visa.status')->label('حالة التأشيرة')->badge(),
                 TextColumn::make('room_type')->label('نوع الغرفة')->badge(),
             ])
-            ->paginate(15);
+            ->paginated();
     }
 }
