@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'email' => 'info@wosoul-travel.com',
+    'email' => 'info@heaven-travel.com',
 
     /*
     |--------------------------------------------------------------------------
