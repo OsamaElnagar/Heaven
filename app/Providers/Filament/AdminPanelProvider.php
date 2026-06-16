@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandLogo(fn (): HtmlString => new HtmlString(
                 '<div style="display: flex; align-items: center; gap: 10px;">'.
-                    '<img src="'.asset('assets/wosol-logo.jpg').'" alt="'.config('app.name').'" style="height: 45px;">'.
+                    '<img src="'.asset('assets/heaven-logo.jpg').'" alt="'.config('app.name').'" style="height: 45px;">'.
                     '<span style="font-size: 16px; font-weight: 700;">'.config('app.name').'</span>'.
                     '</div>',
             ))

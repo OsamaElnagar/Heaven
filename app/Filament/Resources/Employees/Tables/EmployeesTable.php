@@ -80,7 +80,7 @@ class EmployeesTable
                     ->label('الدور')
                     ->multiple()
                     ->options(
-                        fn(): array => Employee::query()
+                        fn (): array => Employee::query()
                             ->distinct()
                             ->whereNotNull('role')
                             ->orderBy('role')
